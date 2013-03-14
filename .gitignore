@@ -1,0 +1,24 @@
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+##generic files
+*.swp
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+
+#dev_https var files
+stunnel/var
+
+#user uploads
+media
+
+#live site
+#git hooks
+post-merge
+#soft links
+static/admin
