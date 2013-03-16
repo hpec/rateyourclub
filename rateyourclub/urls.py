@@ -17,10 +17,13 @@ urlpatterns = patterns('',
     
     url(r'^admin/', include(admin.site.urls)),
     #url(include('clubreview.urls'))
-    url(r'^club/$',
+    url(r'^clubs/$',
         club_list_view,
         name='club_list_view'),
-    url(r'^club/(\d+)$',
+    url(r'^clubs/(\d+)/*$',
         club_info_view,
         name='club_info_view'),
+    url(r'^review/add/$',
+        add_review,
+        name='add_review'),
 )

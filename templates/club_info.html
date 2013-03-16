@@ -1,7 +1,8 @@
 <html>
-    <p>Club: {{ club }}</p>
+    <p>Name: {{ club }}</p>
     <p>Reviews: </p>
     {% for review in reviews %}
         <p> {{ review }} </p>
     {% endfor %}
+    <p><a href="{% url club_list_view %}">Back to list</a></p>
 </html>
