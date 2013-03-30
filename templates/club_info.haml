@@ -1,0 +1,9 @@
+!!! 5
+%p Name: {{ club }}
+%p Introduction: {{ club.introduction }}
+%p Reviews:
+- for review in reviews
+    %p {{ review }}
+%p
+    %a{ 'href': "{% url 'club_list_view' %}"}
+        Back to list

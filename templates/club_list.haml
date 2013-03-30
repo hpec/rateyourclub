@@ -1,0 +1,6 @@
+!!! 5
+- for club in clubs
+    %p
+        %a{'href' : "{% url 'club_info_view' club.id %}"}
+            {{ club }}
+
