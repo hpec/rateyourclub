@@ -2,10 +2,10 @@ from django.core.management.base import BaseCommand, CommandError
 from clubreview.models import *
 from bs4 import BeautifulSoup
 import urllib2
-import re
 import pdb
+import re, sys, traceback
 
-
+RECURSION_LIMIT = 2600
 def main():
     def parse(url):
         print url
@@ -74,16 +74,12 @@ def main():
 
             
         try:
-            pass
-            #school = School.objects.get(name='UC Berkeley')
-            #club = Club.objects.create(name=clubname, abbrev=abbrev, introduction=intro, school=school)
-        except:
+            club, created = Club.objects.get_or_create(name=clubname, abbrev=abbrev, introduction=intro, school=school)
+        except Exception as e:
+            print traceback.format_exc()
             print url
             print clubname
-        #print clubname
-        #print intro
-        #print
-
+    sys.setrecursionlimit(RECURSION_LIMIT)
     GREEKS_BASE = 'http://lead.berkeley.edu/greek/recognized_chapters'
     GROUPS_BASE = 'http://students.berkeley.edu/osl/studentgroups/public/index.asp?todo=listgroups'
     GROUPS_BASE_URL = 'http://students.berkeley.edu'
@@ -96,8 +92,9 @@ def main():
     gid_list = re.findall(r'SGID=(\d+)', content)
     url_list = list()
     
+    school, created = School.objects.get_or_create(name='UC Berkeley')
+
     for gid in gid_list:
-        #print gid
         parse(str(GROUP_INFO_BASE_URL+gid))
 
 class Command(BaseCommand):
