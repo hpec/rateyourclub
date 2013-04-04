@@ -3,6 +3,7 @@ from models import *
 from forms import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def club_list_view(request, template_name='club_list.html'):
@@ -33,10 +34,16 @@ def add_review(request, success_url=None,
                form_class=ReviewForm,
                template_name='add_review.html'):
     if request.method == 'POST':
+        print "Posting"
         form = form_class(data=request.POST)
+        print "Made Form"
         if form.is_valid():
-            form.save()
-        pass
+            print "Saving"
+            review = form.save()
+            print "saved!!"
+            print "review", review
+        print form.errors
+        return HttpResponseRedirect('/') 
     else:
         form = form_class()
     context = RequestContext(request)

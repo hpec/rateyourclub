@@ -14,7 +14,9 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    
+    url(r'^$',
+        club_list_view,
+        name='club_list_view'),
     url(r'^admin/', include(admin.site.urls)),
     #url(include('clubreview.urls'))
     url(r'^clubs/$',
@@ -26,4 +28,5 @@ urlpatterns = patterns('',
     url(r'^review/add/$',
         add_review,
         name='add_review'),
+    (r'^selectable/', include('selectable.urls')),
 )

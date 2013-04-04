@@ -1,5 +1,7 @@
 - load static
 - load compress
+- load selectable_tags
+- include_jquery_libs
 !!! 5
 %head
     %title
@@ -28,6 +30,10 @@
             %h6
                 Displaying
                 ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
+            %h3
+                %a{'href': "{% url 'add_review' %}"}
+                    Write Review
+
         
         %div{'class':'pull-right span7'}
             %div{'class':'span3'}
