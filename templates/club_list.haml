@@ -2,6 +2,7 @@
 - load compress
 - load selectable_tags
 - include_jquery_libs
+- load review_form_handler
 !!! 5
 %head
     %title
@@ -33,6 +34,7 @@
             %h3
                 %a{'href': "{% url 'add_review' %}"}
                     Write Review
+            - review_form_handler
 
         
         %div{'class':'pull-right span7'}

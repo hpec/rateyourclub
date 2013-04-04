@@ -1,0 +1,15 @@
+{% load selectable_tags %}
+{% include_jquery_libs %}
+{{ form.media.css }}
+{{ form.media.js }}
+
+<form class='form-horizontal' action='' method='post'>
+    {% csrf_token %}
+    {% for field in form %}
+        <p></p>
+        {{ field.label_tag }} {{ field }}
+    {% endfor %}
+    <button class='btn-primary' type='submit'>
+        Submit
+    </button>
+</form>

@@ -1,0 +1,12 @@
+- load selectable_tags
+- include_jquery_libs
+{{ form.media.css }}
+{{ form.media.js }} 
+
+%form{ 'method':"post", 'action':"", 'class':"form-horizontal"}
+    - csrf_token
+    - for field in form
+        %p
+        {{ field.label_tag }} {{ field }}
+    %button{'type':"submit", 'class':"btn-primary"}
+        Submit

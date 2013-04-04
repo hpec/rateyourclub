@@ -4,6 +4,7 @@ from django import forms
 from models import *
 from selectable.forms import AutoCompleteSelectWidget
 from lookups import *
+from django.forms.widgets import *
 
 class ReviewForm(ModelForm):
     
@@ -11,7 +12,10 @@ class ReviewForm(ModelForm):
     class Meta:
         model = Review
         fields = ('club', 'ratings', 'content')
-        widgets = {'club':AutoCompleteSelectWidget(ClubLookUp)}
+        widgets = {'club': AutoCompleteSelectWidget(ClubLookUp),
+                   'ratings': TextInput(),
+                   'content': Textarea(attrs={'cols': 20, 'rows': 5})
+                   }
     
 
     

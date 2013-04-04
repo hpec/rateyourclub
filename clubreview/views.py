@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 def club_list_view(request, template_name='club_list.html'):
     if request.method == 'GET' and 'q' in request.GET:
         clubs = Club.objects.filter(name__icontains=request.GET.get('q')).order_by('review_count')
@@ -22,31 +23,29 @@ def club_list_view(request, template_name='club_list.html'):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         clubs = paginator.page(paginator.num_pages)
-
-    return render_to_response(template_name, { 'clubs': clubs })
+    context = RequestContext(request)
+    return render_to_response(template_name, { 'clubs': clubs }, context_instance=context)
 
 def club_info_view(request, club_id, template_name='club_info.html'):
     club = Club.objects.get(id=int(club_id))
     reviews = Review.objects.filter(club=club)
-    return render_to_response(template_name, { 'club': club, 'reviews': reviews })
+    context = RequestContext(request)
+    return render_to_response(template_name, { 'club': club, 'reviews': reviews }, context_instance=context)
 
 def add_review(request, success_url=None,
                form_class=ReviewForm,
                template_name='add_review.html'):
     if request.method == 'POST':
-        print "Posting"
         form = form_class(data=request.POST)
-        print "Made Form"
         if form.is_valid():
-            print "Saving"
             review = form.save()
-            print "saved!!"
-            print "review", review
-        print form.errors
-        return HttpResponseRedirect('/') 
+            return HttpResponseRedirect('/') 
     else:
         form = form_class()
     context = RequestContext(request)
     return render_to_response(template_name,
                               { 'form': form },
                               context_instance=context)
+
+
+
