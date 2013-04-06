@@ -4,29 +4,26 @@
 {{ form.media.js }}
 <style type='text/css'>
 /*<![CDATA[*/
-    .form-horizontal { text-align:left; }
-    .form-horizontal .control-group { margin-bottom: 0px; }
+    .form-horizontal { text-align:left }
+    .form-horizontal .control-group { margin-bottom: 0px }
     .form-horizontal .control-label { margin-left:0px; width:20px }
-    .form-horizontal .controls { margin-left:80px; }
+    .form-horizontal .controls { margin-left:80px }
+    #id_club_0 { width:400px }
+    #id_ratings { width:400px }
+    #id_content { width:400px }
 
 /*]]>*/
 </style>
 <form class='form-horizontal' action='' method='post'>
     {% csrf_token %}
     {% for field in form %}
-        <div class='row-fluid'>
-            <div class='span6'>
+
                 <div class='control-group'>
-                    <label class='control-label' style=''>
-                        {{ field.label_tag }}
-                    </label>
-                    <div class='controls'>
-                        {{ field }}
-                    </div>
+                    <label class='control-label'>{{ field.label_tag }}</label>
+                    <div class='controls'>{{ field }}</div>
                 </div>
-            </div>
-        </div>
     {% endfor %}
+
     <button class='btn-primary' type='submit'>
         Submit
     </button>
