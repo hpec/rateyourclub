@@ -8,19 +8,16 @@
 %div{ 'class': 'container-fluid'}
     %div{ 'class' : 'row'}
         %div{ 'class' : 'offset2'}
-            %h1 {{ club }}
+            %h3 {{ club }}
         %div{'class':'span8 offset2'}
             %p
               %h5 Introduction:
               {{ club.introduction }}
               %h5 Website
               {{club.website}}
-            %a{ 'class':'btn btn-primary','href':"{% url 'clubreview.views.add_review' %}"}
-                Review
-
+            
             %p 
               %h5 Reviews:
-
             - for review in reviews
                     %p {{ review }}
                 - empty
@@ -35,6 +32,5 @@
             %p
               %a{ 'href': "{% url 'club_list_view' %}"}
                     Back to list
-    %div{ 'class' : 'row'}
-        %div{ 'class' : 'offset2'}
-          -review_form_handler
+            -review_form_handler
+            

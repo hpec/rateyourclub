@@ -9,14 +9,17 @@ register = template.Library()
 @register.inclusion_tag('review_form.html', takes_context=True)
 def review_form_handler(context):
     print context
+    initials = {}
+    if 'club' in context:
+        initials['club'] = context['club']
     request = context['request']
     if request.method == 'POST':
         form = ReviewForm(data=request.POST)
         if form.is_valid():
             form.save()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        form = ReviewForm()
+        form = ReviewForm(initial=initials)
     return {'form':form}
 
 
