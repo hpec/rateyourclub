@@ -39,7 +39,10 @@ def add_review(request, success_url=None,
         form = form_class(data=request.POST)
         if form.is_valid():
             review = form.save()
-            return HttpResponseRedirect('/') 
+            print "Validation Successful!"
+            return HttpResponseRedirect('/')
+        else:
+            print "Form Error"
     else:
         form = form_class()
     context = RequestContext(request)

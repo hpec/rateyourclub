@@ -11,11 +11,15 @@ class ReviewForm(ModelForm):
 
     class Meta:
         model = Review
-        fields = ('club', 'ratings', 'content')
+        fields = ('club', 'content')
         widgets = {'club': AutoCompleteSelectWidget(ClubLookUp),
-                   'ratings': TextInput(),
+                   # 'ratings': TextInput(),
                    'content': Textarea(attrs={'cols': 20, 'rows': 5})
                    }
+    class Media:
+        css = {
+            'all': ()
+        }
     
 
     
