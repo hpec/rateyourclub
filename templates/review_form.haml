@@ -1,5 +1,7 @@
+- load static
 - load selectable_tags
 - include_jquery_libs
+
 {{ form.media.css }}
 {{ form.media.js }} 
 :css
@@ -10,13 +12,28 @@
     #id_club_0 { width:400px }
     #id_ratings { width:400px }
     #id_content { width:400px }
+    .star-rating{
+        list-style: none; 
+        margin: 5px;
+        padding: 0px;
+        width: 100px;
+        height: 20px;
+        position: relative;
+        background: url(star_rating.gif) top left repeat-x;
+    }
 
 %form.form-horizontal{ 'method':"post", 'action':""}
     - csrf_token
     - for field in form
+        .control-group
+            .control-label {{ field.label_tag }} 
+            .controls {{ field }}
 
-                .control-group
-                    %label.control-label {{ field.label_tag }} 
-                    .controls {{ field }}
+    %input{ 'name':"star1", 'type':"radio", 'class':"star" }
+    %input{ 'name':"star1", 'type':"radio", 'class':"star" }
+    %input{ 'name':"star1", 'type':"radio", 'class':"star", 'checked':"checked" }
+    %input{ 'name':"star1", 'type':"radio", 'class':"star" }
+    %input{ 'name':"star1", 'type':"radio", 'class':"star" }
+
     %button.btn-primary{'type':"submit"}
         Submit

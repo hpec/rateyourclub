@@ -11,7 +11,7 @@
         %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
         %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
     {% endcompress %}
-    
+
 
 %div{'class': 'navbar navbar-fixed-top'}
     %div{'class':'navbar-inner'}
@@ -33,14 +33,10 @@
             %h6
                 Displaying
                 ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
-            
+
 
     %div{'class':'row'}
-        %div{'class':'span5 offset2'}
-            %h3
-                %a{'href': "{% url 'add_review' %}"} Write Review
-            - review_form_handler
-        %div{'class':'pull-right span7'}
+        %div{'class':'pull-right span3'}
             %div{'class':'span3'}
                 %h4 Categories
                 -# Placeholder for actiual comments
@@ -50,7 +46,11 @@
                         for category in 'Academic Arts Cultural Other Political Profession Religious Service Sport'.split():
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
-    %div{'class':'row'}
+
+        %div{'class':'span7 offset2'}
+            %h3
+                %a{'href': "{% url 'add_review' %}"} Write Review
+            - review_form_handler
         - for club in clubs
             %div{'class':'span7 offset2'}
                 %h4
