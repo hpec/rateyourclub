@@ -4,10 +4,7 @@
 {{ form.media.js }}
 {% load static %}
 <script src="{% static "js/jquery-1.9.1.min.js" %}" type="text/javascript"></script>
-<script src="{% static "js/star-rating/jquery.rating.js" %}" type="text/javascript"></script>
 <script src="{% static "js/jquery.barrating.js" %}" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="{% static "js/star-rating/jquery.rating.css" %}" />
-
 <style type='text/css'>
 /*<![CDATA[*/
     .form-horizontal { text-align:left }
@@ -19,7 +16,7 @@
     #id_content { width:400px }
 
     .rating-f .bar-rating a {
-        background: url(static/img/star.png);
+        background: url({% static "img/star.png" %});
         width: 24px;
         height: 24px;
         display: block;
@@ -54,6 +51,13 @@
         <div class="form-fieldset">
             <div class="alert alert-error">
                 {{ form.errors }}
+            </div>
+        </div>
+    {% endif %}
+    {% if form.success %}
+        <div class="form-fieldset">
+            <div class="alert alert-success">
+                {{ form.success }}
             </div>
         </div>
     {% endif %}
