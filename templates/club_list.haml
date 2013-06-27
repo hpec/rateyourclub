@@ -36,11 +36,7 @@
 
 
     %div{'class':'row'}
-        %div{'class':'span5 offset2'}
-            %h3
-                %a{'href': "{% url 'add_review' %}"} Write Review
-            - review_form_handler
-        %div{'class':'pull-right span7'}
+        %div{'class':'pull-right span3'}
             %div{'class':'span3'}
                 %h4 Categories
                 -# Placeholder for actiual comments
@@ -50,7 +46,11 @@
                         for category in 'Academic Arts Cultural Other Political Profession Religious Service Sport'.split():
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
-    %div{'class':'row'}
+
+        %div{'class':'span7 offset2'}
+            %h3
+                %a{'href': "{% url 'add_review' %}"} Write Review
+            - review_form_handler
         - for club in clubs
             %div{'class':'span7 offset2'}
                 %h4
