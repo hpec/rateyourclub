@@ -1,7 +1,11 @@
 from django import template
-from clubreview.forms import *
+from django.contrib import messages
 from django.http import HttpResponseRedirect
+
 from hamlpy import hamlpy
+
+from clubreview.forms import *
+
 
 register = template.Library()
 
@@ -14,14 +18,16 @@ def review_form_handler(context):
         initials['club'] = context['club']
     request = context['request']
     if request.method == 'POST':
-        print request
         form = ReviewForm(data=request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Review submitted successfully')
             print "Validation Successful!"
         else:
+            messages.error(request, 'Form Error')
             print "Form Error"
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            print form.errors
+        return {'form':form} #HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = ReviewForm(initial=initials)
     return {'form':form}
