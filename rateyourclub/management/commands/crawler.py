@@ -5,7 +5,7 @@ import urllib2
 import pdb
 import re, sys, traceback
 
-RECURSION_LIMIT = 2600
+RECURSION_LIMIT = 3000
 def main():
     def parse(url):
         print url
@@ -30,7 +30,7 @@ def main():
             content_str = content_str.replace(str(intro.group(0)), '')
 
             website = BeautifulSoup(content_str.replace('<p>','').replace('</p>',''))
-            
+
             #pdb.set_trace()
             website = website.findAll('a', href=True)
             if website:
@@ -45,10 +45,10 @@ def main():
             if email:
                 email = email.group(0)[7:]
                 #print 'Email:', email
-            
 
 
-            #cut_length = 
+
+            #cut_length =
             #content_str = content.get_text().encode('ascii','ignore').replace('\t','').replace('\n','').replace('\r','')
             #start = content_str.index('Purpose')
             #end = content_str.index('This group has been viewed')
@@ -72,7 +72,7 @@ def main():
             #content = content.
             #print 'Addition content', content
 
-            
+
         try:
             club, created = Club.objects.get_or_create(name=clubname, abbrev=abbrev, introduction=intro, school=school)
         except Exception as e:
@@ -91,7 +91,7 @@ def main():
     content = content.replace('&amp;','&')
     gid_list = re.findall(r'SGID=(\d+)', content)
     url_list = list()
-    
+
     school, created = School.objects.get_or_create(name='UC Berkeley')
 
     for gid in gid_list:
