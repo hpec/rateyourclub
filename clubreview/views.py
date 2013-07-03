@@ -28,7 +28,6 @@ def club_list_view(request, template_name='club_list.html'):
         # If page is out of range (e.g. 9999), deliver last page of results.
         clubs = paginator.page(paginator.num_pages)
     context = RequestContext(request)
-    messages.add_message(request, messages.INFO, 'Hello world.')
     return render_to_response(template_name, { 'clubs': clubs }, context_instance=context)
 
 def club_info_view(request, club_id, template_name='club_info.html'):
