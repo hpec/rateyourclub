@@ -50,7 +50,7 @@ class Review(models.Model):
     club = models.ForeignKey(Club)
     event = models.ForeignKey(Event, blank=True, null=True)
 
-    ratings = models.TextField(blank=True, null=True)
+    ratings = models.TextField(blank=False, null=True)
     content = models.TextField(blank=True, null=True)
     anonymous = models.BooleanField(default=True)
     date_posted = models.DateTimeField(default=timezone.now)

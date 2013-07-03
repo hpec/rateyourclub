@@ -1,23 +1,67 @@
+- load static
 - load selectable_tags
 - include_jquery_libs
+
 {{ form.media.css }}
-{{ form.media.js }} 
-- include_ui_theme 
+{{ form.media.js }}
+- include_ui_theme
+
 :css
-    .form-horizontal { text-align:left }
-    .form-horizontal .control-group { margin-bottom: 0px }
-    .form-horizontal .control-label { margin-left:0px; width:20px }
-    .form-horizontal .controls { margin-left:80px }
+    #review_form  { text-align:left }
+    #review_form .control-group { margin-bottom: 5px }
+    #review_form .control-label { margin-left:0px; width:20px }
+    #review_form .controls { margin-left:80px }
     #id_club_0 { width:400px }
     #id_ratings { width:400px }
     #id_content { width:400px }
 
-%form.form-horizontal{ 'method':"post", 'action':""}
+    .rating-f .bar-rating a {
+        background: url({% static "img/star.png" %});
+        width: 24px;
+        height: 24px;
+        display: block;
+        float: left;
+    }
+
+    .rating-f .bar-rating a:hover,
+    .rating-f .bar-rating a.active,
+    .rating-f .bar-rating a.selected {
+        background-position: 0 24px;
+    }
+
+%script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
+%script{'type':"text/javascript"}
+    $(function () {
+        $('#example-f').barrating({ showSelectedRating:false });
+    })
+
+
+%form#review_form.form-horizontal{ 'method':"post", 'action':""}
+    - if form.errors
+        .form-fieldset
+            .alert.alert-error
+                = form.errors
+    - if form.success
+        .form-fieldset
+            .alert.alert-success
+                = form.success
+
     - csrf_token
     - for field in form
+        .control-group
+            .control-label {{ field.label_tag }}
+            .controls {{ field }}
 
-                .control-group
-                    %label.control-label {{ field.label_tag }} 
-                    .controls {{ field }}
+    .control-group
+        .control-label Ratings
+        .controls
+            .input.select.rating-f
+                %select{'id':"example-f", 'name':"rating"}
+                    %option{'value':"1"} 1
+                    %option{'value':"2"} 2
+                    %option{'value':"3"} 3
+                    %option{'value':"4"} 4
+                    %option{'value':"5"} 5
+
     %button.btn-primary.btn{'type':"submit"}
         Submit
