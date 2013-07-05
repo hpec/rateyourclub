@@ -11,6 +11,8 @@ local_settings.py
 *.swp
 *.out
 
+config.yaml
+
 #dev_https var files
 stunnel/var
 

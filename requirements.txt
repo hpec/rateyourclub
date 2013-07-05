@@ -9,3 +9,4 @@ django-selectable==0.7.0
 python-dateutil==2.1
 facebook-sdk==0.4.0
 pytz==2013b
+PyYAML==3.10

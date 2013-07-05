@@ -1,9 +1,11 @@
-import os,re, urllib2
+import os, re, urllib2, urllib, cookielib, yaml
 from dateutil.parser import parse
 from datetime import datetime
 import facebook, urllib
 import pytz
 import pdb
+from bs4 import BeautifulSoup
+from rateyourclub import settings
 
 """
 simple library for retrieving events from facebook groups
@@ -44,17 +46,67 @@ class FacebookGroup(object):
     Inspiration from fbconsole and facebook-sdk
     '''
     def __init__(self, url, user_access_token = USER_ACCESS_TOKEN):
-        import urllib2
         try:
             self.user_access_token = user_access_token
             self.app_access_token = facebook.get_app_access_token(APP_ID, APP_SECRET)
-
+            if os.path.isfile(settings.CONFIGURATION_YAML):
+                data = yaml.safe_load(file(settings.CONFIGURATION_YAML))
+                if set(('email','password')).issubset(data):
+                  self.email = data['email']
+                  self.password = data['password']
         except urllib2.HTTPError, e:
             response = _parse_json(e.read())
             raise facebook.GraphAPIError(response)
         self.url = url.strip()
         self.id = None
         self.events = []
+    def login(self, email, password, next_url = None, callback = None):
+      jar = cookielib.CookieJar()
+      cookie = urllib2.HTTPCookieProcessor(jar)
+      opener = urllib2.build_opener(cookie)
+
+      headers = {
+          "User-Agent" : "Mozilla/5.0 (X11; U; FreeBSD i386; en-US; rv:1.8.1.14) Gecko/20080609 Firefox/2.0.0.14",
+          "Accept" : "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,text/png,*/*;q=0.5",
+          "Accept-Language" : "en-us,en;q=0.5",
+          "Accept-Charset" : "ISO-8859-1",
+          "Content-type": "application/x-www-form-urlencoded",
+          "Host": "m.facebook.com"
+      }
+
+      try:
+          params = urllib.urlencode({'email': email,
+                                      'pass': password,
+                                      'login':'Log+In',
+                                      'next' : next_url})
+          req = urllib2.Request('http://m.facebook.com/login.php?m=m&refsrc=m.facebook.com%2F', params, headers)
+          res = opener.open(req)
+          html = res.read()
+          if callable(callback):
+            callback(html)
+      except urllib2.HTTPError, e:
+          print e.msg
+      except urllib2.URLError, e:
+          print e.reason[1]
+    def get_facebook_group_gid(self, group_url):
+        """
+        This method provides reverse lookup support for urls, by parsing the DOM for group id after authenticating as a user
+        http://stackoverflow.com/questions/2030652/logging-into-facebook-with-python
+        http://stackoverflow.com/a/3846516/1123985
+        http://stackoverflow.com/a/11424765/1123985
+        """
+
+        def callback(html):
+          soup = BeautifulSoup( html )
+          gid = soup.select("input[name=target]")[0]['value'] if len(soup.select("input[name=target]")) > 0 else None
+          if gid:
+            self.id = gid
+
+        if self.email and self.password:
+            self.login(self.email, self.password, group_url, callback)
+
+        return self.id
+
     def get_id(self):
         '''
         Method to retrieve names from facebook pages and groups.
@@ -67,10 +119,10 @@ class FacebookGroup(object):
         118333034872164
         >>> csua = FacebookGroup('https://www.facebook.com/groups/csuahosers/')
         >>> csua.get_id()
-        182992048515852
+        2200089855
         >>> hb_alias = FacebookGroup('https://www.facebook.com/groups/hackberkeley')
-        >>> hb_alias.get_id()
-        False
+        >>> hb_alias.get_id() #test get id by logging in
+        276905079008757
         >>> hb = FacebookGroup('https://graph.facebook.com/276905079008757')
         >>> hb.get_id()
         276905079008757
@@ -80,10 +132,31 @@ class FacebookGroup(object):
         >>> zuck = FacebookGroup('https://www.facebook.com/zuck')
         >>> zuck.get_id()
         False
+        >>> a2f = FacebookGroup("https://www.facebook.com/group.php?gid=110646618973618") #club no longer exists but link still stored in fb graph
+        >>> a2f.get_id()
+        110646618973618
+        >>> armenian = FacebookGroup('http://www.facebook.com/group.php?gid=2200021660')
+        >>> armenian.get_id()
+        2200021660
+        >>> aclu = FacebookGroup('https://www.facebook.com/group.php?gid=2200041910')
+        >> aclu.get_id()
+        2200041910
+
         '''
         #== intialize == #
         if re.match('https:\/\/graph\.facebook\.com\/\d+$', self.url): #if graph.facebook.com url is provided, just read from the url
             data = urllib2.urlopen(self.url).read()
+        elif re.search(r'facebook\.com\/group\.php\?gid=(\d+)', self.url):
+            self.id = int(re.findall(r'facebook\.com\/group\.php\?gid=(\d+)', self.url)[0])
+            return self.id
+        elif re.match('https:\/\/www\.facebook\.com\/groups/.*', self.url):
+            gid = self.get_facebook_group_gid(self.url)
+            if re.match('\d+', str(gid)):
+              if not re.match('\d+', str(self.id)):
+                  self.id = int(gid)
+              return int(gid)
+            else:
+              return gid
         else:
             data = urllib2.urlopen('https://graph.facebook.com/?ids='+ self.url).read() #resolve group id from url
 
@@ -190,6 +263,8 @@ class FacebookGroup(object):
         >>> print len(coke.get_events()) >= 0
         True
         """
+        if type(self.id) == type(None):
+            self.get_id()
         try:
             if self.id == None:
                 self.get_id()
@@ -215,8 +290,8 @@ class FacebookGroup(object):
 
 def main():
     import os
-    #os.system('python -m doctest %s' % __file__)
-    hb = FacebookGroup('https://graph.facebook.com/276905079008757')
+    os.system('python -m doctest %s' % __file__)
+    #hb = FacebookGroup('https://graph.facebook.com/276905079008757')
 
 
 if __name__ == "__main__":
