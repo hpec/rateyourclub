@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.core.exceptions import (ObjectDoesNotExist,
                                         MultipleObjectsReturned, FieldError, ValidationError, NON_FIELD_ERRORS)
 import pdb
+import urlparse, fb_events
 
 # Create your models here.
 
@@ -36,9 +37,23 @@ class Club(models.Model):
     size = models.IntegerField(blank=True, null=True)
     review_count = models.IntegerField(default=0)
     hit = models.IntegerField(default=0)
+    SGID = models.BigIntegerField(blank=True,unique=True,null=True)
+    callink_permalink = models.TextField(blank=True,null=True)
+    requirements = models.TextField(blank=True,null=True)
+    meeting = models.TextField(blank=True,null=True) #information about club meetings
+    address = models.TextField(blank=True,null=True)
+    activity_summary = models.TextField(blank=True,null=True)
+
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
+    @property
+    def callink_url(self):
+        return urlparse.urljoin("https://callink.berkeley.edu/organization", self.permalink) if self.permalink else None
+
+    @property
+    def students_berkeley_edu_url(self):
+        return "http://students.berkeley.edu/osl/studentgroups/public/index.asp?todo=getgroupinfo&SGID=%s" % self.SGID if self.SGID else None
 
     @property
     def _EventManager(self):
@@ -46,7 +61,7 @@ class Club(models.Model):
 
     @property
     def facebook_graph_url(self):
-        return "https://graph.facebook.com/%s" % self.facebook_id
+        return "https://graph.facebook.com/%s" % self.facebook_id if self.facebook_id else None
     def facebook_event_update(self):
         import fb_events
         if self.facebook_id == None:

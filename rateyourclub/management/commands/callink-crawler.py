@@ -53,6 +53,7 @@ def main(callback = None):
     while r.status_code == 200:
         soup = BeautifulSoup(r.text)
         links  = soup.select('.result h5 a')
+        print "%s\n" % params['CurrentPage'], '\n\t'.join([a['href'] for a  in links]), "\n%s" % len(links)
 
         if last_links == links:
             break
@@ -95,8 +96,8 @@ def updateExistingClubs(meta_dict):
                 #don't require category
 
     try:
+        print meta_dict['permalink']
         club = Club.objects.get(name = meta_dict['name'])
-        print meta_dict['name'] + " found !!!"
         clubs_found.append(club.name)
     except (Club.DoesNotExist,  DatabaseError) as e:
         try:
@@ -118,27 +119,20 @@ def updateExistingClubs(meta_dict):
                 club = Club.objects.filter(name__icontains = meta_dict['name'])[0]
                 clubs_partially_found.append(meta_dict['name'])
                 save_club_links(club, meta_dict)
+            elif abbreviation and len( Club.objects.filter(name__contains = abbreviation) ) > 0:
 
-                print meta_dict['name'] + " partially found -- " + club.name
-            elif abbreviation:
                 if len( Club.objects.filter(name__contains = abbreviation) ) > 0:
                     clubs_partially_found.append(meta_dict['name'])
                     club = Club.objects.filter(name__contains = abbreviation)[0]
                     save_club_links(club, meta_dict)
-
-                    print meta_dict['name'] + " partially found " + abbreviation + ' ' + club.name
-            elif just_name.strip() and just_name != meta_dict['name']:
+            elif just_name.strip() and just_name != meta_dict['name'] and len( Club.objects.filter(name__contains = just_name.strip()) ) > 0:
                 just_name = just_name.strip()
                 if len( Club.objects.filter(name__contains = just_name) ) > 0:
-                    club = Club.objects.filter(name__contains = just_name)
+                    club = Club.objects.filter(name__contains = just_name)[0]
                     save_club_links(club, meta_dict)
-
-                    print meta_dict['name'] + " partially found " + just_name + ' ' + club.name
             else:
                 clubs_not_found.append(meta_dict['name'])
-                print meta_dict['name'] + " not found"
         except DatabaseError as e:
-            print "here"
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, exc_traceback,
                                                                      limit=10, file=sys.stdout)
