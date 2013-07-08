@@ -7,7 +7,7 @@ import re, sys, traceback
 import django.utils.html as django_html
 from django.core.exceptions import (ObjectDoesNotExist,
                                         MultipleObjectsReturned, FieldError, ValidationError, NON_FIELD_ERRORS)
-from django.core.validators import validate_email
+from django.core.validators import validate_email, URLValidator
 import requests
 
 RECURSION_LIMIT = 3000
@@ -17,6 +17,13 @@ def main():
     TODO: convert to unicode to store in database
           schemamigration for club to store metadata
     """
+    URL_VALIDATOR_INSTANCE = URLValidator()
+    def validate_url(url_string):
+        try:
+            URL_VALIDATOR_INSTANCE(url_string)
+            return True
+        except ValidationError:
+            return False
 
     BASIC_WEBSITE_REGEX = re.compile(r"(?P<url>https?://[^\s]+)", re.MULTILINE) #http://stackoverflow.com/questions/839994/extracting-a-url-in-python
 
@@ -200,15 +207,15 @@ def main():
         metadata =  { 'gid' : gid }
         try:
             metadata.update(parse(unicode(GROUP_INFO_BASE_URL+gid)))
-            print gid, metadata['name']
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, exc_traceback,
                                         limit=10, file=sys.stdout)
-            pdb.set_trace()
         try:
             try:
-                club = Club.objects.get(abbrev=metadata['abbrev'], school=school, SGID = long(gid))
+                club = Club.objects.get(school=school, name=metadata['name'])
+                club.SGID = long(gid)
+                #club = Club.objects.get(school=school, SGID = long(gid))
             except Club.DoesNotExist:
                 club = Club(abbrev=metadata['abbrev'], school=school, SGID=long(gid))
 
@@ -217,7 +224,6 @@ def main():
 
                 if len(contact_emails) > 0 and validateEmail(contact_emails[0]):
                     club.contact_email = contact_emails[0]
-
 
             if club.name != metadata['name'] and metadata['name']:
                 club.name = metadata['name']
@@ -235,25 +241,29 @@ def main():
                 club.school = school
 
 
-            if club.website != metadata[URL] and metadata[URL]:
-                    website_to_add = BASIC_WEBSITE_REGEX.findall(metadata[URL])[0] if BASIC_WEBSITE_REGEX.search(metadata[URL]) else re.findall('[^\s]+\.[A-Za-z]{2,3}[^\s]+', metadata[URL])[0]
+            if metadata[URL] and not ( unicode(metadata[URL]) in unicode(club.website) ):
+                    website_to_add = BASIC_WEBSITE_REGEX.search(metadata[URL]).group('url') if BASIC_WEBSITE_REGEX.search(metadata[URL]) else re.findall('[^\s]+\.[A-Za-z]{2,3}[^\s]+', metadata[URL])[0]
                     try:
-                        website_to_add = "http://%s" % website_to_add if not urlparse.urlparse(website_to_add).scheme else website_to_add
+                        website_to_add = "http://%s" % website_to_add if not urlparse.urlparse(website_to_add).scheme else website_to_add #add http protocol if protocol does not exist
                         print website_to_add
-                        requests.get(website_to_add) #check to see that url exists
+                        r = requests.get(website_to_add) if validate_url(website_to_add) else None #check to see that url exists
+                        if r and r.status_code == 200:
+                            club.website = website_to_add
 
-                        facebook_url = re.search(r'(facebook\.com.*)', website_to_add)
-                        if facebook_url and not ( unicode(facebook_url.group(1)) in unicode(club.facebook_url) ):
-                            facebook_url = urlparse.urlparse(facebook_url.group(1))
-                            facebook_url = urlparse.urljoin(facebook_url.netloc, facebook_url.path)
-                            club.facebook_url = urlparse.urljoin("https://" , facebook_url)
-                            fb = fb_events.FacebookGroup(club.facebook_url)
-                            fb.get_id()
-                            if fb.id:
-                                pdb.set_trace()
-                                club.facebook_id = long(fb.id)
+                            facebook_url = re.search(r'(facebook\.com[^\s]*)', website_to_add)
+                            if facebook_url and not ( unicode(facebook_url.group(1)) in unicode(club.facebook_url) ):
+
+                                facebook_url = urlparse.urlparse(facebook_url.group(1))
+                                facebook_url = urlparse.urljoin(facebook_url.netloc, facebook_url.path)
+                                club.facebook_url = "https://wwww.%s" % facebook_url
+                                club.website = club.facebook_url
+                                fb = fb_events.FacebookGroup(club.facebook_url)
+                                fb.get_id()
+                                if fb.id:
+                                    club.facebook_id = long(fb.id)
                     except:
-                        print traceback.format_exc()
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        traceback.print_exception(exc_type, exc_value, exc_traceback, limit=10, file=sys.stdout)
 
             if club.contact_phone != metadata[PHONE] and metadata[PHONE]:
                 metadata[PHONE] = re.sub(r'[^0-9]', '', metadata[PHONE])
@@ -275,11 +285,12 @@ def main():
             if not club.category:
                 club.category = default_category
 
-            if club.full_clean():
+            if type(club.full_clean()) == type(None): #no errors
                 club.save()
         except (Exception, ValidationError) as e:
             import pprint
-            print traceback.format_exc()
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_traceback, limit=10, file=sys.stdout)
             pprint.pprint(metadata)
 
 
