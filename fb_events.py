@@ -224,13 +224,18 @@ class FacebookGroup(object):
 
 
 
-    @property
-    def extended_token_url(self):
-        return "https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=fb_exchange_token&fb_exchange_token=%s" % (APP_ID, APP_SECRET, self.user_access_token)
+    #@property
+    def extended_token_url(self, user_access_token = None):
+        if not user_access_token:
+            user_access_token = self.user_access_token
+        return "https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=fb_exchange_token&fb_exchange_token=%s" % (APP_ID, APP_SECRET, user_access_token)
 
     @property
     def login_url(self):
-        return "https://graph.facebook.com/oauth/authorize?redirect_uri=http://www.berkeleyproject.org&client_id=%s" % (APP_ID)
+        params = {
+                   'client_id' : str(APP_ID),
+                }
+        return 'https://graph.facebook.com/oauth/authorize?' + urllib.urlencode(params) + "&response_type=code%20token&redirect_uri=http://localhost:8000/admin/facebook_auth/"
 
     def parse_event(self, event_dict):
         #http://stackoverflow.com/questions/1302161/how-do-i-parse-timezones-with-utc-offsets-in-python
