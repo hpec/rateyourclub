@@ -1,6 +1,5 @@
 - load static
 - load selectable_tags
-- include_jquery_libs
 
 {{ form.media.css }}
 {{ form.media.js }}
@@ -32,7 +31,7 @@
 %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
 %script{'type':"text/javascript"}
     $(function () {
-        $('#example-f').barrating({ showSelectedRating:false });
+        $('#rating').barrating({ showSelectedRating:false });
     })
 
 
@@ -56,7 +55,7 @@
         .control-label Ratings
         .controls
             .input.select.rating-f
-                %select{'id':"example-f", 'name':"rating"}
+                %select#rating
                     %option{'value':"1"} 1
                     %option{'value':"2"} 2
                     %option{'value':"3"} 3

@@ -1,0 +1,31 @@
+- load static
+- load compress
+- load selectable_tags
+
+!!! 5
+%head
+    %title Berkeley Clubs
+    {% compress css %}
+        %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
+        %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
+    {% endcompress %}
+    - include_jquery_libs
+%body
+    %div{'class': 'navbar navbar-fixed-top'}
+        %div{'class':'navbar-inner'}
+            %div{'class':'container', 'style':'margin-left: 100px'}
+                %a{'class':'brand', 'href': "{% url 'club_list_view' %}"} Berkeley Clubs
+                %form{'class':'navbar-search pull-left'}
+                    %div{'class':'input-prepend input-append'}
+                        %span{'class':'add-on'}
+                            %i{'class':'icon-search'}
+                        %input{'type':'text','class':'','placeholder':'Search', 'name':'q'}
+                        %button{'class':'btn', 'type':'submit'} Search
+                        %button{'class':'btn', 'type':'button'} Categories
+
+
+    - block content
+
+
+    .footer
+        © 2013 Daniel Liu and David Su

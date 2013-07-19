@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 from clubreview.views import *
 
 # Uncomment the next two lines to enable the admin:
@@ -28,5 +29,7 @@ urlpatterns = patterns('',
     url(r'^review/add/$',
         add_review,
         name='add_review'),
+    # url(r'^base$',
+    #     TemplateView.as_view(template_name='base.html')),
     (r'^selectable/', include('selectable.urls')),
 )

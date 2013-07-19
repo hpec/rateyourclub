@@ -1,36 +1,33 @@
--load static
--load review_form_handler
-!!! 5
-%head
-    %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
-    %title
-        {{club}}
-%div{ 'class': 'container-fluid'}
-    %div{ 'class' : 'row'}
-        %div{ 'class' : 'offset2'}
-            %h3 {{ club }}
-        %div{'class':'span8 offset2'}
-            %p
-              %h5 Introduction:
-              {{ club.introduction }}
-              %h5 Website
-              {{club.website}}
-            
-            %p 
-              %h5 Reviews:
-            - for review in reviews
-                    %p {{ review }}
-                - empty
-                    %p No reviews yet!
-        %div{'class':'span4'}
-            %h4 Events
-            %span
-                - firstof events "No events listed!"
+- extends "base.html"
 
-    %div{ 'class' : 'row'}
-        %div{'class': 'offset2'}
-            %p
-              %a{ 'href': "{% url 'club_list_view' %}"}
-                    Back to list
-            -review_form_handler
-            
+- load review_form_handler
+- load static
+
+- block content
+    %div{ 'class':'container-fluid'}
+        %div{ 'class':'row'}
+            %div{ 'class':'offset1'}
+                %h3 {{ club }}
+            %div{'class':'span8 offset1'}
+                %p
+                  %h5 Introduction:
+                  {{ club.introduction }}
+                  %h5 Website
+                  {{club.website}}
+
+                %p
+                  %h5 Reviews:
+                - for review in reviews
+                        %p {{ review }}
+                    - empty
+                        %p No reviews yet!
+            %div{'class':'span4'}
+                %h4 Events
+                %span
+                    - firstof events "No events listed!"
+
+        %div{ 'class' : 'row'}
+            %div{'class': 'offset1'}
+                %p
+                  %a{ 'href': "{% url 'club_list_view' %}"} Back to list
+                -review_form_handler

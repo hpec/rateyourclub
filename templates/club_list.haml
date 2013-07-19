@@ -1,100 +1,76 @@
-- load static
-- load compress
-- load selectable_tags
-- include_jquery_libs
+- extends "base.html"
 - load review_form_handler
-!!! 5
-%head
-    %title
-        Berkeley Clubs
-    {% compress css %}
-        %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
-        %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
-    {% endcompress %}
+
+- block content
+    %div{ 'class': 'container-fluid'}
+        %div{'class':'row'}
+            %div{'class':'span12 offset1'}
+                %h6
+                    Displaying
+                    ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
 
 
-%div{'class': 'navbar navbar-fixed-top'}
-    %div{'class':'navbar-inner'}
-        %div{'class':'container'}
-            %a{'class':'brand'}
-                Berkeley Clubs
-            %form{'class':'navbar-search pull-left'}
-                %div{'class':'input-prepend input-append'}
-                    %span{'class':'add-on'}
-                        %i{'class':'icon-search'}
-                    %input{'type':'text','class':'','placeholder':'Search', 'name':'q'}
-                    %button{'class':'btn', 'type':'submit'} Search
-                    %button{'class':'btn', 'type':'button'} Categories
-
-
-%div{ 'class': 'container-fluid'}
-    %div{'class':'row'}
-        %div{'class':'span12 offset2'}
-            %h6
-                Displaying
-                ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
-
-
-    %div{'class':'row'}
-        %div{'class':'pull-right span3'}
-            %div{'class':'span3'}
-                %h4 Categories
-                -# Placeholder for actiual comments
-                %ul{'class':'pull-left'}
-                    :python
-                        import random
-                        for category in 'Academic Arts Cultural Other Political Profession Religious Service Sport'.split():
+        %div{'class':'row'}
+            %div{'class':'pull-right span3'}
+                %div{'class':'span3'}
+                    %h4 Categories
+                    -# Placeholder for actiual comments
+                    %ul{'class':'pull-left'}
+                        :python
+                            import random
+                            for category in 'Academic Arts Cultural Other Political Profession Religious Service Sport'.split():
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
 
-        %div{'class':'span7 offset2'}
-            %h3
-                %a{'href': "{% url 'add_review' %}"} Write Review
-            - review_form_handler
-        - for club in clubs
-            %div{'class':'span7 offset2'}
-                %h4
-                    %a{'href' : "{% url 'club_info_view' club.id %}"}
-                        {{club}}
-                %p
-                    {{club.introduction|truncatechars:200}}
-                %hr
+            %div{'class':'span7 offset1'}
+                %h3
+                    %a{'href': "#"} Write Review
+                - review_form_handler
+
+            - for club in clubs
+                %div{'class':'span7 offset1'}
+                    %h4
+                        %a{'href' : "{% url 'club_info_view' club.id %}"}
+                            {{club}}
+                    %p
+                        {{club.introduction|truncatechars:200}}
+                    %hr
 
 
-    %div{'class':'row'}
-        - if clubs.paginator.count > 0
-            %div{'class':'pagination pagination-centered'}
-                %ul{'class' : 'step-links'}
-                    %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
-                        - if clubs.has_previous
-                            %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}'} &larr;
-                        - else
-                            %a{'href' : '#'} &larr;
+        %div{'class':'row'}
+            - if clubs.paginator.count > 0
+                %div{'class':'pagination pagination-centered'}
+                    %ul{'class' : 'step-links'}
+                        %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
+                            - if clubs.has_previous
+                                %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}'} &larr;
+                            - else
+                                %a{'href' : '#'} &larr;
 
-                    - for i in clubs.paginator.page_range
-                        - with offset_start=clubs.number|add:"-5"
-                            - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
-                                %li
-                                    %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
-                                        {{i}}
-                    %li{'class':'current active'}
-                        %span
-                            {{clubs.number}}
-                    - for i in clubs.paginator.page_range
-                        - with offset_end=clubs.number|add:"5"
-                            - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
-                                %li
-                                    %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
-                                        {{i}}
+                        - for i in clubs.paginator.page_range
+                            - with offset_start=clubs.number|add:"-5"
+                                - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
+                                    %li
+                                        %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
+                                            {{i}}
+                        %li{'class':'current active'}
+                            %span
+                                {{clubs.number}}
+                        - for i in clubs.paginator.page_range
+                            - with offset_end=clubs.number|add:"5"
+                                - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
+                                    %li
+                                        %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
+                                            {{i}}
 
-                    %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
-                        - if clubs.has_next
-                            %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}'}
-                                &rarr;
-                        - else
-                            %a{'href': '#'}
-                                &rarr;
-                %p
-                    page ={clubs.number} of ={clubs.paginator.num_pages}
+                        %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
+                            - if clubs.has_next
+                                %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}'}
+                                    &rarr;
+                            - else
+                                %a{'href': '#'}
+                                    &rarr;
+                    %p
+                        page ={clubs.number} of ={clubs.paginator.num_pages}
 
 
