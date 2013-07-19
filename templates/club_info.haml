@@ -4,30 +4,28 @@
 - load static
 
 - block content
-    %div{ 'class':'container-fluid'}
-        %div{ 'class':'row'}
-            %div{ 'class':'offset1'}
+    .container-fluid
+        .row
+            .span8.offset1{'style': 'margin-left:109px'}
                 %h3 {{ club }}
-            %div{'class':'span8 offset1'}
                 %p
-                  %h5 Introduction:
-                  {{ club.introduction }}
-                  %h5 Website
-                  {{club.website}}
-
+                    %h5 Introduction:
+                    {{ club.introduction }}
+                    %h5 Website
+                    {{club.website}}
                 %p
-                  %h5 Reviews:
+                    %h5 Reviews:
                 - for review in reviews
-                        %p {{ review }}
-                    - empty
+                      %p {{ review }}
+                      - empty
                         %p No reviews yet!
-            %div{'class':'span4'}
+                %p
+                    %a{ 'href': "{% url 'club_list_view' %}"} Back to list
+                -review_form_handler
+
+            .span3
                 %h4 Events
                 %span
                     - firstof events "No events listed!"
 
-        %div{ 'class' : 'row'}
-            %div{'class': 'offset1'}
-                %p
-                  %a{ 'href': "{% url 'club_list_view' %}"} Back to list
-                -review_form_handler
+
