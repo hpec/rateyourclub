@@ -21,6 +21,9 @@ class Category(models.Model):
     def __unicode__(self):
         return "%s" % (self.name)
 
+class FacebookManager(models.Manager):
+    def get_query_set(self):
+        return super(FacebookManager, self).get_query_set().filter(facebook_id__isnull=False)
 class Club(models.Model):
     school = models.ForeignKey(School)
     category = models.ForeignKey(Category, null=True)
@@ -44,6 +47,8 @@ class Club(models.Model):
     address = models.TextField(blank=True,null=True)
     activity_summary = models.TextField(blank=True,null=True)
 
+    objects = models.Manager()
+    facebook_clubs = FacebookManager()
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
@@ -70,9 +75,9 @@ class Club(models.Model):
         try:
             for _event in (fb.get_events()+fb.get_events_by_fql()):
                 try:
-                    event = self._EventManager.objects.get( facebook_id = long(_event['id']) )
-                except self._EventManager.DoesNotExist:
-                    event = self._EventManager( facebook_id = long(_event['id']) )
+                    event = self._EventManager.get( facebook_id = long(_event['id']) )
+                except self._EventManager.model.DoesNotExist:
+                    event = self._EventManager.model( facebook_id = long(_event['id']) )
                 for field in event._meta.fields:
                     #https://github.com/django/django/blob/master/django/db/models/base.py
                     if field.name in _event and (field.attname == field.name and not field.primary_key): #is assignable property, property is a column in the table

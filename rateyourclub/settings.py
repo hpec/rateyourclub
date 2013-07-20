@@ -1,5 +1,7 @@
 # Django settings for rateyourclub project.
 import os
+import djcelery
+djcelery.setup_loader()
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -129,6 +131,7 @@ INSTALLED_APPS = (
     'clubreview',
     'django.contrib.admin',
     'selectable',
+    'djcelery',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
