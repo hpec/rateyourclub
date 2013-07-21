@@ -99,6 +99,8 @@ class FacebookGroup(object):
         def callback(html):
           soup = BeautifulSoup( html )
           gid = soup.select("input[name=target]")[0]['value'] if len(soup.select("input[name=target]")) > 0 else None
+          if not gid:
+            gid = soup.select("input[name=group_id]")[0]['value'] if len(soup.select("input[name=group_id]")) > 0 else None
           if gid:
             self.id = gid
 
@@ -106,6 +108,33 @@ class FacebookGroup(object):
             self.login(self.email, self.password, group_url, callback)
 
         return self.id
+
+    def get_gid_by_login(self):
+        '''
+        >>> bass = FacebookGroup("https://wwww.facebook.com/groups/bassatcal/")
+        >>> bass.get_gid_by_login()
+        4481649665
+        >>> wolverines = FacebookGroup("https://wwww.facebook.com/groups/386451501365588/")
+        >>> wolverines.get_gid_by_login()
+        386451501365588
+        >>> campus_awakening = FacebookGroup("https://wwww.facebook.com/pages/Campus-Awakening-Berkeley/106794053655")
+        >>> campus_awakening.get_gid_by_login()
+        106794053655
+        >>> cbkers = FacebookGroup("https://wwww.facebook.com/groups/413552452071204/")
+        >>> cbkers.get_gid_by_login()
+        413552452071204
+        >>> chess = FacebookGroup("https://wwww.facebook.com/groups/ucbchessteam/")
+        >>> chess.get_gid_by_login()
+        121809917891807
+        '''
+
+        gid = self.get_facebook_group_gid(self.url)
+        if re.match('\d+', str(gid)):
+          if not re.match('\d+', str(self.id)):
+              self.id = int(gid)
+          return int(gid)
+        else:
+          return gid
 
     def get_id(self):
         '''
@@ -139,10 +168,19 @@ class FacebookGroup(object):
         >>> armenian.get_id()
         2200021660
         >>> aclu = FacebookGroup('https://www.facebook.com/group.php?gid=2200041910')
-        >> aclu.get_id()
+        >>> aclu.get_id()
         2200041910
-
+        >>> bball = FacebookGroup("https://wwww.facebook.com/groups/CharacterBuildingThroughBasketball/") #CLOSED privacy
+        >>> bball.get_id()
+        346445622105938
+        >>> adventist = FacebookGroup("https://wwww.facebook.com/groups/125018597588206") #CLOSED privacy
+        >>> adventist.get_id()
+        125018597588206
+        >>> amnesty = FacebookGroup("https://wwww.facebook.com/groups/2200963143/")
+        >>> amnesty.get_id()
+        2200963143
         '''
+
         #== intialize == #
         if re.match('https:\/\/graph\.facebook\.com\/\d+$', self.url): #if graph.facebook.com url is provided, just read from the url
             data = urllib2.urlopen(self.url).read()
@@ -150,13 +188,7 @@ class FacebookGroup(object):
             self.id = int(re.findall(r'facebook\.com\/group\.php\?gid=(\d+)', self.url)[0])
             return self.id
         elif re.match('https:\/\/www\.facebook\.com\/groups/.*', self.url):
-            gid = self.get_facebook_group_gid(self.url)
-            if re.match('\d+', str(gid)):
-              if not re.match('\d+', str(self.id)):
-                  self.id = int(gid)
-              return int(gid)
-            else:
-              return gid
+            return self.get_gid_by_login()
         else:
             data = urllib2.urlopen('https://graph.facebook.com/?ids='+ self.url).read() #resolve group id from url
 
@@ -171,13 +203,13 @@ class FacebookGroup(object):
                     return self.id
                 else:
                     self.id = None
-                    return False
+                    return self.get_gid_by_login()
         elif self.url in response and not 'first_name' in response[self.url] and 'id' in response[self.url]:  #filter out profiles
             if re.match('\d+$', str(response[self.url]['id']) ):
                 self.id = int(response[self.url]['id'])
                 return self.id
             else: #when the id returned is just a url
-                return False
+                return self.get_gid_by_login()
         else:
             return False
     def get_events_by_fql(self):
