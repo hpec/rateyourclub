@@ -27,7 +27,8 @@ def main():
 
     BASIC_WEBSITE_REGEX = re.compile(r"(?P<url>https?://[^\s]+)", re.MULTILINE) #http://stackoverflow.com/questions/839994/extracting-a-url-in-python
 
-    WHITESPACE_REGEX= r = re.compile(r"\s+", re.MULTILINE)
+    WHITESPACE_REGEX = re.compile(r"\s+", re.MULTILINE)
+    BASIC_DOMAIN_REGEX = re.compile('[^\s]+\.[A-Za-z]{2,3}[^\s]*')
     def strip_tags(string, replacement=''):
         """
         Returns the given HTML with all tags stripped.
@@ -112,7 +113,6 @@ def main():
             traceback.print_exception(exc_type, exc_value, exc_traceback,
                                         limit=10, file=sys.stdout)
 
-            pdb.set_trace()
         return name_email_list
 
     def parse(url):
@@ -242,29 +242,29 @@ def main():
 
 
             if metadata[URL] and not ( unicode(metadata[URL]) in unicode(club.website) ):
-                    website_to_add = BASIC_WEBSITE_REGEX.search(metadata[URL]).group('url') if BASIC_WEBSITE_REGEX.search(metadata[URL]) else re.findall('[^\s]+\.[A-Za-z]{2,3}[^\s]+', metadata[URL])[0]
+                    website_to_add = BASIC_WEBSITE_REGEX.search(metadata[URL]).group('url') if BASIC_WEBSITE_REGEX.search(metadata[URL]) else (BASIC_DOMAIN_REGEX.findall(metadata[URL])[0] if BASIC_DOMAIN_REGEX.search(metadata[URL]) else None)
                     try:
-                        website_to_add = "http://%s" % website_to_add if not urlparse.urlparse(website_to_add).scheme else website_to_add #add http protocol if protocol does not exist
-                        print website_to_add
-                        r = requests.get(website_to_add) if validate_url(website_to_add) else None #check to see that url exists
-                        if r and r.status_code == 200:
-                            club.website = website_to_add
+                        if website_to_add:
+                            website_to_add = "http://%s" % website_to_add if not urlparse.urlparse(website_to_add).scheme else website_to_add #add http protocol if protocol does not exist
+                            print website_to_add
+                            r = requests.get(website_to_add) if validate_url(website_to_add) else None #check to see that url exists
+                            if r and r.status_code == 200:
+                                club.website = website_to_add
 
-                            facebook_url = re.search(r'(facebook\.com[^\s]*)', website_to_add)
-                            if facebook_url and not ( unicode(facebook_url.group(1)) in unicode(club.facebook_url) ):
+                                facebook_url = re.search(r'(facebook\.com[^\s]*)', website_to_add)
+                                if facebook_url and not ( unicode(facebook_url.group(1)) in unicode(club.facebook_url) ):
 
-                                facebook_url = urlparse.urlparse(facebook_url.group(1))
-                                facebook_url = urlparse.urljoin(facebook_url.netloc, facebook_url.path)
-                                club.facebook_url = "https://wwww.%s" % facebook_url
-                                club.website = club.facebook_url
-                                fb = fb_events.FacebookGroup(club.facebook_url)
-                                fb.get_id()
-                                if fb.id:
-                                    club.facebook_id = long(fb.id)
+                                    facebook_url = urlparse.urlparse(facebook_url.group(1))
+                                    facebook_url = urlparse.urljoin(facebook_url.netloc, facebook_url.path)
+                                    club.facebook_url = "https://wwww.%s" % facebook_url
+                                    club.website = club.facebook_url
+                                    fb = fb_events.FacebookGroup(club.facebook_url)
+                                    fb.get_id()
+                                    if fb.id:
+                                        club.facebook_id = long(fb.id)
                     except:
                         exc_type, exc_value, exc_traceback = sys.exc_info()
                         traceback.print_exception(exc_type, exc_value, exc_traceback, limit=10, file=sys.stdout)
-
             if club.contact_phone != metadata[PHONE] and metadata[PHONE]:
                 metadata[PHONE] = re.sub(r'[^0-9]', '', metadata[PHONE])
                 if metadata[PHONE] and len(metadata[PHONE]) == 10:
