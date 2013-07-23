@@ -11,9 +11,9 @@
     {% endcompress %}
     - include_jquery_libs
 %body
-    %div{'class': 'navbar navbar-fixed-top'}
-        %div{'class':'navbar-inner'}
-            %div{'class':'container', 'style':'margin-left: 100px'}
+    .navbar.navbar-fixed-top
+        .navbar-inner
+            .container
                 %a{'class':'brand', 'href': "{% url 'club_list_view' %}"} Berkeley Clubs
                 %form{'class':'navbar-search pull-left'}
                     %div{'class':'input-prepend input-append'}
@@ -22,10 +22,7 @@
                         %input{'type':'text','class':'','placeholder':'Search', 'name':'q'}
                         %button{'class':'btn', 'type':'submit'} Search
                         %button{'class':'btn', 'type':'button'} Categories
-
-
-    - block content
-
-
-    .footer
-        © 2013 Daniel Liu and David Su
+    .container
+        - block content
+        #footer
+            © 2013 Daniel Liu and David Su
