@@ -1,4 +1,11 @@
-body{ padding-top: 40px; }
+body{ padding-top: 40px; background-color: rgba(41,128,185,0.6)}
 input[type="text"]{ height: inherit; }
+#main-wrapper { margin-top: 20px; }
+#club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 5px; background-color: white; }
+.card { padding: 15px; padding-top: 5px; margin-top: 15px; background-color: white; }
+#event-panel { padding: 15px; padding-top: 5px; background-color: white; width: 235px; margin-left: auto; margin-right: auto;}
 #footer { margin-top: 20px }
 .navbar-inner { height: 40px }
+.backtolist { margin-top: 10px; margin-bottom: 10px;}
+.backtolist a { color: white; }
+.review-form-wrapper { padding: 15px; padding-bottom: 1px; margin-top: 15px; background-color: white; }
