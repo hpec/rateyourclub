@@ -1,3 +1,4 @@
 body{ padding-top: 40px; }
 input[type="text"]{ height: inherit; }
 #footer { margin-top: 20px }
+.navbar-inner { height: 40px }
