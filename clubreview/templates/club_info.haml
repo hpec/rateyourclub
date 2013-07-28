@@ -17,9 +17,14 @@
             .card
                 %h5 Reviews:
                 - for review in reviews
-                      %p {{ review }}
-                      - empty
-                        %p No reviews yet!
+                    .review
+                        {{ review.date_posted }}
+                        {{ review.ratings }}
+                        {{ review.content }}
+
+
+                - empty
+                    %p No reviews yet!
             .backtolist
                 %a{ 'href': "{% url 'club_list_view' %}"} Back to list
 

@@ -31,7 +31,10 @@
 %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
 %script{'type':"text/javascript"}
     $(function () {
-        $('#rating').barrating({ showSelectedRating:false });
+        $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
+                $("#rating-val").val(value);
+            }
+        });
     })
 
 .review-form-wrapper
@@ -50,6 +53,7 @@
             .control-group
                 .control-label {{ field.label_tag }}
                 .controls {{ field }}
+        %input{'type':"hidden", 'id':"rating-val", 'name':"rating-val", 'value':"3"}
 
         .control-group
             .control-label Ratings
