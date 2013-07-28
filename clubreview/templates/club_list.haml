@@ -2,15 +2,15 @@
 - load review_form_handler
 
 - block content
-        %div{'class':'row'}
-            %div{'class':'span12'}
+        .row
+            .card{'style': 'margin-left: 20px; padding-bottom: 5px;'}
                 %h6
                     Displaying
                     ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
 
 
-        %div{'class':'row'}
-            %div{'class':'pull-right span3'}
+        .row
+            .pull-right.span3.card
                 %div{'class':'span3'}
                     %h4 Categories
                     -# Placeholder for actiual comments
@@ -21,19 +21,19 @@
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
 
-            %div{'class':'span7'}
+            .span8.card
                 %h3
                     %a{'href': "#"} Write Review
                 - review_form_handler
 
             - for club in clubs
-                %div{'class':'span7'}
+                .span8.card
                     %h4
                         %a{'href' : "{% url 'club_info_view' club.id %}"}
                             {{club}}
                     %p
                         {{club.introduction|truncatechars:200}}
-                    %hr
+
 
 
         .row

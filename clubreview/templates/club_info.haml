@@ -4,27 +4,32 @@
 - load static
 
 - block content
-    .row
-        .span7
-            %h3 {{ club }}
-            %p
+    #main-wrapper.row
+        #main-content.span8
+            #club-name
+                %h3 {{ club }}
+            .card
                 %h5 Introduction:
                 {{ club.introduction }}
+            .card
                 %h5 Website
                 {{club.website}}
-            %p
+            .card
                 %h5 Reviews:
-            - for review in reviews
-                  %p {{ review }}
-                  - empty
-                    %p No reviews yet!
-            %p
+                - for review in reviews
+                      %p {{ review }}
+                      - empty
+                        %p No reviews yet!
+            .backtolist
                 %a{ 'href': "{% url 'club_list_view' %}"} Back to list
+
+
             -review_form_handler
 
-        .span3.pull-right
-            %h4 Events
-            %span
-                - firstof events "No events listed!"
+        .span4
+            #event-panel
+                %h4 Events
+                %span
+                    - firstof events "No events listed!"
 
 

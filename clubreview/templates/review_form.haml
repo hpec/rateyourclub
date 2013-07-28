@@ -34,33 +34,33 @@
         $('#rating').barrating({ showSelectedRating:false });
     })
 
+.review-form-wrapper
+    %form#review_form.form-horizontal{ 'method':"post", 'action':""}
+        - if form.errors
+            .form-fieldset
+                .alert.alert-error
+                    = form.errors
+        - if form.success
+            .form-fieldset
+                .alert.alert-success
+                    = form.success
 
-%form#review_form.form-horizontal{ 'method':"post", 'action':""}
-    - if form.errors
-        .form-fieldset
-            .alert.alert-error
-                = form.errors
-    - if form.success
-        .form-fieldset
-            .alert.alert-success
-                = form.success
+        - csrf_token
+        - for field in form
+            .control-group
+                .control-label {{ field.label_tag }}
+                .controls {{ field }}
 
-    - csrf_token
-    - for field in form
         .control-group
-            .control-label {{ field.label_tag }}
-            .controls {{ field }}
+            .control-label Ratings
+            .controls
+                .input.select.rating-f
+                    %select#rating
+                        %option{'value':"1"} 1
+                        %option{'value':"2"} 2
+                        %option{'value':"3"} 3
+                        %option{'value':"4"} 4
+                        %option{'value':"5"} 5
 
-    .control-group
-        .control-label Ratings
-        .controls
-            .input.select.rating-f
-                %select#rating
-                    %option{'value':"1"} 1
-                    %option{'value':"2"} 2
-                    %option{'value':"3"} 3
-                    %option{'value':"4"} 4
-                    %option{'value':"5"} 5
-
-    %button.btn-primary.btn{'type':"submit"}
-        Submit
+        %button.btn-primary.btn{'type':"submit"}
+            Submit
