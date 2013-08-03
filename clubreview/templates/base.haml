@@ -15,7 +15,7 @@
         .navbar-inner
             .container
                 %a{'class':'brand', 'href': "{% url 'club_list_view' %}"} Berkeley Clubs
-                %form{'class':'navbar-search pull-left'}
+                %form{'class':'navbar-search pull-left', 'action':'/clubs/'}
                     %div{'class':'input-prepend input-append'}
                         %span{'class':'add-on'}
                             %i{'class':'icon-search'}
