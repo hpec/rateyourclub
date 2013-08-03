@@ -31,9 +31,14 @@ class ReviewForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
-        review = Review(club=self.cleaned_data['club'],
+        club = self.cleaned_data['club']
+        review = Review(club=club,
             content=self.cleaned_data['content'],
             ratings=self.cleaned_data['ratings'])
+        club.review_count += 1
+        club.review_score += int(self.ratings)
+
+        club.save()
         review.save()
 
 

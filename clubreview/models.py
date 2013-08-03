@@ -39,6 +39,7 @@ class Club(models.Model):
     introduction = models.TextField(blank=True, null=True)
     size = models.IntegerField(blank=True, null=True)
     review_count = models.IntegerField(default=0)
+    review_score = models.IntegerField(default=0)
     hit = models.IntegerField(default=0)
     SGID = models.BigIntegerField(blank=True,unique=True,null=True)
     callink_permalink = models.TextField(blank=True,null=True)

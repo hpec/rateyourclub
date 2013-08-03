@@ -29,13 +29,24 @@
                 }
             })
 
-
+            avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
+            for (var i=0; i<avgRating; i++) {
+                $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
+            }
+            if (avgRating==0) {
+                for (var i=0; i<5; i++) {
+                    $('.avg-rating-stars').append($("<a>").toggleClass("star"))
+                }
+            }
         })
 
     #main-wrapper.row
         #main-content.span8
             #club-name
                 %h3 {{ club }}
+                .avg-rating-stars
+                .avg-rating-val
+                    {{ rating }}
             .card
                 %h5 Introduction:
                 {{ club.introduction }}

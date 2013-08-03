@@ -40,9 +40,13 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     club.save()
     events = list(club.event_set.all()[:5])
     reviews = Review.objects.filter(club=club)
+    try:
+        rating = int(club.review_score)*1.0 / int(club.review_count)
+    except:
+        rating = 0.0
     context = RequestContext(request)
     return render_to_response(template_name,
-        { 'club': club, 'reviews': reviews, 'events': events }, context_instance=context)
+        { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating }, context_instance=context)
 
 def add_review(request, success_url=None,
                form_class=ReviewForm,
