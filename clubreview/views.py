@@ -32,9 +32,11 @@ def club_list_view(request, template_name='club_list.html'):
 
 def club_info_view(request, club_id, template_name='club_info.html'):
     club = Club.objects.get(id=int(club_id))
+    events = list(club.event_set.all()[:5])
     reviews = Review.objects.filter(club=club)
     context = RequestContext(request)
-    return render_to_response(template_name, { 'club': club, 'reviews': reviews }, context_instance=context)
+    return render_to_response(template_name,
+        { 'club': club, 'reviews': reviews, 'events': events }, context_instance=context)
 
 def add_review(request, success_url=None,
                form_class=ReviewForm,
