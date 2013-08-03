@@ -26,6 +26,18 @@
                     %a{'href': "#"} Write Review
                 - review_form_handler
 
+            .span8.card
+                .pull-right
+                    Sort by
+                    - if order == 'name'
+                        %a{'href':'?order=pop'} Popularity
+                        %strong
+                            %a{'href':'?order=name'} Name
+                    - else
+                        %strong
+                            %a{'href':'?order=pop'} Popularity
+                        %a{'href':'?order=name'} Name
+
             - for club in clubs
                 .span8.card
                     %h4

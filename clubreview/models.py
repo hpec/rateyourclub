@@ -131,3 +131,4 @@ class Review(models.Model):
 
     def __unicode__(self):
         return "%s" % (self.content)
+
