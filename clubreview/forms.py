@@ -1,5 +1,4 @@
 from django.utils.translation import ugettext_lazy as _
-from django.forms import ModelForm
 from django import forms
 from models import *
 from selectable.forms import AutoCompleteSelectField
@@ -8,16 +7,6 @@ from django.forms.widgets import *
 
 class ReviewForm(forms.Form):
 
-    # class Meta:
-    #     model = Review
-    #     fields = ('club', 'content')
-    #     widgets = {'club': AutoCompleteSelectWidget(ClubLookUp),
-    #                'content': Textarea(attrs={'cols': 20, 'rows': 5})
-    #                }
-    # class Media:
-    #     css = {
-    #         'all': ()
-    #     }
     club = AutoCompleteSelectField(required=True,
         lookup_class=ClubLookUp)
 
