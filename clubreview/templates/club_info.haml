@@ -4,6 +4,34 @@
 - load static
 
 - block content
+    :css
+        a.star {
+            background: url({% static "img/star.png" %});
+            width: 24px;
+            height: 24px;
+            display: block;
+            float: left;
+        }
+        a.star.selected {
+            background-position: 0 24px;
+        }
+        .review-content {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+    %script{'type':"text/javascript"}
+        $(function () {
+            $('.review .rating div').each(function() {
+                var rating = $(this).data("rating");
+                for (var i=0; i<rating; i++) {
+                    $(this).append($("<a>").toggleClass("star selected"));
+                }
+            })
+
+
+        })
+
     #main-wrapper.row
         #main-content.span8
             #club-name
@@ -11,15 +39,30 @@
             .card
                 %h5 Introduction:
                 {{ club.introduction }}
-            .card
-                %h5 Website
-                {{club.website}}
+            - if club.website
+                .card
+                    %h5 Website
+                    {{ club.website }}
             .card
                 %h5 Reviews:
                 - for review in reviews
-                      %p {{ review }}
-                      - empty
-                        %p No reviews yet!
+                    .review
+                        .pull-right
+                            {{ review.date_posted }}
+                        .container
+                            - if review.anonymous
+                                %div{'style':"float:left; margin-right: 10px"} Anonymous
+
+                            .rating
+                                %div{'data-rating': "{{ review.ratings }}"}
+
+                        .review-content
+                            {{ review.content }}
+                        %hr
+
+
+                - empty
+                    %p No reviews yet!
             .backtolist
                 %a{ 'href': "{% url 'club_list_view' %}"} Back to list
 

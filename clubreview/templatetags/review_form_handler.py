@@ -14,7 +14,6 @@ def review_form_handler(context):
     initials = {}
     if 'club' in context:
         initials['club'] = context['club']
-
     request = context['request']
     if request.method == 'POST':
         form = ReviewForm(data=request.POST)
