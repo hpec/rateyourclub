@@ -40,11 +40,36 @@
 
             - for club in clubs
                 .span8.card
+                    %ul.unstyled.pull-right
+                      - if club.website
+                              %li
+                                  %a{ 'href' : "{{club.website}}" }
+                                      %i.icon-external-link
+                      - if club.facebook_url 
+                          %li
+                              %a{ 'href' : "{{club.facebook_url}}" }
+                                  %i.icon-facebook-sign
+                                  .hide-text
+                                    {{ club.facebook_url}}
+
+
+
                     %h4
                         %a{'href' : "{% url 'club_info_view' club.id %}"}
                             {{club}}
                     %p
-                        {{club.introduction|truncatechars:200}}
+                        %span.intro-text
+                            {{club.introduction|slice:":200"}}
+                        - if club.introduction and club.introduction|length  > 200
+                            %span.ellipsis
+                                \...
+
+                            %br
+                            %a.show-more{ 'href' : "#" }
+                              Read more
+                            %span.hide-text
+                              {{club.introduction}}
+                    
 
 
 
@@ -84,5 +109,20 @@
                                         &rarr;
                         %p
                             page ={clubs.number} of ={clubs.paginator.num_pages}
+        <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+              $(".show-more").click(function(e){
+                $this = $(e.target);
+                e.preventDefault();
+                var toInsert = $this.siblings('.hide-text').text().trim();
+                $this.siblings('.ellipsis').remove();
+                var $target = $this.siblings('.intro-text');
+                $target.text( toInsert);
+                $this.remove();
+              })
+              });
+          })(jQuery)
+        </script>
 
 

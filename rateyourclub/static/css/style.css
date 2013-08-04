@@ -1,4 +1,9 @@
-body{ padding-top: 40px; background-color: rgba(41,128,185,0.6)}
+body{
+    padding-top : 40px;
+    background-image : url(../img/patterns/pw_maze_white/pw_maze_white.png);
+    background-position : initial initial;
+    background-repeat : initial initial;
+}
 input[type="text"]{ height: inherit; }
 #main-wrapper { margin-top: 20px; }
 #club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 20px; background-color: white; }
@@ -9,3 +14,11 @@ input[type="text"]{ height: inherit; }
 .backtolist { margin-top: 10px; margin-bottom: 10px;}
 .backtolist a { color: white; }
 .review-form-wrapper { padding: 15px; padding-bottom: 1px; margin-top: 15px; background-color: white; }
+.step-links{ background: white; }
+.no-border-radius {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    border: 0px;
+}

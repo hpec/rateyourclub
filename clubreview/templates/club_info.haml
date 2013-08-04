@@ -42,18 +42,62 @@
 
     #main-wrapper.row
         #main-content.span8
-            #club-name
+            #club-name.hero-unit.no-border-radius
                 %h3 {{ club }}
-                .avg-rating-stars
-                .avg-rating-val
-                    {{ rating }}
-            .card
-                %h5 Introduction:
-                {{ club.introduction }}
-            - if club.website
-                .card
-                    %h5 Website
-                    {{ club.website }}
+                %blockquote
+                        %p
+                            {{ club.introduction }}
+
+                .avg-rating-stars.pull-left
+                %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
+                    {{ rating|floatformat:2 }}
+                .clearfix
+                %dl.dl
+                    
+                    - if club.requirements
+                        %dt.muted
+                          Requirements
+                        %dd
+                          {{club.requirements}}
+                    
+                      - if club.address
+                        %dt.muted
+                          Address
+                        %dd
+                          {{club.address}}
+                    - if club.activity_summary
+                        %dt.muted
+                          Activities
+                        %dd
+                          {{club.activity_summary}}
+
+                      - if club.meeting
+                        %dt.muted
+                            Meetings
+                        %dd
+                          {{club.meeting}}
+
+                %ul{ 'class' : 'unstyled'}
+                                        
+                  - if club.website
+                      %li
+                        %a{ 'href' : "{{club.website}}" }
+                            %i.icon-external-link
+                            {{ club.website }}
+
+                        - if club.facebook_url
+                          %li
+                              %a{ 'href' : "{{club.facebook_url}}" }
+                                  %i.icon-facebook-sign
+                                  Facebook
+                        - if club.students_berkeley_edu_url
+                            %li
+                              %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
+                                Source
+
+
+
+
             .card
                 %h5 Reviews:
                 - for review in reviews
@@ -62,20 +106,23 @@
                             {{ review.date_posted }}
                         .container
                             - if review.anonymous
-                                %div{'style':"float:left; margin-right: 10px"} Anonymous
+                                %div.muted{'style':"float:left; margin-right: 10px"} Anonymous
 
                             .rating
                                 %div{'data-rating': "{{ review.ratings }}"}
 
                         .review-content
-                            {{ review.content }}
+                          %blockquote
+                            %p {{ review.content }}
                         %hr
 
 
                 - empty
                     %p No reviews yet!
-            .backtolist
-                %a{ 'href': "{% url 'club_list_view' %}"} Back to list
+            %ul.pager
+              %li.previous
+                %a{'href': "{{request.META.HTTP_REFERER}}"}
+                    &larr;  Previous
 
 
             - review_form_handler
@@ -85,7 +132,8 @@
                 %h4 Events
                 - for event in events
                     %div
-                        {{ event.name }}
+                      %a{ 'href' : "{{ event.facebook_url }}" }
+                            {{ event.name }}
                     %div{'style':'font-size:12px; color:#aaa;'}
                         {{ event.location }}
                     %div{'style':'font-size:12px; color:#aaa;'}
