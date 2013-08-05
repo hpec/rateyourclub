@@ -1,12 +1,14 @@
 - load static
 - load compress
 - load selectable_tags
+- load date_helpers
 
 !!! 5
 %head
     %title Berkeley Clubs
     {% compress css %}
         %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
         %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
     {% endcompress %}
     - include_jquery_libs
@@ -24,5 +26,12 @@
                         %button{'class':'btn', 'type':'button'} Categories
     .container
         - block content
-        #footer
-            © 2013 Daniel Liu and David Su
+        %p#footer
+        &copy;
+        - with year_tuple=2013|year_and_current_year
+          {{year_tuple.0}}
+          - if year_tuple.0  != year_tuple.1
+            \-
+            {{ year_tuple.1 }}
+        Daniel Liu and David Su
+
