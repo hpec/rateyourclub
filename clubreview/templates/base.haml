@@ -8,10 +8,21 @@
     %title Berkeley Clubs
     {% compress css %}
         %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
-        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        %link{ 'href' : "//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css", 'rel':"stylesheet"}
         %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
     {% endcompress %}
     - include_jquery_libs
+    %script{'type':"text/javascript"}
+        $(function () {
+            $("#search-box").autocomplete({
+                source: "/clubs/search/",
+                select: function( event, ui ) {
+                    document.location.href='/clubs/'+ui.item.id;
+                }
+            });
+            $("#search-box").attr('autocomplete', 'on')
+        });
+
 %body
     .navbar.navbar-fixed-top
         .navbar-inner
