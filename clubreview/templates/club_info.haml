@@ -27,16 +27,16 @@
                 for (var i=0; i<rating; i++) {
                     $(this).append($("<a>").toggleClass("star selected"));
                 }
+
             })
 
             avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
             for (var i=0; i<avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
             }
-            if (avgRating==0) {
-                for (var i=0; i<5; i++) {
-                    $('.avg-rating-stars').append($("<a>").toggleClass("star"))
-                }
+
+            for (var i=0; i<5-avgRating; i++) {
+                $('.avg-rating-stars').append($("<a>").toggleClass("star"))
             }
         })
 
@@ -53,13 +53,13 @@
                     {{ rating|floatformat:2 }}
                 .clearfix
                 %dl.dl
-                    
+
                     - if club.requirements
                         %dt.muted
                           Requirements
                         %dd
                           {{club.requirements}}
-                    
+
                       - if club.address
                         %dt.muted
                           Address
@@ -78,7 +78,7 @@
                           {{club.meeting}}
 
                 %ul{ 'class' : 'unstyled'}
-                                        
+
                   - if club.website
                       %li
                         %a{ 'href' : "{{club.website}}" }
