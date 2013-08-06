@@ -15,6 +15,7 @@ registry.register(ClubLookUp)
 def club_lookup(request):
     result = []
     search_string = request.GET.get('term')
-    for club in Club.objects.filter(name__icontains=search_string):
+    clubs = Club.objects.filter(name__icontains=search_string)[:6]
+    for club in clubs:
         result.append({'label':club.name, 'id':club.id})
     return HttpResponse(json.dumps(result), content_type="application/json")
