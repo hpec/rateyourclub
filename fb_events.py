@@ -279,8 +279,9 @@ class FacebookGroup(object):
                     event[k] = parse(event[k])
                 if 'timezone' in event and type(event['timezone']) != type(None):
                     #http://pytz.sourceforge.net/#localized-times-and-date-arithmetic
-                    event[k] = event[k].replace(tzinfo =  pytz.utc)
-                    event[k] = event[k].astimezone( pytz.timezone(event['timezone']) )
+                    event[k] = event[k].replace(tzinfo =  pytz.timezone(event['timezone']))
+                    local_dt = event[k].astimezone( pytz.timezone(event['timezone']) )
+                    event[k] = pytz.utc.normalize(local_dt.astimezone(pytz.utc))
         return event
 
     def get_events(self):
