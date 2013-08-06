@@ -4,6 +4,8 @@ from django.core.exceptions import (ObjectDoesNotExist,
                                         MultipleObjectsReturned, FieldError, ValidationError, NON_FIELD_ERRORS)
 import pdb
 import urlparse, fb_events
+from copy import copy
+from datetime import timedelta
 
 # Create your models here.
 
@@ -112,6 +114,24 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
+    @property
+    def display_start_time(self):
+        return self.convert_to_local_time(self.start_time)
+    @property
+    def display_end_time(self):
+        return self.convert_to_local_time(self.end_time)
+    def convert_to_local_time(self, dt):
+        # includes DST support
+        # http://stackoverflow.com/questions/2775864/python-datetime-to-unix-timestamp
+        # http://stackoverflow.com/a/2881048/1123985
+        import rateyourclub.settings as settings
+        import pytz, time
+        localtimezone = pytz.timezone(settings.TIME_ZONE)
+        is_dst = time.localtime( time.mktime(dt.timetuple()) ).tm_isdst == 1
+
+        time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
+        return localtimezone.localize(time_without_zone, is_dst=is_dst )
+
     def __unicode__(self):
         return "%s" % (self.name)
     @property
