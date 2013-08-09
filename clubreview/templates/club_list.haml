@@ -30,27 +30,34 @@
                 .pull-right
                     Sort by
                     - if order == 'name'
-                        %a{'href':'?order=pop'} Popularity
+                        %a{'href':'?order=pop&q={{request.GET.dict.q}}'} Popularity
                         %strong
-                            %a{'href':'?order=name'} Name
+                            %a{'href':'?order=name&q={{request.GET.dict.q}}'} Name
                     - else
                         %strong
-                            %a{'href':'?order=pop'} Popularity
-                        %a{'href':'?order=name'} Name
+                            %a{'href':'?order=pop&q={{request.GET.dict.q}}'} Popularity
+                        %a{'href':'?order=name&q={{request.GET.dict.q}}'} Name
 
             - for club in clubs
                 .span8.card
                     %ul.unstyled.pull-right
+                      %li
+                        %span.text-info
+                          {% widthratio club.avg_rating 5 5 %}
+                          &times;
+                          %i.icon-star
                       - if club.website
                               %li
-                                  %a{ 'href' : "{{club.website}}" }
+                                  %a.pull-right{ 'href' : "{{club.website}}" }
                                       %i.icon-external-link
+                                  .clearfix
                       - if club.facebook_url 
                           %li
-                              %a{ 'href' : "{{club.facebook_url}}" }
+                              %a.pull-right{ 'href' : "{{club.facebook_url}}" }
                                   %i.icon-facebook-sign
                                   .hide-text
                                     {{ club.facebook_url}}
+                              .clearfix
 
 
 
@@ -59,7 +66,7 @@
                             {{club}}
                     %p
                         %span.intro-text
-                            {{club.introduction|slice:":200"}}
+                            {{club.introduction|slice:":200"|urlize}}
                         - if club.introduction and club.introduction|length  > 200
                             %span.ellipsis
                                 \...
@@ -68,7 +75,7 @@
                             %a.show-more{ 'href' : "#" }
                               Read more
                             %span.hide-text
-                              {{club.introduction}}
+                              {{club.introduction|urlize}}
                     
 
 

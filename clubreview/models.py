@@ -52,6 +52,13 @@ class Club(models.Model):
 
     objects = models.Manager()
     facebook_clubs = FacebookManager()
+    def is_float(self, val):
+        try:
+            float(val)
+            return True
+        except ValueError, TypeError:
+            return False
+
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
@@ -70,6 +77,21 @@ class Club(models.Model):
     @property
     def facebook_graph_url(self):
         return "https://graph.facebook.com/%s" % self.facebook_id if self.facebook_id else None
+    @property
+    def reviews(self):
+        return self.review_set.all()
+    @property
+    def num_ratings(self):
+        return len( [ r for r in  self.reviews if ( self.is_float(r.ratings) and float( r.ratings ) > 0 ) ] )
+    @property
+    def total_rating(self):
+        return sum( map(lambda r : (float(r.ratings) if self.is_float(r.ratings) else 0), self.reviews) )
+    @property
+    def avg_rating(self):
+        if self.num_ratings > 0:
+            return self.total_rating / self.num_ratings
+        else:
+            return 0
     def facebook_event_update(self):
         import fb_events
         if self.facebook_id == None:
