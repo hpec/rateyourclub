@@ -185,16 +185,34 @@ class ClubURIEdit(models.Model):
     value = models.TextField()
     state = models.IntegerField(null=True,blank=True)
     def __unicode__(self):
-        return "%s %s" %(self.club, self.value)
-    def handle_attribute_save(state):
-        if state == APPROVED_STATE:
-            if attribute_type == WEBSITE_TYPE:
-                club.website = value
-            if attribute_type == FACEBOOK_TYPE:
-                club.facebook_url = value
-            club.save()
-            self.state = APPROVED_STATE
-            self.save()
-        elif state == DENIED_STATE:
-            self.state = DENIED_STATE
+        return "%s %s"
+    @property
+    def club_name(self):
+        return self.club.name
+    @property
+    def display_attribute_type(self):
+        if self.attribute_type == ClubURIEdit.WEBSITE_URL_TYPE:
+            return "Website"
+        if self.attribute_type == ClubURIEdit.FACEBOOK_URL_TYPE:
+            return "Facebook"
+    @property
+    def display_state(self):
+        if self.state == ClubURIEdit.DENIED_STATE:
+            return "Denied"
+        if self.state == ClubURIEdit.APPROVED_STATE:
+            return "Approved"
+        return "Pending"
+
+    def handle_attribute_save(self, state):
+        if state == ClubURIEdit.APPROVED_STATE:
+            if self.attribute_type == ClubURIEdit.WEBSITE_URL_TYPE:
+                self.club.website = self.value
+            if self.attribute_type == ClubURIEdit.FACEBOOK_URL_TYPE:
+                self.club.facebook_url = self.value
+            if self.club.full_clean():
+                self.club.save()
+                self.state = ClubURIEdit.APPROVED_STATE
+                self.save()
+        elif state == ClubURIEdit.DENIED_STATE:
+            self.state = ClubURIEdit.DENIED_STATE
             self.save()

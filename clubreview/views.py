@@ -73,17 +73,5 @@ def add_url_edit(request, id):
             c.attribute_type = ClubURIEdit.WEBSITE_URL_TYPE
             c.save()
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
-
-
     else :
-        raise Http404
-
-def approve_url_edit(request, id, state):
-    if request.method == 'POST':
-        pdb.set_trace()
-        clubedit = get_object_or_404(ClubEdit, pk=id)
-        clubedit.state = state
-        clubedit.handle_attribute_save()
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
-    else:
         raise Http404
