@@ -1,7 +1,7 @@
 # Create your views here.
 from models import *
 from forms import *
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -58,5 +58,32 @@ def create_review(request):
         else:
             response['status'] = 'error'
             response['error'] = form.errors
-        print json.dumps(response)
     return HttpResponse(json.dumps(response), content_type="application/json")
+def add_url_edit(request, id):
+    if request.method == 'POST':
+        club = get_object_or_404(Club, pk=id)
+        if request.POST['facebook_url']:
+            c = ClubURIEdit(club=club)
+            c.value = request.POST['facebook_url']
+            c.attribute_type = ClubURIEdit.FACEBOOK_URL_TYPE
+            c.save()
+        if request.POST['website_url']:
+            c = ClubURIEdit(club=club)
+            c.value = request.POST['website_url']
+            c.attribute_type = ClubURIEdit.WEBSITE_URL_TYPE
+            c.save()
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+    else :
+        raise Http404
+
+def approve_url_edit(request, id, state):
+    if request.method == 'POST':
+        pdb.set_trace()
+        clubedit = get_object_or_404(ClubEdit, pk=id)
+        clubedit.state = state
+        clubedit.handle_attribute_save()
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    else:
+        raise Http404

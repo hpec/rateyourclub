@@ -5,4 +5,5 @@ admin.site.register(Event)
 admin.site.register(School)
 admin.site.register(Review)
 admin.site.register(Club)
+admin.site.register(ClubURIEdit)
 

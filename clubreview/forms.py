@@ -52,4 +52,13 @@ class ReviewForm(forms.Form):
         review.save()
         return review
 
+class ClubEditForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ClubEditForm, self).__init__(*args, **kwargs)
+    def clean(self):
+        pass
+    def save(self):
+        club_edit = ClubEdit(club=club,attribute_type=self.cleaned_data['value'],value=self.cleaned_data['value'])
+        club_edit.save()
+        pass
 

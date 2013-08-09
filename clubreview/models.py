@@ -175,3 +175,26 @@ class Review(models.Model):
     def __unicode__(self):
         return "%s" % (self.content)
 
+class ClubURIEdit(models.Model):
+    WEBSITE_URL_TYPE = 0
+    FACEBOOK_URL_TYPE = 1
+    DENIED_STATE = 0
+    APPROVED_STATE = 1
+    club = models.ForeignKey(Club)
+    attribute_type  = models.IntegerField()
+    value = models.TextField()
+    state = models.IntegerField(null=True,blank=True)
+    def __unicode__(self):
+        return "%s %s" %(self.club, self.value)
+    def handle_attribute_save(state):
+        if state == APPROVED_STATE:
+            if attribute_type == WEBSITE_TYPE:
+                club.website = value
+            if attribute_type == FACEBOOK_TYPE:
+                club.facebook_url = value
+            club.save()
+            self.state = APPROVED_STATE
+            self.save()
+        elif state == DENIED_STATE:
+            self.state = DENIED_STATE
+            self.save()

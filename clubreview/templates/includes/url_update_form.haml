@@ -1,0 +1,44 @@
+- load static
+%a#add-url-btn{ 'href' : '#'}
+    %small
+        %i.icon-edit
+        %span.text
+            Contribute
+
+
+%form.add-url-form.form-horizontal{ 'style': 'display:none', 'method' : 'post', 'action' : "{% url 'clubreview.views.add_url_edit' club.id %}"}
+  - csrf_token
+  %legend
+      %small
+          Add urls
+
+  .control-group
+    .control-label
+      %label{ 'for' : 'facebook_url'}
+        Facebook
+    .controls 
+      %input.input-xlarge{ 'type':'text', 'name':'facebook_url', 'placeholder' : "{% firstof club.facebook_url 'https://www.facebook.com/UCBerkeley' %}" }
+  .control-group
+    .control-label 
+      %label{ 'for': 'website_url'}
+        Website
+    .controls 
+      %input.input-xlarge{ 'type':'text', 'name':'website_url', 'placeholder' : "{% firstof club.website 'http://www.example.com'%}"}
+  .control-group
+    .controls 
+      %button.btn.btn-primary{' type':"submit" }
+        Submit
+  %script{ 'type':'text/javascript' }
+          (function($){
+            $add_btn = $('#add-url-btn');
+            var _old_text = $add_btn.text();
+            var text_a = ['Hide', _old_text];
+            $add_btn.on('click', function(e){
+                var $this = $(this);
+                var count = $this.data('count') || 0;
+                $this.find('.text').text(text_a[count % text_a.length]);
+                $this.data('count', (count + 1) % text_a.length);
+                e.preventDefault();
+                $('.add-url-form').fadeToggle('fast');
+            })
+          })(jQuery)
