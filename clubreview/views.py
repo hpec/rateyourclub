@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.core import serializers
 from django.contrib import messages
 
 def club_list_view(request, template_name='club_list.html'):
@@ -48,20 +48,16 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     return render_to_response(template_name,
         { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating }, context_instance=context)
 
-def add_review(request, success_url=None,
-               form_class=ReviewForm,
-               template_name='add_review.html'):
+def create_review(request):
+    response = {}
     if request.method == 'POST':
-        form = form_class(data=request.POST)
+        form = ReviewForm(data=request.POST)
         if form.is_valid():
             review = form.save()
-            print "Validation Successful!"
-            return HttpResponseRedirect('/')
+            response['status'] = 'success'
+            response['data'] = serializers.serialize("json", review)
         else:
-            print "Form Error"
-    else:
-        form = form_class()
-    context = RequestContext(request)
-    return render_to_response(template_name,
-                              { 'form': form },
-                              context_instance=context)
+            response['status'] = 'error'
+            response['error'] = form.errors
+        print json.dumps(response)
+    return HttpResponse(json.dumps(response), content_type="application/json")

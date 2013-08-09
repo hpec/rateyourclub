@@ -25,20 +25,31 @@
         $(function () {
             $('.review .rating div').each(function() {
                 var rating = $(this).data("rating");
-                for (var i=0; i<rating; i++) {
+                for (var i=0; i < rating; i++) {
                     $(this).append($("<a>").toggleClass("star selected"));
                 }
 
             })
 
             avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
-            for (var i=0; i<avgRating; i++) {
+            for (var i=0; i < avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
             }
 
             for (var i=0; i<5-avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star"))
             }
+
+            $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
+                $("#rating-val").val(value);
+            }})
+
+            $('#review_form_submit').click(function(){
+                $.post('/reviews/create/', $('#review_form').serialize(), function(data){
+                    console.log(data);
+                })
+            })
+
         })
 
     #main-wrapper.row
@@ -125,8 +136,52 @@
                 %a{'href': "{{request.META.HTTP_REFERER}}"}
                     &larr;  Previous
 
+            :css
+                #review_form  { text-align:left }
+                #review_form .control-group { margin-bottom: 5px }
+                #review_form .control-label { margin-left:0px; width:20px }
+                #review_form .controls { margin-left:80px }
+                #id_club_0 { width:400px }
+                #id_ratings { width:400px }
+                #id_content { width:400px }
 
-            - review_form_handler
+                .rating-f .bar-rating a {
+                    background: url({% static "img/star.png" %});
+                    width: 24px;
+                    height: 24px;
+                    display: block;
+                    float: left;
+                }
+
+                .rating-f .bar-rating a:hover,
+                .rating-f .bar-rating a.active,
+                .rating-f .bar-rating a.selected {
+                    background-position: 0 24px;
+                }
+
+            %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
+            .review-form-wrapper
+                %form#review_form.form-horizontal
+                    - csrf_token
+                    %input{'type':"hidden", 'id':"club_id", 'name':"club_id", 'value':"{{ club.id }}"}
+                    .control-group
+                        .control-label Content
+                        .controls
+                            %textarea{'cols':"20", 'id':"id_content", 'name':"content", 'rows':"5"}
+                    %input{'type':"hidden", 'id':"rating-val", 'name':"rating-val", 'value':"3"}
+                    .control-group
+                        .control-label Ratings
+                        .controls
+                            .input.select.rating-f
+                                %select#rating
+                                    %option{'value':"1"} 1
+                                    %option{'value':"2"} 2
+                                    %option{'value':"3", 'selected':'true'} 3
+                                    %option{'value':"4"} 4
+                                    %option{'value':"5"} 5
+
+                    %button#review_form_submit.btn-primary.btn{'type':'button'} Submit
+
 
         .span4
             #event-panel
@@ -144,8 +199,9 @@
                             {{ event.display_end_time }}
                         {% endlocaltime %}
                     %hr
-                - empty
-                    No events listed!
+
                 - if events
                     %a{'href':'#'} View more
+                - else
+                    No events listed!
 

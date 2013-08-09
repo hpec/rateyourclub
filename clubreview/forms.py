@@ -7,7 +7,7 @@ from django.forms.widgets import *
 
 class ReviewForm(forms.Form):
 
-    club = AutoCompleteSelectField(required=True,
+    club = AutoCompleteSelectField(required=False,
         lookup_class=ClubLookUp)
 
     content = forms.CharField(required=True,
@@ -17,8 +17,13 @@ class ReviewForm(forms.Form):
         super(ReviewForm, self).__init__(*args, **kwargs)
         try:
             self.ratings = kwargs['data']['rating-val']
+            self.club_id = kwargs['data']['club_id']
         except KeyError:
             pass
+
+    # def clean_club(self):
+    #     self.cleaned_data['club'] = self.club
+    #     return self.cleaned_data['club']
 
     def clean(self):
         try:
@@ -31,7 +36,7 @@ class ReviewForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
-        club = self.cleaned_data['club']
+        club = Club.objects.get(id=self.club_id)
         review = Review(club=club,
             content=self.cleaned_data['content'],
             ratings=self.cleaned_data['ratings'])
@@ -40,5 +45,6 @@ class ReviewForm(forms.Form):
 
         club.save()
         review.save()
+        return review
 
 
