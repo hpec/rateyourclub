@@ -55,7 +55,6 @@ def create_review(request):
         if form.is_valid():
             review = form.save()
             response['status'] = 'success'
-            response['data'] = serializers.serialize("json", review)
         else:
             response['status'] = 'error'
             response['error'] = form.errors

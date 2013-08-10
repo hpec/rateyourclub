@@ -1,28 +1,12 @@
 - extends "base.html"
-
-- load review_form_handler
 - load static
 - load tz
 
 - block content
-    :css
-        a.star {
-            background: url({% static "img/star.png" %});
-            width: 24px;
-            height: 24px;
-            display: block;
-            float: left;
-        }
-        a.star.selected {
-            background-position: 0 24px;
-        }
-        .review-content {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-
     %script{'type':"text/javascript"}
         $(function () {
+            $('#form-errors').hide();
+
             $('.review .rating div').each(function() {
                 var rating = $(this).data("rating");
                 for (var i=0; i < rating; i++) {
@@ -36,17 +20,21 @@
                 $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
             }
 
-            for (var i=0; i<5-avgRating; i++) {
+            for (var i=0; i < 5-avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star"))
             }
 
-            $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
-                $("#rating-val").val(value);
-            }})
-
             $('#review_form_submit').click(function(){
-                $.post('/reviews/create/', $('#review_form').serialize(), function(data){
-                    console.log(data);
+                $.post('/reviews/create/', $('#review_form').serialize(), function(response){
+                    if (response.status == 'success') {
+                        location.reload();
+                    } else {
+                        $.each(response.error, function(key, val) {
+                            $('#form-errors').append($('<div>').text(val[0]));
+                        });
+                        $('#form-errors').show();
+                    }
+
                 })
             })
 
@@ -58,7 +46,7 @@
                 %h3 {{ club }}
                 %blockquote
                     %p
-                            {{ club.introduction|urlize }}
+                        {{ club.introduction|urlize }}
 
                 .avg-rating-stars.pull-left
                 %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
@@ -89,7 +77,7 @@
                         %dd
                           {{club.meeting|urlize}}
 
-                %ul{ 'class' : 'unstyled'}
+                %ul{ 'class' : 'unstyled' }
 
                   - if club.website
                       %li
@@ -106,8 +94,6 @@
                             %li
                               %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
                                 Source
-
-
 
 
             .card
@@ -127,42 +113,19 @@
                           %blockquote
                             %p {{ review.content }}
                         %hr
-
-
                 - empty
                     %p No reviews yet!
+
             %ul.pager
               %li.previous
                 %a{'href': "{{request.META.HTTP_REFERER}}"}
                     &larr;  Previous
 
-            :css
-                #review_form  { text-align:left }
-                #review_form .control-group { margin-bottom: 5px }
-                #review_form .control-label { margin-left:0px; width:20px }
-                #review_form .controls { margin-left:80px }
-                #id_club_0 { width:400px }
-                #id_ratings { width:400px }
-                #id_content { width:400px }
-
-                .rating-f .bar-rating a {
-                    background: url({% static "img/star.png" %});
-                    width: 24px;
-                    height: 24px;
-                    display: block;
-                    float: left;
-                }
-
-                .rating-f .bar-rating a:hover,
-                .rating-f .bar-rating a.active,
-                .rating-f .bar-rating a.selected {
-                    background-position: 0 24px;
-                }
-
-            %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
             .review-form-wrapper
                 %form#review_form.form-horizontal
                     - csrf_token
+                    .form-fieldset
+                        #form-errors.alert.alert-error
                     %input{'type':"hidden", 'id':"club_id", 'name':"club_id", 'value':"{{ club.id }}"}
                     .control-group
                         .control-label Content
@@ -172,7 +135,7 @@
                     .control-group
                         .control-label Ratings
                         .controls
-                            .input.select.rating-f
+                            .input.select.rating-star-wrapper
                                 %select#rating
                                     %option{'value':"1"} 1
                                     %option{'value':"2"} 2

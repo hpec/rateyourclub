@@ -22,3 +22,31 @@ input[type="text"]{ height: inherit; }
     border-radius: 0px;
     border: 0px;
 }
+
+.review-content {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#review_form  { text-align:left }
+#review_form .control-group { margin-bottom: 5px }
+#review_form .control-label { margin-left:0px; width:20px }
+#review_form .controls { margin-left:80px }
+#id_club_0 { width:400px }
+#id_ratings { width:400px }
+#id_content { width:400px }
+
+a.star, .rating-star-wrapper .bar-rating a {
+    background: url(../img/star.png);
+    width: 24px;
+    height: 24px;
+    display: block;
+    float: left;
+}
+
+a.star.selected,
+.rating-star-wrapper .bar-rating a:hover,
+.rating-star-wrapper .bar-rating a.active,
+.rating-star-wrapper .bar-rating a.selected {
+    background-position: 0 24px;
+}

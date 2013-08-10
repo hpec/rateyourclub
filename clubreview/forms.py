@@ -21,9 +21,14 @@ class ReviewForm(forms.Form):
         except KeyError:
             pass
 
-    # def clean_club(self):
-    #     self.cleaned_data['club'] = self.club
-    #     return self.cleaned_data['club']
+    def clean_club(self):
+        print "cleaning club"
+        try:
+            club = Club.objects.get(id=self.club_id)
+            self.cleaned_data['club'] = club
+        except:
+            pass
+        return self.cleaned_data['club']
 
     def clean(self):
         try:
@@ -36,7 +41,7 @@ class ReviewForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
-        club = Club.objects.get(id=self.club_id)
+        club = self.cleaned_data['club']
         review = Review(club=club,
             content=self.cleaned_data['content'],
             ratings=self.cleaned_data['ratings'])
