@@ -178,14 +178,17 @@ class Review(models.Model):
 class ClubURIEdit(models.Model):
     WEBSITE_URL_TYPE = 0
     FACEBOOK_URL_TYPE = 1
-    DENIED_STATE = 0
-    APPROVED_STATE = 1
+    DENIED_STATE = False
+    APPROVED_STATE = True
     club = models.ForeignKey(Club)
     attribute_type  = models.IntegerField()
-    value = models.TextField()
-    state = models.IntegerField(null=True,blank=True)
+    value = models.URLField(default='')
+    state = models.NullBooleanField()
     def __unicode__(self):
-        return "%s %s"
+        if self.club:
+            return "%s %s: %s" % (self.club.name, self.display_attribute_type, self.value)
+        else:
+            return "%s: %s" % (self.display_attribute_type,  self.value)
     @property
     def club_name(self):
         return self.club.name
@@ -209,7 +212,7 @@ class ClubURIEdit(models.Model):
                 self.club.website = self.value
             if self.attribute_type == ClubURIEdit.FACEBOOK_URL_TYPE:
                 self.club.facebook_url = self.value
-            if self.club.full_clean():
+            if type(self.club.full_clean()) == type(None):
                 self.club.save()
                 self.state = ClubURIEdit.APPROVED_STATE
                 self.save()

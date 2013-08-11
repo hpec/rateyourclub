@@ -13,8 +13,8 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('club', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['clubreview.Club'])),
             ('attribute_type', self.gf('django.db.models.fields.IntegerField')()),
-            ('value', self.gf('django.db.models.fields.TextField')()),
-            ('state', self.gf('django.db.models.fields.IntegerField')(null=True)),
+            ('value', self.gf('django.db.models.fields.URLField')(default='', max_length=200)),
+            ('state', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'clubreview', ['ClubURIEdit'])
 
@@ -60,8 +60,8 @@ class Migration(SchemaMigration):
             'attribute_type': ('django.db.models.fields.IntegerField', [], {}),
             'club': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['clubreview.Club']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'state': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
-            'value': ('django.db.models.fields.TextField', [], {})
+            'state': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
+            'value': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200'})
         },
         u'clubreview.event': {
             'Meta': {'object_name': 'Event'},
