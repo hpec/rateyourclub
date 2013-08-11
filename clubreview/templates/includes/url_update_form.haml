@@ -6,12 +6,13 @@
             Contribute
 
 
-%form.add-url-form.form-horizontal{ 'style': 'display:none', 'method' : 'post', 'action' : "{% url 'clubreview.views.add_url_edit' club.id %}"}
+%form#add-url-form.form-horizontal{ 'style': 'display:none', 'method' : 'post', 'action' : "{% url 'clubreview.views.add_url_edit' club.id %}"}
   - csrf_token
   %legend
       %small
           Add urls
 
+  #add-url-form-status.control-group.alert{ 'style' : 'display:none' }
   .control-group
     .control-label
       %label{ 'for' : 'facebook_url'}
@@ -30,6 +31,8 @@
         Submit
   %script{ 'type':'text/javascript' }
           (function($){
+            $status = $('#add-url-form-status');
+            $add_form = $('#add-url-form');
             $add_btn = $('#add-url-btn');
             var _old_text = $add_btn.text();
             var text_a = ['Hide', _old_text];
@@ -39,6 +42,25 @@
                 $this.find('.text').text(text_a[count % text_a.length]);
                 $this.data('count', (count + 1) % text_a.length);
                 e.preventDefault();
-                $('.add-url-form').fadeToggle('fast');
-            })
+                $add_form.fadeToggle('fast');
+            });
+            $add_form.submit(function(e){
+                e.preventDefault();
+                var $this = $(this), _this = this;
+                var url = $this.attr('action');
+                var serializedData = $this.serializeArray;
+                $.ajax(url, {
+                    type: 'POST',
+                    data : $this.serialize(),
+                    dataType : "json",
+                    success : function(data, textStatus, jqXHR){
+                        $status.removeClass('alert-error').addClass('alert-success').html($('<p></p>').text(data.message)).show();
+                        _this.reset();
+                    },
+                    error : function(jqXHR, textStatus, errorThrown){
+                        var data =  $.parseJSON(jqXHR.responseText);
+                        $status.removeClass('alert-success').addClass('alert-error').html($('<p></p>').text(data.message)).show();
+                    }
+                });
+            });
           })(jQuery)
