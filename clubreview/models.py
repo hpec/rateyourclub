@@ -44,11 +44,12 @@ class Club(models.Model):
     review_score = models.IntegerField(default=0)
     hit = models.IntegerField(default=0)
     SGID = models.BigIntegerField(blank=True,unique=True,null=True)
-    callink_permalink = models.TextField(blank=True,null=True)
+    callink_permalink = models.SlugField(blank=True,null=True)
     requirements = models.TextField(blank=True,null=True)
     meeting = models.TextField(blank=True,null=True) #information about club meetings
     address = models.TextField(blank=True,null=True)
     activity_summary = models.TextField(blank=True,null=True)
+    permalink = models.SlugField(blank=True,null=True)
 
     objects = models.Manager()
     facebook_clubs = FacebookManager()
