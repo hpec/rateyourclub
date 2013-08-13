@@ -12,13 +12,14 @@
         %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/style.css' %}" }
     {% endcompress %}
     - include_jquery_libs
+    - include_ui_theme
     %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
     %script{'type':"text/javascript"}
         $(function () {
             $("#search-box").autocomplete({
                 source: "/clubs/search/",
                 select: function( event, ui ) {
-                    document.location.href='/clubs/'+ui.item.id;
+                    document.location.href='/clubs/'+ui.item.permalink;
                 }
             });
             $("#search-box").attr('autocomplete', 'on')

@@ -171,7 +171,7 @@ class Event(models.Model):
         localtimezone = pytz.timezone(settings.TIME_ZONE)
         is_dst = time.localtime( time.mktime(dt.timetuple()) ).tm_isdst == 1
 
-        time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
+        time_without_zone = localtimezone.localize((dt - timedelta(hours=1) if is_dst else dt)).astimezone(localtimezone).replace(tzinfo=None)
         return localtimezone.localize(time_without_zone, is_dst=is_dst )
 
     def __unicode__(self):

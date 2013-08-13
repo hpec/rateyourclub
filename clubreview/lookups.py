@@ -17,5 +17,5 @@ def club_lookup(request):
     search_string = request.GET.get('term')
     clubs = Club.objects.filter(name__icontains=search_string)[:6]
     for club in clubs:
-        result.append({'label':club.name, 'id':club.id})
+        result.append({'label':club.name, 'id':club.id, 'permalink':club.permalink })
     return HttpResponse(json.dumps(result), content_type="application/json")
