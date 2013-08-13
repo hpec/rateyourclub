@@ -49,7 +49,7 @@ class Club(models.Model):
     meeting = models.TextField(blank=True,null=True) #information about club meetings
     address = models.TextField(blank=True,null=True)
     activity_summary = models.TextField(blank=True,null=True)
-    permalink = models.SlugField(blank=True,null=True)
+    permalink = models.SlugField(blank=True,null=True, unique=True)
 
     objects = models.Manager()
     facebook_clubs = FacebookManager()
