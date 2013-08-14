@@ -6,6 +6,9 @@ import pdb
 import urlparse, fb_events
 from copy import copy
 from datetime import timedelta
+from django.db.models.signals import post_init
+from django.dispatch import receiver
+import re
 
 # Create your models here.
 
@@ -26,7 +29,19 @@ class Category(models.Model):
 class FacebookManager(models.Manager):
     def get_query_set(self):
         return super(FacebookManager, self).get_query_set().filter(facebook_id__isnull=False)
+class ClubManager(models.Manager):
+    def find_by_permalink(self, permalink):
+        return super(ClubManager, self).get_query_set().get(permalink=permalink)
 class Club(models.Model):
+    def ensure_has_permalink(self):
+        if not self.permalink:
+            clean_name = self.name.replace(self.abbrev, '') if self.abbrev else self.name
+            self.permalink = re.sub('[^a-zA-Z0-9]', '-', clean_name.lower())
+            self.permalink = re.sub('[^a-zA-Z0-9]+$','', self.permalink)
+            self.permalink = re.sub('^[^a-zA-Z0-9]+','', self.permalink)
+            self.permalink = re.sub('-+','-',self.permalink)[:50]
+            if not self.permalink: self.permalink = re.sub('[^a-zA-Z0-9]+','', self.abbrev.lower())
+            self.save()
     school = models.ForeignKey(School)
     category = models.ForeignKey(Category, null=True)
 
@@ -44,13 +59,14 @@ class Club(models.Model):
     review_score = models.IntegerField(default=0)
     hit = models.IntegerField(default=0)
     SGID = models.BigIntegerField(blank=True,unique=True,null=True)
-    callink_permalink = models.TextField(blank=True,null=True)
+    callink_permalink = models.SlugField(blank=True,null=True)
     requirements = models.TextField(blank=True,null=True)
     meeting = models.TextField(blank=True,null=True) #information about club meetings
     address = models.TextField(blank=True,null=True)
     activity_summary = models.TextField(blank=True,null=True)
+    permalink = models.SlugField(blank=True,null=True, unique=True)
 
-    objects = models.Manager()
+    objects = ClubManager()
     facebook_clubs = FacebookManager()
     def is_float(self, val):
         try:
@@ -122,6 +138,10 @@ class Club(models.Model):
 
     def __unicode__(self):
         return "%s" % (self.name)
+@receiver(post_init, sender=Club)
+def post_init_callbacks(sender, instance, **kwargs):
+    instance.ensure_has_permalink()
+
 class Event(models.Model):
     """
     Model fields are modeled very closely after facebook event api attributes
@@ -151,7 +171,7 @@ class Event(models.Model):
         localtimezone = pytz.timezone(settings.TIME_ZONE)
         is_dst = time.localtime( time.mktime(dt.timetuple()) ).tm_isdst == 1
 
-        time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
+        time_without_zone = localtimezone.localize((dt - timedelta(hours=1) if is_dst else dt)).astimezone(localtimezone).replace(tzinfo=None)
         return localtimezone.localize(time_without_zone, is_dst=is_dst )
 
     def __unicode__(self):

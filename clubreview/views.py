@@ -39,7 +39,7 @@ def club_list_view(request, template_name='club_list.html'):
     return render_to_response(template_name, { 'clubs': clubs, 'order': order }, context_instance=context)
 
 def club_info_view(request, club_id, template_name='club_info.html'):
-    club = Club.objects.get(id=int(club_id))
+    club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
     club.save()
     events = list(club.event_set.all()[:5])
