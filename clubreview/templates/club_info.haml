@@ -94,6 +94,8 @@
                             %li
                               %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
                                 Source
+                  - with club=club
+                    - include "includes/url_update_form.html"
 
 
             .card
