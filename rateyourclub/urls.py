@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from clubreview.views import *
 from clubreview.lookups import club_lookup
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -36,3 +37,4 @@ urlpatterns = patterns('',
         club_info_view,
         name='club_info_view'),
 )
+urlpatterns += staticfiles_urlpatterns()
