@@ -1,4 +1,3 @@
-# Create your views here.
 from models import *
 from forms import *
 from django.shortcuts import render_to_response, get_object_or_404
@@ -11,6 +10,7 @@ import itertools
 from django.utils import simplejson
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 def club_list_view(request, template_name='club_list.html'):
 
@@ -38,6 +38,7 @@ def club_list_view(request, template_name='club_list.html'):
     context = RequestContext(request)
     return render_to_response(template_name, { 'clubs': clubs, 'order': order }, context_instance=context)
 
+@login_required
 def club_info_view(request, club_id, template_name='club_info.html'):
     club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
@@ -52,6 +53,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     return render_to_response(template_name,
         { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating }, context_instance=context)
 
+@login_required
 def create_review(request):
     response = {}
     if request.method == 'POST':

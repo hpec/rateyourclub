@@ -1,0 +1,34 @@
+- extends "base.html"
+
+- block title
+    Log in
+
+- block content
+
+    %h1 Log in
+
+    %form{'method':"post", 'action':""}
+        - csrf_token
+
+        .control-group
+            .control-label
+                %label Email
+            .controls
+                %input{'name':'email', 'maxlength':'40', 'type':'text'}
+        .control-group
+            .control-label
+                %label Password
+            .controls
+                %input{'name':'password', 'maxlength':'40', 'type':'password'}
+
+        %button.btn{'type':'submit'} Log in
+
+
+
+
+        %p
+            If you don't have an account, you can
+            %a{'href':"/accounts/register/"} sign up
+            for one.
+        %p Or
+            %a{'href':"{% url 'auth_password_reset' %}"} Forgot Password?

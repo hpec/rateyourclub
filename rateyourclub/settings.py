@@ -119,17 +119,19 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
+    'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
     'compressor',
     'rateyourclub',
     'clubreview',
-    'django.contrib.admin',
+    'registration',
     'selectable',
     'djcelery',
     # Uncomment the next line to enable admin documentation:
@@ -184,3 +186,10 @@ ALLOWED_HOSTS = ['*']
 
 if os.path.exists(os.path.normpath(os.path.join(os.path.dirname(__file__), 'local_settings.py'))):
   from local_settings import *
+
+ACCOUNT_ACTIVATION_DAYS = 14
+EMAIL_PORT = 1025
+EMAIL_HOST = 'localhost'
+
+AUTH_USER_MODEL = 'registration.User'
+LOGIN_URL = '/accounts/login/'

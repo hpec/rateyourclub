@@ -2,11 +2,8 @@
 - load review_form_handler
 
 - block content
-        .row
-            .card{'style': 'margin-left: 20px; padding-bottom: 5px;'}
-                %h6
-                    Displaying
-                    ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
+
+
 
 
         .row
@@ -21,12 +18,17 @@
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
 
-            .span8.card
-                %h3
-                    %a{'href': "#"} Write Review
-                - review_form_handler
+            - if user.is_authenticated
+                .span8.card
+                    %h3
+                        %a{'href': "#"} Write Review
+                    - review_form_handler
 
-            .span8.card
+            .span8.card{'style':'padding-bottom:10px; padding-top:10px'}
+                .pull-left
+
+                        Displaying
+                        ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
                 .pull-right
                     Sort by
                     - if order == 'name'
@@ -51,7 +53,7 @@
                                   %a.pull-right{ 'href' : "{{club.website}}" }
                                       %i.icon-external-link
                                   .clearfix
-                      - if club.facebook_url 
+                      - if club.facebook_url
                           %li
                               %a.pull-right{ 'href' : "{{club.facebook_url}}" }
                                   %i.icon-facebook-sign
@@ -76,7 +78,7 @@
                               Read more
                             %span.hide-text
                               {{club.introduction|urlize}}
-                    
+
 
 
 

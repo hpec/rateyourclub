@@ -9,7 +9,9 @@ input[type="text"]{ height: inherit; }
 #club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 20px; background-color: white; }
 .card { padding: 15px; padding-top: 5px; margin-top: 15px; background-color: white; }
 #event-panel { padding: 15px; padding-top: 5px; background-color: white; width: 235px; margin-left: auto; margin-right: auto;}
-#footer { margin-top: 20px }
+#footer {
+    margin-top: 80px;
+}
 .navbar-inner { height: 40px }
 .backtolist { margin-top: 10px; margin-bottom: 10px;}
 .backtolist a { color: white; }
