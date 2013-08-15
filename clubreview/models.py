@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.db.models.signals import post_init
 from django.dispatch import receiver
 import re
+from django.utils.timezone import is_aware
 
 # Create your models here.
 
@@ -170,8 +171,10 @@ class Event(models.Model):
         import pytz, time
         localtimezone = pytz.timezone(settings.TIME_ZONE)
         is_dst = time.localtime( time.mktime(dt.timetuple()) ).tm_isdst == 1
-
-        time_without_zone = localtimezone.localize((dt - timedelta(hours=1) if is_dst else dt)).astimezone(localtimezone).replace(tzinfo=None)
+        if is_aware(dt):
+             time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
+        else:
+            time_without_zone = localtimezone.localize((dt - timedelta(hours=1) if is_dst else dt)).astimezone(localtimezone).replace(tzinfo=None)
         return localtimezone.localize(time_without_zone, is_dst=is_dst )
 
     def __unicode__(self):
