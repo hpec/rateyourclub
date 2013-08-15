@@ -35,19 +35,14 @@ def login(request, template_name='login.html'):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-        print "authenticating user"
         user = authenticate(username=email, password=password)
         if user is not None:
             if user.is_active:
                 auth_login(request, user)
                 messages.success(request, 'Logged in successfully.')
                 return HttpResponseRedirect('/')
-
-                # Redirect to a success page.
             else:
-
-                print "user inactive"
-                # Return a 'disabled account' error message
+                messages.error(request, 'You have not activated your account yet.')
         else:
             messages.error(request, 'Incorrect username and password.')
             print "no user found"
