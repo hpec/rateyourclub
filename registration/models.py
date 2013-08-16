@@ -31,9 +31,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         activation = self.create_activation(user)
         try:
-            print "sending activation email"
             self.send_activation_email(activation)
-            print "email sent"
         except Exception, e:
             print e
             user.delete()
@@ -45,6 +43,12 @@ class UserManager(BaseUserManager):
         activation_key = hashlib.sha1(salt+user.email).hexdigest()
         activation = Activation.objects.create(user=user, activation_key=activation_key)
         return activation
+
+    def create_invitation(self, email):
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        invitation_key = hashlib.sha1(salt+email).hexdigest()
+        invitation = Invitation.objects.create(email=email, invitation_key=invitation_key)
+        return invitation
 
     def send_activation_email(self, activation):
         current_site = "Rateyourclub"
@@ -63,6 +67,24 @@ class UserManager(BaseUserManager):
                                     })
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [activation.user.email])
+
+    def send_invitation_email(self, invitation):
+        current_site = "Rateyourclub"
+
+        subject = render_to_string('activation_email_subject.txt',
+                                   { 'site': current_site,
+                                     'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+                                    })
+        # Email subject *must not* contain newlines
+        subject = ''.join(subject.splitlines())
+
+        message = render_to_string('activation_email.txt',
+                                   { 'activation_key': invitation.invitation_key,
+                                     'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+                                     'site': current_site,
+                                    })
+
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [invitation.email])
 
     def create_superuser(self, email, password):
         u = self.create_user(email, password)
@@ -132,5 +154,13 @@ class Activation(models.Model):
         return self.activation_key == ACTIVATED or \
                (self.user.date_joined.replace(tzinfo=None) + expiration_date <= datetime.datetime.now())
 
+class Invitation(models.Model):
+    email = models.EmailField(
+        verbose_name='email',
+        max_length=255,
+        unique=True,
+        db_index=True,
+    )
+    invitation_key = models.CharField(_('invitation key'), max_length=40)
 
 

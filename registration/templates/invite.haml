@@ -1,0 +1,20 @@
+- extends "base.html"
+
+- block title
+    Invite
+
+- block content
+
+    %h1 Invite
+
+    %form{'method':"post", 'action':""}
+        - csrf_token
+
+        .control-group
+            .control-label
+                %label Email
+            .controls
+                %input{'name':'email', 'maxlength':'40', 'type':'text'}
+
+        %button.btn{'type':'submit'} Invite
+

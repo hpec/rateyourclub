@@ -7,18 +7,23 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.http import HttpResponseRedirect
 
+from models import *
+
 from registration.models import User
 
 
-class UserCreationForm(forms.ModelForm):
+class UserCreationForm(forms.Form):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
+    email = forms.EmailField(label='Email')
+    screen_name = forms.CharField(label='Screen Name')
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    invitation_key = forms.CharField(label='', widget=forms.HiddenInput)
 
-    class Meta:
-        model = User
-        fields = ('email', 'screen_name')
+    # class Meta:
+    #     model = User
+    #     fields = ('email', 'screen_name')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -35,15 +40,29 @@ class UserCreationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
 
+    def clean(self):
+        if 'invitation_key' in self.cleaned_data:
+            invitation_key = self.cleaned_data['invitation_key']
+            invitation = Invitation.objects.get(invitation_key=invitation_key)
+            if invitation.email != self.cleaned_data['email']:
+                raise forms.ValidationError("Invalid Inivitation")
+        return self.cleaned_data
+
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = User.objects.create_user(email=self.cleaned_data['email'], screen_name=self.cleaned_data['screen_name'],
             password=self.cleaned_data['password1'])
+
+
+
         # user = super(UserCreationForm, self).save(commit=False)
         # user.set_password(self.cleaned_data["password1"])
         # if commit:
         #     user.save()
         return user
+
+
+
 
 
 class UserChangeForm(forms.ModelForm):

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from forms import *
-# Create your views here.
+from models import *
 
 def register(request, template_name='register.html'):
     context = RequestContext(request)
@@ -15,7 +15,15 @@ def register(request, template_name='register.html'):
             form.save()
             return HttpResponseRedirect('/')
     else:
-        form = UserCreationForm()
+        invitation_key = request.GET.get('invitation', None)
+        initial = {}
+        if invitation_key:
+            invitation = Invitation.objects.get(invitation_key=invitation_key)
+            initial['email'] = invitation.email
+            initial['invitation_key'] = invitation_key
+        form = UserCreationForm(initial=initial)
+        print "balba"
+        print form.fields
     return render_to_response(template_name, {'form': form}, context_instance=context)
 
 
@@ -29,6 +37,16 @@ def activate(request, activation_key,
                               { 'user': user,
                                 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS },
                               context_instance=context)
+
+
+def invite(request, template_name='invite.html'):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        invitation = User.objects.create_invitation(email)
+        User.objects.send_invitation_email(invitation)
+
+    context = RequestContext(request)
+    return render_to_response(template_name, context_instance=context)
 
 
 def login(request, template_name='login.html'):

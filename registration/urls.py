@@ -24,7 +24,7 @@ from django.conf.urls.defaults import *
 # from django.views.generic.simple import direct_to_template
 from django.contrib.auth import views as auth_views
 
-from registration.views import activate, login
+from registration.views import activate, login, invite
 from registration.views import register
 
 
@@ -62,9 +62,13 @@ urlpatterns = patterns('',
                        url(r'^password/reset/done/$',
                            auth_views.password_reset_done,
                            name='auth_password_reset_done'),
-                       url(r'^register/$',
+                       url(r'^register/',
                            register,
                            name='registration_register'),
+
+                       url(r'^invite/$',
+                           invite,
+                           name='registration_invite'),
                        # url(r'^register/complete/$',
                        #     direct_to_template,
                        #     {'template': 'registration/registration_complete.html'},
