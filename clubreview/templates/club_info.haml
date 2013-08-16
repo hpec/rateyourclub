@@ -60,7 +60,7 @@
                         %dd
                           {{club.requirements|urlize}}
 
-                      - if club.address
+                    - if club.address
                         %dt.muted
                           Address
                         %dd
@@ -71,29 +71,38 @@
                         %dd
                           {{club.activity_summary|urlize}}
 
-                      - if club.meeting
+                    - if club.meeting
                         %dt.muted
                             Meetings
                         %dd
                           {{club.meeting|urlize}}
+                    - if club.students_berkeley_edu_url
+                        %p
+                          %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
+                            %small Source
 
-                %ul{ 'class' : 'unstyled' }
 
-                  - if club.website
+                %ul.unstyled
+                  - if club.contact_email
+                    %li
+                      %a{ 'href' : "mailto:{{club.contact_email}}"}
+                        %i.icon-envelope-alt
+                        %small
+                            = club.contact_email
+
+                  - if club.website and club.website != club.facebook_url
                       %li
                         %a{ 'href' : "{{club.website}}" }
                             %i.icon-external-link
-                            {{ club.website }}
+                            %small
+                                = club.website
 
-                        - if club.facebook_url
-                          %li
-                              %a{ 'href' : "{{club.facebook_url}}" }
-                                  %i.icon-facebook-sign
-                                  Facebook
-                        - if club.students_berkeley_edu_url
-                            %li
-                              %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
-                                Source
+                  - if club.facebook_url
+                    %li
+                        %a{ 'href' : "{{club.facebook_url}}" }
+                            %i.icon-facebook-sign
+                            %small
+                                  = club.facebook_url
                   - with club=club
                     - include "includes/url_update_form.html"
 
