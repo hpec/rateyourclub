@@ -19,7 +19,9 @@ def register(request, template_name='register.html'):
             if user.is_active:
                 user = authenticate(username=request.POST['email'], password=request.POST['password1'])
                 auth_login(request, user)
-            messages.success(request, "You have successfully created your account!")
+                messages.success(request, "You have successfully created your account!")
+            else:
+                messages.success(request, "You have successfully created your account! Please check your email and confirm your registration.")
             return HttpResponseRedirect('/')
         else:
             pass
@@ -80,7 +82,7 @@ def login(request, template_name='login.html'):
                 messages.success(request, 'Logged in successfully.')
                 return HttpResponseRedirect('/')
             else:
-                messages.error(request, 'You have not activated your account yet.')
+                messages.error(request, 'You have not activated your account yet. Please check your email and confirm your registration.')
         else:
             messages.error(request, 'Incorrect username and password.')
             print "no user found"

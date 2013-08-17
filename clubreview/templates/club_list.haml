@@ -3,9 +3,6 @@
 
 - block content
 
-
-
-
         .row
             .pull-right.span3.card
                 %div{'class':'span3'}
@@ -118,7 +115,7 @@
                                         &rarr;
                         %p
                             page ={clubs.number} of ={clubs.paginator.num_pages}
-        <script type="text/javascript">
+    :javascript
         (function($){
             $(document).ready(function(){
               $(".show-more").click(function(e){
@@ -132,6 +129,5 @@
               })
               });
           })(jQuery)
-        </script>
 
 

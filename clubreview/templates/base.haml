@@ -48,8 +48,9 @@
                         %a{'href':'/accounts/login'} Sign in
     .container
         - if messages
-            - for message in messages
-                <div class="alert alert-{{ message.tags }}" style="margin-bottom:0; margin-top:15px"> {{ message }} </div>
+            %div{'style':'margin-top:15px; margin-bottom:0;'}
+                - for message in messages
+                    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 5px"> {{ message }} </div>
         - block content
         %p#footer
             &copy;
