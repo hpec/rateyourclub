@@ -10,6 +10,10 @@ from django.http import HttpResponseRedirect
 from models import *
 
 
+def check_email_domain(email):
+    domain = email.split('@')[1]
+    return re.search(r'berkeley.edu$', domain)
+
 class UserCreationForm(forms.Form):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -22,8 +26,8 @@ class UserCreationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        domain = email.split('@')[1]
-        if not re.search(r'berkeley.edu$', domain):
+
+        if not check_email_domain(email):
             raise forms.ValidationError("Must use berkeley.edu email")
 
         try:

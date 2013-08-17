@@ -1,17 +1,18 @@
-from models import *
-from forms import *
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.http import HttpResponseRedirect, Http404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core import serializers
-from django.core.exceptions import ValidationError
 import itertools
-from django.utils import simplejson
-from django.db.models import Q
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core import serializers
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils import simplejson
+
+from models import *
+from forms import *
 
 def club_list_view(request, template_name='club_list.html'):
 

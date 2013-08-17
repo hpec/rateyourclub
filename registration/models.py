@@ -154,6 +154,7 @@ class User(AbstractBaseUser):
 class Activation(models.Model):
     user = models.ForeignKey(User, unique=True)
     activation_key = models.CharField(_('activation key'), max_length=40)
+    created_at = models.DateTimeField(_('created_at'), default=timezone.now)
 
     def activation_key_expired(self):
         expiration_date = datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
@@ -168,5 +169,6 @@ class Invitation(models.Model):
         db_index=True,
     )
     invitation_key = models.CharField(_('invitation key'), max_length=40)
+    created_at = models.DateTimeField(_('created_at'), default=timezone.now)
 
 

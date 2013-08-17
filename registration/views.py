@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 from forms import *
 from models import *
 
@@ -52,13 +54,16 @@ def activate(request, activation_key,
                                 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS },
                               context_instance=context)
 
-
+@login_required
 def invite(request, template_name='invite.html'):
     if request.method == 'POST':
         email = request.POST.get('email')
-        invitation = User.objects.create_invitation(email)
-        User.objects.send_invitation_email(invitation)
-        messages.success(request, 'Invitation sent successfully!')
+        if check_email_domain(email):
+            invitation = User.objects.create_invitation(email)
+            User.objects.send_invitation_email(invitation)
+            messages.success(request, 'Invitation sent successfully!')
+        else:
+            messages.error(request, 'You can only send invitation to @berkeley.edu')
 
     context = RequestContext(request)
     return render_to_response(template_name, context_instance=context)
