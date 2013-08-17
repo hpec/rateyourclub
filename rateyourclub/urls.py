@@ -2,6 +2,9 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 from clubreview.views import *
+from clubreview.lookups import club_lookup
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from registration.views import register
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -23,13 +26,21 @@ urlpatterns = patterns('',
     url(r'^clubs/$',
         club_list_view,
         name='club_list_view'),
-    url(r'^clubs/(\d+)/*$',
-        club_info_view,
-        name='club_info_view'),
-    url(r'^review/add/$',
-        add_review,
-        name='add_review'),
+    url(r'^clubs/(\d+)/update', add_url_edit),
+    url(r'^reviews/create/$',
+        create_review,
+        name='create_review'),
+    url(r'^clubs/search/', club_lookup),
+    url(r'^register/', register),
     # url(r'^base$',
     #     TemplateView.as_view(template_name='base.html')),
     (r'^selectable/', include('selectable.urls')),
+
+    url(r'^clubs/([a-zA-Z0-9|-]+)/$',
+        club_info_view,
+        name='club_info_view'),
+
+    (r'^accounts/', include('registration.urls')),
+
 )
+urlpatterns += staticfiles_urlpatterns()

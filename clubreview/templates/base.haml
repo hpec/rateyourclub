@@ -7,15 +7,31 @@
 %head
     %title Berkeley Clubs
     {% compress css %}
-        %link{ 'href' : "{% static 'css/bootstrap.min.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
-        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-        %link{ 'href' : "{% static 'css/style.css' %}", 'rel' : 'stylesheet', 'type' : 'text/css' }
+        %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/bootstrap.min.css' %}" }
+        %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" }
+        %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/style.css' %}" }
     {% endcompress %}
     - include_jquery_libs
+    - include_ui_theme
+    %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
+    %script{'type':"text/javascript"}
+        $(function () {
+            $("#search-box").autocomplete({
+                source: "/clubs/search/",
+                select: function( event, ui ) {
+                    document.location.href='/clubs/'+ui.item.permalink;
+                }
+            });
+            $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
+                $("#rating-val").val(value);
+            }})
+        });
+
 %body
     .navbar.navbar-fixed-top
         .navbar-inner
             .container
+                %a{'href':'/accounts/login'}
                 %a{'class':'brand', 'href': "{% url 'club_list_view' %}"} Berkeley Clubs
                 %form{'class':'navbar-search pull-left', 'action':'/clubs/'}
                     %div{'class':'input-prepend input-append'}
@@ -24,14 +40,24 @@
                         %input{'id':'search-box','type':'text','class':'','placeholder':'Search', 'name':'q'}
                         %button{'class':'btn', 'type':'submit'} Search
                         %button{'class':'btn', 'type':'button'} Categories
+                .pull-right{'style':'margin-top:10px;'}
+                    - if user.is_authenticated
+                        Welcome, {{ user.screen_name }}
+                        %a{'href':'/accounts/logout'} Logout
+                    - else
+                        %a{'href':'/accounts/login'} Sign in
     .container
+        - if messages
+            %div{'style':'margin-top:15px; margin-bottom:0;'}
+                - for message in messages
+                    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 5px"> {{ message }} </div>
         - block content
         %p#footer
-        &copy;
-        - with year_tuple=2013|year_and_current_year
-          {{year_tuple.0}}
-          - if year_tuple.0  != year_tuple.1
-            \-
-            {{ year_tuple.1 }}
-        Daniel Liu and David Su
+            &copy;
+            - with year_tuple=2013|year_and_current_year
+              {{year_tuple.0}}
+              - if year_tuple.0  != year_tuple.1
+                \-
+                {{ year_tuple.1 }}
+            Daniel Liu and David Su
 

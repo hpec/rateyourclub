@@ -24,6 +24,3 @@ def review_form_handler(context):
     else:
         form = ReviewForm(initial=initials)
     return {'form':form}
-
-#t = get_template('review_form.html')
-#register.inclusion_tag(t)(review_form_handler, takes_context=True)

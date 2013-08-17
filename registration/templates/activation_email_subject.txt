@@ -1,0 +1,2 @@
+{% load humanize %}
+[CalBEAT] Activate your CalBEAT account - you have {{ expiration_days|apnumber }} days!

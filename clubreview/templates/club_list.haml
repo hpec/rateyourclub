@@ -2,12 +2,6 @@
 - load review_form_handler
 
 - block content
-        .row
-            .card{'style': 'margin-left: 20px; padding-bottom: 5px;'}
-                %h6
-                    Displaying
-                    ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
-
 
         .row
             .pull-right.span3.card
@@ -21,45 +15,57 @@
                                 print '<li><a href="#">%s (%d)</a></li>' % (category, random.randint(1,1000))
 
 
-            .span8.card
-                %h3
-                    %a{'href': "#"} Write Review
-                - review_form_handler
+            - if user.is_authenticated
+                .span8.card
+                    %h3
+                        %a{'href': "#"} Write Review
+                    - review_form_handler
 
-            .span8.card
+            .span8.card{'style':'padding-bottom:10px; padding-top:10px'}
+                .pull-left
+
+                        Displaying
+                        ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
                 .pull-right
                     Sort by
                     - if order == 'name'
-                        %a{'href':'?order=pop'} Popularity
+                        %a{'href':'?order=pop&q={{request.GET.dict.q}}'} Popularity
                         %strong
-                            %a{'href':'?order=name'} Name
+                            %a{'href':'?order=name&q={{request.GET.dict.q}}'} Name
                     - else
                         %strong
-                            %a{'href':'?order=pop'} Popularity
-                        %a{'href':'?order=name'} Name
+                            %a{'href':'?order=pop&q={{request.GET.dict.q}}'} Popularity
+                        %a{'href':'?order=name&q={{request.GET.dict.q}}'} Name
 
             - for club in clubs
                 .span8.card
                     %ul.unstyled.pull-right
+                      %li
+                        %span.text-info
+                          {% widthratio club.avg_rating 5 5 %}
+                          &times;
+                          %i.icon-star
                       - if club.website
                               %li
-                                  %a{ 'href' : "{{club.website}}" }
+                                  %a.pull-right{ 'href' : "{{club.website}}" }
                                       %i.icon-external-link
-                      - if club.facebook_url 
+                                  .clearfix
+                      - if club.facebook_url
                           %li
-                              %a{ 'href' : "{{club.facebook_url}}" }
+                              %a.pull-right{ 'href' : "{{club.facebook_url}}" }
                                   %i.icon-facebook-sign
                                   .hide-text
                                     {{ club.facebook_url}}
+                              .clearfix
 
 
 
                     %h4
-                        %a{'href' : "{% url 'club_info_view' club.id %}"}
+                        %a{'href' : "{% url 'club_info_view' club.permalink %}"}
                             {{club}}
                     %p
                         %span.intro-text
-                            {{club.introduction|slice:":200"}}
+                            {{club.introduction|slice:":200"|urlize}}
                         - if club.introduction and club.introduction|length  > 200
                             %span.ellipsis
                                 \...
@@ -68,8 +74,8 @@
                             %a.show-more{ 'href' : "#" }
                               Read more
                             %span.hide-text
-                              {{club.introduction}}
-                    
+                              {{club.introduction|urlize}}
+
 
 
 
@@ -109,7 +115,7 @@
                                         &rarr;
                         %p
                             page ={clubs.number} of ={clubs.paginator.num_pages}
-        <script type="text/javascript">
+    :javascript
         (function($){
             $(document).ready(function(){
               $(".show-more").click(function(e){
@@ -123,6 +129,5 @@
               })
               });
           })(jQuery)
-        </script>
 
 

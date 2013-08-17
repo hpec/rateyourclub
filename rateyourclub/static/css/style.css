@@ -9,7 +9,9 @@ input[type="text"]{ height: inherit; }
 #club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 20px; background-color: white; }
 .card { padding: 15px; padding-top: 5px; margin-top: 15px; background-color: white; }
 #event-panel { padding: 15px; padding-top: 5px; background-color: white; width: 235px; margin-left: auto; margin-right: auto;}
-#footer { margin-top: 20px }
+#footer {
+    margin-top: 80px;
+}
 .navbar-inner { height: 40px }
 .backtolist { margin-top: 10px; margin-bottom: 10px;}
 .backtolist a { color: white; }
@@ -21,4 +23,32 @@ input[type="text"]{ height: inherit; }
     -o-border-radius: 0px;
     border-radius: 0px;
     border: 0px;
+}
+
+.review-content {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#review_form  { text-align:left }
+#review_form .control-group { margin-bottom: 5px }
+#review_form .control-label { margin-left:0px; width:20px }
+#review_form .controls { margin-left:80px }
+#id_club_0 { width:400px }
+#id_ratings { width:400px }
+#id_content { width:400px }
+
+a.star, .rating-star-wrapper .bar-rating a {
+    background: url(../img/star.png);
+    width: 24px;
+    height: 24px;
+    display: block;
+    float: left;
+}
+
+a.star.selected,
+.rating-star-wrapper .bar-rating a:hover,
+.rating-star-wrapper .bar-rating a.active,
+.rating-star-wrapper .bar-rating a.selected {
+    background-position: 0 24px;
 }

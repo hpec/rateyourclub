@@ -1,0 +1,2 @@
+{% load humanize %}
+[CalBEAT] You are invited to try CalBEAT.com, get the most of campus life at Berkeley!

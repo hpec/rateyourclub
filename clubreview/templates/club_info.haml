@@ -1,43 +1,43 @@
 - extends "base.html"
-
-- load review_form_handler
 - load static
+- load tz
 
 - block content
-    :css
-        a.star {
-            background: url({% static "img/star.png" %});
-            width: 24px;
-            height: 24px;
-            display: block;
-            float: left;
-        }
-        a.star.selected {
-            background-position: 0 24px;
-        }
-        .review-content {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-
     %script{'type':"text/javascript"}
         $(function () {
+            $('#form-errors').hide();
+
             $('.review .rating div').each(function() {
                 var rating = $(this).data("rating");
-                for (var i=0; i<rating; i++) {
+                for (var i=0; i < rating; i++) {
                     $(this).append($("<a>").toggleClass("star selected"));
                 }
 
             })
 
             avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
-            for (var i=0; i<avgRating; i++) {
+            for (var i=0; i < avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
             }
 
-            for (var i=0; i<5-avgRating; i++) {
+            for (var i=0; i < 5-avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star"))
             }
+
+            $('#review_form_submit').click(function(){
+                $.post('/reviews/create/', $('#review_form').serialize(), function(response){
+                    if (response.status == 'success') {
+                        location.reload();
+                    } else {
+                        $.each(response.error, function(key, val) {
+                            $('#form-errors').append($('<div>').text(val[0]));
+                        });
+                        $('#form-errors').show();
+                    }
+
+                })
+            })
+
         })
 
     #main-wrapper.row
@@ -45,8 +45,8 @@
             #club-name.hero-unit.no-border-radius
                 %h3 {{ club }}
                 %blockquote
-                        %p
-                            {{ club.introduction }}
+                    %p
+                        {{ club.introduction|urlize }}
 
                 .avg-rating-stars.pull-left
                 %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
@@ -58,9 +58,9 @@
                         %dt.muted
                           Requirements
                         %dd
-                          {{club.requirements}}
+                          {{club.requirements|urlize}}
 
-                      - if club.address
+                    - if club.address
                         %dt.muted
                           Address
                         %dd
@@ -69,33 +69,42 @@
                         %dt.muted
                           Activities
                         %dd
-                          {{club.activity_summary}}
+                          {{club.activity_summary|urlize}}
 
-                      - if club.meeting
+                    - if club.meeting
                         %dt.muted
                             Meetings
                         %dd
-                          {{club.meeting}}
+                          {{club.meeting|urlize}}
+                    - if club.students_berkeley_edu_url
+                        %p
+                          %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
+                            %small Source
 
-                %ul{ 'class' : 'unstyled'}
 
-                  - if club.website
+                %ul.unstyled
+                  - if club.contact_email
+                    %li
+                      %a{ 'href' : "mailto:{{club.contact_email}}"}
+                        %i.icon-envelope-alt
+                        %small
+                            = club.contact_email
+
+                  - if club.website and club.website != club.facebook_url
                       %li
                         %a{ 'href' : "{{club.website}}" }
                             %i.icon-external-link
-                            {{ club.website }}
+                            %small
+                                = club.website
 
-                        - if club.facebook_url
-                          %li
-                              %a{ 'href' : "{{club.facebook_url}}" }
-                                  %i.icon-facebook-sign
-                                  Facebook
-                        - if club.students_berkeley_edu_url
-                            %li
-                              %a.muted{ 'href' : "{{club.students_berkeley_edu_url}}" }
-                                Source
-
-
+                  - if club.facebook_url
+                    %li
+                        %a{ 'href' : "{{club.facebook_url}}" }
+                            %i.icon-facebook-sign
+                            %small
+                                  = club.facebook_url
+                  - with club=club
+                    - include "includes/url_update_form.html"
 
 
             .card
@@ -115,17 +124,38 @@
                           %blockquote
                             %p {{ review.content }}
                         %hr
-
-
                 - empty
                     %p No reviews yet!
+
             %ul.pager
               %li.previous
                 %a{'href': "{{request.META.HTTP_REFERER}}"}
                     &larr;  Previous
 
+            .review-form-wrapper
+                %form#review_form.form-horizontal
+                    - csrf_token
+                    .form-fieldset
+                        #form-errors.alert.alert-error
+                    %input{'type':"hidden", 'id':"club_id", 'name':"club_id", 'value':"{{ club.id }}"}
+                    .control-group
+                        .control-label Content
+                        .controls
+                            %textarea{'cols':"20", 'id':"id_content", 'name':"content", 'rows':"5"}
+                    %input{'type':"hidden", 'id':"rating-val", 'name':"rating-val", 'value':"3"}
+                    .control-group
+                        .control-label Ratings
+                        .controls
+                            .input.select.rating-star-wrapper
+                                %select#rating
+                                    %option{'value':"1"} 1
+                                    %option{'value':"2"} 2
+                                    %option{'value':"3", 'selected':'true'} 3
+                                    %option{'value':"4"} 4
+                                    %option{'value':"5"} 5
 
-            - review_form_handler
+                    %button#review_form_submit.btn-primary.btn{'type':'button'} Submit
+
 
         .span4
             #event-panel
@@ -137,10 +167,15 @@
                     %div{'style':'font-size:12px; color:#aaa;'}
                         {{ event.location }}
                     %div{'style':'font-size:12px; color:#aaa;'}
-                        {{ event.start_time }}
+                        {% localtime off %}
+                            {{ event.display_start_time }}
+                            to
+                            {{ event.display_end_time }}
+                        {% endlocaltime %}
                     %hr
-                - empty
-                    No events listed!
+
                 - if events
                     %a{'href':'#'} View more
+                - else
+                    No events listed!
 
