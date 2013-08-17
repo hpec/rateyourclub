@@ -19,7 +19,9 @@
             %div{'style':'margin-right:auto; margin-left:auto;'}
                 %button.btn-primary.btn{'type':"submit"} Register
 
-    <script type="text/javascript">
+    %script{'tyoe':'text/javascript', 'src':'/static/js/bootstrap.js'}
+
+    :javascript
         $(function(){
             function getURLParameter(name) {
                 return decodeURI(
@@ -29,5 +31,9 @@
             if (getURLParameter('invitation') != "null") {
                 $('#id_email').attr('readonly', 'readonly');
             }
+            $("#id_email").popover({'content':'You need to use <strong>@berkeley.edu</strong> to register. Please enter a valid email address as we will send confirmation link to this address. Later you will use this email to login.', 'trigger':'focus', 'html':true});
+            $("#id_screen_name").popover({'content':'This will be displayed when you post reviews, but you can also post reviews as <font color=#999999>Anonymous</font>.', 'trigger':'focus', 'html':true});
+            $("#id_password1").popover({'content':'Minimum length:  <font color=#0088cc>6</font>', 'trigger':'focus', 'html':true});
+            $("#id_password2").popover({'content':'Please enter your password again.', 'trigger':'focus'});
+
         })
-    </script>
