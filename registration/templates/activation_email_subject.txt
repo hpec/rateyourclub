@@ -1,2 +1,2 @@
 {% load humanize %}
-[Rateyourclub] Activate your Rateyourclub account - you have {{ expiration_days|apnumber }} days!
+[CalBEAT] Activate your CalBEAT account - you have {{ expiration_days|apnumber }} days!

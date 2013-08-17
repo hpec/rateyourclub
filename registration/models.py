@@ -14,7 +14,11 @@ from django.utils.translation import ugettext_lazy as _
 
 SHA1_RE = re.compile('^[a-f0-9]{40}$')
 ACTIVATED = u"ALREADY_ACTIVATED"
-# Create your models here.
+
+def generate_random_key(info):
+    salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+    return hashlib.sha1(salt+info).hexdigest()
+
 
 class UserManager(BaseUserManager):
 
@@ -24,34 +28,43 @@ class UserManager(BaseUserManager):
             raise ValueError('User must have an email address')
         email = self.normalize_email(email)
         user = self.model(email=email, screen_name=screen_name,
-                          is_staff=False, is_active=False,
+                          is_staff=False, is_active=True,
                           last_login=now, date_joined=now)
 
         user.set_password(password)
         user.save(using=self._db)
+        return user
+
+    def create_inactive_user(self, email, screen_name, password=None):
+        user = self.create_user(email, screen_name, password)
         activation = self.create_activation(user)
         try:
             self.send_activation_email(activation)
+            user.is_active = False
+            user.save()
         except Exception, e:
-            print e
+            print '[ERROR]: Fail to create inactive user'
+            print '[ERROR]:', e
             user.delete()
             activation.delete()
         return user
 
+    def create_superuser(self, email, password):
+        u = self.create_user(email, password)
+        u.is_staff = True
+        u.is_active = True
+        u.is_superuser = True
+        u.save(using=self._db)
+        return u
+
     def create_activation(self, user):
-        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
-        activation_key = hashlib.sha1(salt+user.email).hexdigest()
-        activation = Activation.objects.create(user=user, activation_key=activation_key)
-        return activation
+        return Activation.objects.create(user=user, activation_key=generate_random_key(user.email))
 
     def create_invitation(self, email):
-        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
-        invitation_key = hashlib.sha1(salt+email).hexdigest()
-        invitation = Invitation.objects.create(email=email, invitation_key=invitation_key)
-        return invitation
+        return Invitation.objects.create(email=email, invitation_key=generate_random_key(email))
 
     def send_activation_email(self, activation):
-        current_site = "Rateyourclub"
+        current_site = "CalBEAT"
 
         subject = render_to_string('activation_email_subject.txt',
                                    { 'site': current_site,
@@ -69,30 +82,23 @@ class UserManager(BaseUserManager):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [activation.user.email])
 
     def send_invitation_email(self, invitation):
-        current_site = "Rateyourclub"
+        current_site = "CalBEAT"
 
-        subject = render_to_string('activation_email_subject.txt',
+        subject = render_to_string('invitation_email_subject.txt',
                                    { 'site': current_site,
                                      'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
                                     })
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
 
-        message = render_to_string('activation_email.txt',
-                                   { 'activation_key': invitation.invitation_key,
-                                     'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+        message = render_to_string('invitation_email.txt',
+                                   { 'invitation_key': invitation.invitation_key,
                                      'site': current_site,
                                     })
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [invitation.email])
 
-    def create_superuser(self, email, password):
-        u = self.create_user(email, password)
-        u.is_staff = True
-        u.is_active = True
-        u.is_superuser = True
-        u.save(using=self._db)
-        return u
+
 
     def activate_user(self, activation_key):
         # Make sure the key we're trying conforms to the pattern of a
@@ -112,6 +118,7 @@ class UserManager(BaseUserManager):
                 return user
         return False
 
+
 class User(AbstractBaseUser):
     email = models.EmailField(
         verbose_name='email address',
@@ -120,7 +127,6 @@ class User(AbstractBaseUser):
         db_index=True,
     )
     screen_name = models.CharField(_('screen name'), max_length=30)
-
     is_active = models.BooleanField(_('active'), default=False,
         help_text=_('Designates whether this user should be treated as '
                     'active. Unselect this instead of deleting accounts.'))

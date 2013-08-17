@@ -8,6 +8,7 @@ from django.core import serializers
 from django.core.exceptions import ValidationError
 import itertools
 from django.utils import simplejson
+from django.db.models import Q
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -22,7 +23,7 @@ def club_list_view(request, template_name='club_list.html'):
     else:
         order_by = '-hit'
 
-    clubs = Club.objects.filter(name__icontains=query).order_by(order_by)
+    clubs = Club.objects.filter(Q(name__icontains=query)|Q(introduction__icontains=query)).order_by(order_by)
 
     paginator = Paginator(clubs, 25) # Show 25 clubs per page
 

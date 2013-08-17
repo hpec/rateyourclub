@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib import messages
 from forms import *
 from models import *
@@ -12,18 +13,30 @@ def register(request, template_name='register.html'):
     if request.method == 'POST':
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            if user.is_active:
+                user = authenticate(username=request.POST['email'], password=request.POST['password1'])
+                auth_login(request, user)
+            messages.success(request, "You have successfully created your account!")
             return HttpResponseRedirect('/')
+        else:
+            pass
+            # for field, error in form.errors.items():
+            #     messages.error(request, "{0}: {1}".format(field, form.errors[field]))
     else:
         invitation_key = request.GET.get('invitation', None)
         initial = {}
         if invitation_key:
-            invitation = Invitation.objects.get(invitation_key=invitation_key)
-            initial['email'] = invitation.email
-            initial['invitation_key'] = invitation_key
+            try:
+                invitation = Invitation.objects.get(invitation_key=invitation_key)
+                initial['email'] = invitation.email
+                initial['invitation_key'] = invitation_key
+            except Invitation.DoesNotExist:
+                messages.error(request, "Invalid Invitation")
+                return HttpResponseRedirect('/accounts/register/')
+
         form = UserCreationForm(initial=initial)
-        print "balba"
-        print form.fields
+
     return render_to_response(template_name, {'form': form}, context_instance=context)
 
 
@@ -32,6 +45,7 @@ def activate(request, activation_key,
     activation_key = activation_key.lower() # Normalize before trying anything with it.
     user = User.objects.activate_user(activation_key)
     context = RequestContext(request)
+    messages.success(request, 'Your account is activated!')
 
     return render_to_response(template_name,
                               { 'user': user,
@@ -44,6 +58,7 @@ def invite(request, template_name='invite.html'):
         email = request.POST.get('email')
         invitation = User.objects.create_invitation(email)
         User.objects.send_invitation_email(invitation)
+        messages.success(request, 'Invitation sent successfully!')
 
     context = RequestContext(request)
     return render_to_response(template_name, context_instance=context)
@@ -67,3 +82,9 @@ def login(request, template_name='login.html'):
             # Return an 'invalid login' error message.
     context = RequestContext(request)
     return render_to_response(template_name, context_instance=context)
+
+def logout(request):
+    auth_logout(request)
+    messages.info(request, 'You have successfully logged out.')
+    return HttpResponseRedirect('/')
+

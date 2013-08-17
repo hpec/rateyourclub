@@ -22,7 +22,6 @@
                     document.location.href='/clubs/'+ui.item.permalink;
                 }
             });
-            $("#search-box").attr('autocomplete', 'on')
             $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
                 $("#rating-val").val(value);
             }})
@@ -41,9 +40,10 @@
                         %input{'id':'search-box','type':'text','class':'','placeholder':'Search', 'name':'q'}
                         %button{'class':'btn', 'type':'submit'} Search
                         %button{'class':'btn', 'type':'button'} Categories
-                .pull-right{'style':'margin-top:8px;'}
+                .pull-right{'style':'margin-top:10px;'}
                     - if user.is_authenticated
                         Welcome, {{ user.screen_name }}
+                        %a{'href':'/accounts/logout'} Logout
                     - else
                         %a{'href':'/accounts/login'} Sign in
     .container

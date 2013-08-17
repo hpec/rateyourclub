@@ -2,14 +2,12 @@ import re
 
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 
 from models import *
-
-from registration.models import User
 
 
 class UserCreationForm(forms.Form):
@@ -19,18 +17,22 @@ class UserCreationForm(forms.Form):
     screen_name = forms.CharField(label='Screen Name')
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
-    invitation_key = forms.CharField(label='', widget=forms.HiddenInput)
+    invitation_key = forms.CharField(label='', widget=forms.HiddenInput, required=False)
 
-    # class Meta:
-    #     model = User
-    #     fields = ('email', 'screen_name')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
         domain = email.split('@')[1]
         if not re.search(r'berkeley.edu$', domain):
             raise forms.ValidationError("Must use berkeley.edu email")
-        return email
+
+        try:
+            User.objects.get(email=email)
+            raise forms.ValidationError("The email address is already in use")
+        except User.DoesNotExist:
+            pass
+
+        return self.cleaned_data['email']
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -41,28 +43,34 @@ class UserCreationForm(forms.Form):
         return password2
 
     def clean(self):
-        if 'invitation_key' in self.cleaned_data:
-            invitation_key = self.cleaned_data['invitation_key']
-            invitation = Invitation.objects.get(invitation_key=invitation_key)
-            if invitation.email != self.cleaned_data['email']:
+        print self.cleaned_data
+        invitation_key = self.cleaned_data['invitation_key']
+        if invitation_key:
+            SHA1_RE = re.compile('^[a-f0-9]{40}$')
+            if not SHA1_RE.search(activation_key):
                 raise forms.ValidationError("Invalid Inivitation")
+
+            try:
+                invitation = Invitation.objects.get(invitation_key=invitation_key)
+            except Invitation.DoesNotExist:
+                raise forms.ValidationError("Invalid Inivitation")
+
+            if 'email' in self.cleaned_data and invitation.email != self.cleaned_data['email']:
+                raise forms.ValidationError("Invalid Inivitation")
+
+            self.cleaned_data['email'] = invitation.email
+
         return self.cleaned_data
 
     def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = User.objects.create_user(email=self.cleaned_data['email'], screen_name=self.cleaned_data['screen_name'],
-            password=self.cleaned_data['password1'])
+        if self.cleaned_data['invitation_key']:
+            user = User.objects.create_user(email=self.cleaned_data['email'], screen_name=self.cleaned_data['screen_name'],
+                password=self.cleaned_data['password1'])
+        else:
+            user = User.objects.create_inactive_user(email=self.cleaned_data['email'], screen_name=self.cleaned_data['screen_name'],
+                password=self.cleaned_data['password1'])
 
-
-
-        # user = super(UserCreationForm, self).save(commit=False)
-        # user.set_password(self.cleaned_data["password1"])
-        # if commit:
-        #     user.save()
         return user
-
-
-
 
 
 class UserChangeForm(forms.ModelForm):
