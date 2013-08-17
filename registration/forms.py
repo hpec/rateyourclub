@@ -38,6 +38,12 @@ class UserCreationForm(forms.Form):
 
         return self.cleaned_data['email']
 
+    def clean_password1(self):
+        password1 = self.cleaned_data.get("password1")
+        if len(password1) < 6:
+            raise forms.ValidationError("Password must be at least 6 characters")
+        return password1
+
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
@@ -47,11 +53,9 @@ class UserCreationForm(forms.Form):
         return password2
 
     def clean(self):
-        print self.cleaned_data
         invitation_key = self.cleaned_data['invitation_key']
         if invitation_key:
-            SHA1_RE = re.compile('^[a-f0-9]{40}$')
-            if not SHA1_RE.search(activation_key):
+            if not valid_hash(invitation_key):
                 raise forms.ValidationError("Invalid Inivitation")
 
             try:

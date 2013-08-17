@@ -28,7 +28,7 @@ def register(request, template_name='register.html'):
     else:
         invitation_key = request.GET.get('invitation', None)
         initial = {}
-        if invitation_key:
+        if valid_hash(invitation_key):
             try:
                 invitation = Invitation.objects.get(invitation_key=invitation_key)
                 initial['email'] = invitation.email

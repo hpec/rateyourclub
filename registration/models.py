@@ -19,6 +19,9 @@ def generate_random_key(info):
     salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
     return hashlib.sha1(salt+info).hexdigest()
 
+def valid_hash(string):
+    return string and SHA1_RE.search(string)
+
 
 class UserManager(BaseUserManager):
 
@@ -104,7 +107,7 @@ class UserManager(BaseUserManager):
         # Make sure the key we're trying conforms to the pattern of a
         # SHA1 hash; if it doesn't, no point trying to look it up in
         # the database.
-        if SHA1_RE.search(activation_key):
+        if valid_hash(activation_key):
             try:
                 activation = Activation.objects.get(activation_key=activation_key)
             except Activation.DoesNotExist:
