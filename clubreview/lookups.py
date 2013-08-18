@@ -14,6 +14,7 @@ registry.register(ClubLookUp)
 
 
 def club_lookup(request):
+    #TODO: refactor and share this search logic with club_list_view
     result = []
     query = request.GET.get('term')
     querySet = Club.objects.all()
