@@ -80,13 +80,13 @@ def login(request, template_name='login.html'):
             if user.is_active:
                 auth_login(request, user)
                 messages.success(request, 'Logged in successfully.')
-                return HttpResponseRedirect('/')
+                next_url = request.REQUEST.get('next', None)
+                return HttpResponseRedirect(next_url) if next_url else HttpResponseRedirect('/')
             else:
                 messages.error(request, 'You have not activated your account yet. Please check your email and confirm your registration.')
         else:
             messages.error(request, 'Incorrect username and password.')
-            print "no user found"
-            # Return an 'invalid login' error message.
+
     context = RequestContext(request)
     return render_to_response(template_name, context_instance=context)
 
