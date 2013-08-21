@@ -22,7 +22,7 @@ class School(models.Model):
         return "%s" % (self.name)
 
 class Category(models.Model):
-    name = models.CharField(max_length=NAME_LENGTH)
+    name = models.CharField(max_length=NAME_LENGTH, unique=True)
 
     def __unicode__(self):
         return "%s" % (self.name)
@@ -99,16 +99,26 @@ class Club(models.Model):
         return self.review_set.all()
     @property
     def num_ratings(self):
-        return len( [ r for r in  self.reviews if ( self.is_float(r.ratings) and float( r.ratings ) > 0 ) ] )
+        # This operation is too expensive # return len( [ r for r in  self.reviews if ( self.is_float(r.ratings) and float( r.ratings ) > 0 ) ] )
+        return self.review_count
     @property
     def total_rating(self):
-        return sum( map(lambda r : (float(r.ratings) if self.is_float(r.ratings) else 0), self.reviews) )
+        # This operation is too expensive # return sum( map(lambda r : (float(r.ratings) if self.is_float(r.ratings) else 0), self.reviews) )
+        return self.review_score
     @property
     def avg_rating(self):
-        if self.num_ratings > 0:
-            return self.total_rating / self.num_ratings
-        else:
-            return 0
+        return self.total_rating / self.num_ratings if self.num_ratings > 0 else 0
+
+    def relevance(self, query):
+        from nltk.tokenize import wordpunct_tokenize
+
+        name_words = wordpunct_tokenize(self.name.lower())
+        score = 0
+        for word in query.split():
+            if word in name_words: score += 20
+
+        return score + self.hit * 0.1
+
     def facebook_event_update(self):
         import fb_events
         if self.facebook_id == None:

@@ -14,9 +14,14 @@ registry.register(ClubLookUp)
 
 
 def club_lookup(request):
+    #TODO: refactor and share this search logic with club_list_view
     result = []
-    search_string = request.GET.get('term')
-    clubs = Club.objects.filter(Q(name__icontains=search_string)|Q(introduction__icontains=search_string))[:6]
-    for club in clubs:
+    query = request.GET.get('term')
+    querySet = Club.objects.all()
+    for word in query.split():
+        querySet = querySet.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
+
+    sorted_clubs = sorted(list(querySet), key=lambda club: -club.relevance(query))[:12]
+    for club in sorted_clubs:
         result.append({'label':club.name, 'id':club.id, 'permalink':club.permalink })
     return HttpResponse(json.dumps(result), content_type="application/json")

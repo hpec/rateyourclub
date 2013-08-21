@@ -15,16 +15,14 @@ from models import *
 from forms import *
 
 def club_list_view(request, template_name='club_list.html'):
-
     order = request.GET.get('order', '')
     query = request.GET.get('q', '')
 
-    if order == 'name':
-        order_by = 'name'
-    else:
-        order_by = '-hit'
+    order_by = 'name' if order == 'name' else '-hit'
 
-    clubs = Club.objects.filter(Q(name__icontains=query)|Q(introduction__icontains=query)).order_by(order_by)
+    clubs = Club.objects.all().order_by(order_by)
+    for word in query.split():
+        clubs = clubs.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
 
     paginator = Paginator(clubs, 25) # Show 25 clubs per page
 
