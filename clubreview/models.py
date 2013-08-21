@@ -22,7 +22,7 @@ class School(models.Model):
         return "%s" % (self.name)
 
 class Category(models.Model):
-    name = models.CharField(max_length=NAME_LENGTH)
+    name = models.CharField(max_length=NAME_LENGTH, unique=True)
 
     def __unicode__(self):
         return "%s" % (self.name)
