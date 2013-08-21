@@ -1,11 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError
 from nltk.tokenize import word_tokenize, wordpunct_tokenize, sent_tokenize
 from clubreview.models import *
 import operator
 import re
 import pdb
 
-CATEGORIES = ['academic', 'arts', 'cultural', 'polictical', 'profession', 'religious', 'service', 'sport']
+CATEGORIES = ['Academic', 'Arts', 'Cultural', 'Polictical', 'Profession', 'Religious', 'Service', 'Sport']
 
 
 def find(word1, word2):
@@ -13,13 +14,13 @@ def find(word1, word2):
 
 def main():
     determinstic_words = {
-        'academic':['academic',],
-        'profession':['professional', 'professionals', 'financial', 'profession','entrepreneurship', 'entrepreneurs'],
-        'service':['service', 'services', 'communities', 'community', 'welfare', 'volunteer', 'volunteers'],
-        'cultural':['cultural', 'china', 'chinese', 'japan', 'japanese', 'african', 'afghan'],
-        'religious':['jewish', 'christian', 'christ'],
-        'arts':['art', 'performance', 'artistic'],
-        'sport':['sport', 'athletics', 'athletic', 'tournament', 'basketball', 'football', 'soccer', 'badminton', 'archery', 'tennis', 'swim'],
+        'Academic':['academic',],
+        'Profession':['professional', 'professionals', 'financial', 'profession','entrepreneurship', 'entrepreneurs'],
+        'Service':['service', 'services', 'communities', 'community', 'welfare', 'volunteer', 'volunteers'],
+        'Cultural':['cultural', 'china', 'chinese', 'japan', 'japanese', 'african', 'afghan'],
+        'Religious':['jewish', 'christian', 'christ'],
+        'Arts':['art', 'performance', 'artistic'],
+        'Sport':['sport', 'athletics', 'athletic', 'tournament', 'basketball', 'football', 'soccer', 'badminton', 'archery', 'tennis', 'swim'],
     }
     # related_words = {
     #     'art':['art', 'arts', , 'op art', 'pop art', 'art deco', 'art form', 'art house', 'art-house', 'clip art', 'fine art', 'art gallery', 'art nouveau', 'art therapy',  'kinetic art', 'martial art', 'art director', 'conceptual art', "objet d'art", 'performance art', 'work of art', 'state-of-the-art', 'the black art', 'thou art', 'noble art', 'craft', 'craftsmanship', 'ingenuity', 'mastery', 'artistry', 'imagination', 'Biedermeier', 'Parian', 'Queen Anne', 'annulate', 'anomphalous', 'banded', 'chryselephantine', 'aperture', 'collared', 'artificial', 'condensed', 'camera', 'copied'],
@@ -53,6 +54,10 @@ def main():
                     max_score = score
 
         if max_cat and max_score > 2:
+            category = Category.objects.get(name=max_cat)
+            club.category = category
+            club.save()
+
             try:
                 # print name, max_cat, max_score
                 result[max_cat].append(name)
@@ -86,10 +91,23 @@ def show_word_stats():
     for a, b in sorted_x:
         print a, b
 
+
+def create_categories():
+    print "Creating Categorie"
+    for category_name in CATEGORIES:
+        try:
+            category = Category.objects.create(name=category_name)
+        except IntegrityError:
+            print "Category Already Exists:", category_name
+            pass
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        create_categories()
         main()
         # show_word_stats()
+
 
 
 
