@@ -93,7 +93,7 @@ def show_word_stats():
 
 
 def create_categories():
-    print "Creating Categorie"
+    print "Creating Category ..."
     for category_name in CATEGORIES:
         try:
             category = Category.objects.create(name=category_name)
