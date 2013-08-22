@@ -6,6 +6,7 @@ import pytz
 import pdb
 from bs4 import BeautifulSoup
 from rateyourclub import settings
+from constance import *
 
 """
 simple library for retrieving events from facebook groups
@@ -45,15 +46,12 @@ class FacebookGroup(object):
     Retrieve your access token here https://developers.facebook.com/tools/explorer/
     Inspiration from fbconsole and facebook-sdk
     '''
-    def __init__(self, url, user_access_token = USER_ACCESS_TOKEN):
+    def __init__(self, url, user_access_token = config.FACEBOOK_USER_ACCESS_TOKEN, email = config.FACEBOOK_USER_EMAIL, password = config.FACEBOOK_USER_PASSWORD, APP_ID = config.FACEBOOK_APP_ID, APP_SECRET = config.FACEBOOK_APP_SECRET_ID):
         try:
             self.user_access_token = user_access_token
             self.app_access_token = facebook.get_app_access_token(APP_ID, APP_SECRET)
-            if os.path.isfile(settings.CONFIGURATION_YAML):
-                data = yaml.safe_load(file(settings.CONFIGURATION_YAML))
-                if set(('email','password')).issubset(data):
-                  self.email = data['email']
-                  self.password = data['password']
+            if email : self.email = email
+            if password : self.password = password
         except urllib2.HTTPError, e:
             response = _parse_json(e.read())
             raise facebook.GraphAPIError(response)

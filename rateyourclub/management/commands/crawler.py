@@ -258,7 +258,11 @@ def main():
                                     facebook_url = urlparse.urljoin(facebook_url.netloc, facebook_url.path)
                                     club.facebook_url = "https://wwww.%s" % facebook_url
                                     club.website = club.facebook_url
-                                    fb = fb_events.FacebookGroup(club.facebook_url)
+                                    fb = fb_events.FacebookGroup(club.facebook_url, user_access_token = config.FACEBOOK_USER_ACCESS_TOKEN,
+                                                                 email = config.FACEBOOK_USER_EMAIL,
+                                                                 password = config.FACEBOOK_USER_PASSWORD,
+                                                                 APP_ID = config.FACEBOOK_APP_ID,
+                                                                 APP_SECRET = config.FACEBOOK_APP_SECRET_ID)
                                     fb.get_id()
                                     if fb.id:
                                         club.facebook_id = long(fb.id)
