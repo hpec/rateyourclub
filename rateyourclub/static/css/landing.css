@@ -1,0 +1,19 @@
+body{ 
+  background: url(http://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/UCBerkeleyCampus.jpg/800px-UCBerkeleyCampus.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height : 100%;
+}
+#landing_main {
+    margin-top : 2%;
+    background-color : rgba(0,0,0, 0.8);
+    color : white;
+}
+#landing_main_content {
+}
+
+#landing-hero  {
+  background-color : inherit;
+}

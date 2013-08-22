@@ -21,6 +21,11 @@ urlpatterns = patterns('',
     url(r'^$',
         club_list_view,
         name='club_list_view'),
+
+    url(r'landing$',
+        landing,
+        name='landing'),
+
     url(r'^admin/', include(admin.site.urls)),
     #url(include('clubreview.urls'))
     url(r'^clubs/$',
