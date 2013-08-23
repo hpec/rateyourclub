@@ -1,0 +1,67 @@
+- extends "base.html"
+- load static
+- load tz
+- block content
+  #landing_main.container-fluid.clearfix
+    #landing_main_content.row-fluid.clearfix
+      .span12
+        #landing-hero.hero-unit
+            %h1.lead CalBeat
+            CalBeat is the easiest way to discover clubs at UC Berkeley
+            %blockquote
+              %p  Being Berkeley means being involved and connected, on campus and in the community.
+              %small
+                ="http://admissions.berkeley.edu/clubs"|urlize
+            %ul.thumbnails
+              %li.span6
+                .thumbnails
+                  .page-header
+                    %h3 
+                      %i.icon-search
+                      Discover
+                  %p
+                    Simple search to get you going.
+                  %b
+                    Find
+                  %ul
+                    %li
+                      Contact info
+                    %li
+                      Club requirements
+                    %li
+                      Meeting Times and Locations
+                    %li
+                      Activity Summary
+              %li.span6
+                .thumbnails
+                  .page-header
+                    %h3 
+                        %i.icon-facebook-sign
+                        Facebook Events
+                  %p
+                    Stay social and up to date on club events.
+            .clearfix
+            %ul.thumbnails
+              %li.span6
+                .thumbnails
+                    .page-header
+                        %h3 
+                          %i.icon-star
+                          Ratings
+                    %p
+                      Write reviews with a passion!
+                      Support those clubs that you care about.
+                      Find out what clubs are relevant on campus.
+              %li.span6
+                .thumbnails
+                    .page-header
+                        %h3 
+                          %i.icon-mobile-phone
+                          Mobile Friendly
+                    %p
+                      Use <em>CalBeat</em> on the go on any device.
+
+       
+  %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/landing.css' %}" }
+
+

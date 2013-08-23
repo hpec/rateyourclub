@@ -86,6 +86,14 @@ class Club(models.Model):
     @property
     def students_berkeley_edu_url(self):
         return "http://students.berkeley.edu/osl/studentgroups/public/index.asp?todo=getgroupinfo&SGID=%s" % self.SGID if self.SGID else None
+    @property
+    def legacy_students_berkeley_edu_url(self):
+        """
+        The students.berkeley.edu website was deprecated around August 2013 but many of the urls have been archived.
+        """
+        return "http://web.archive.org/web/20130127122716/" + self.students_berkeley_edu_url
+
+
 
     @property
     def _EventManager(self):

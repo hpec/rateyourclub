@@ -1,6 +1,8 @@
 # Django settings for rateyourclub project.
+from datetime import datetime
 import os
 import djcelery
+from django.utils import timezone
 djcelery.setup_loader()
 
 DEBUG = True
@@ -134,6 +136,8 @@ INSTALLED_APPS = (
     'registration',
     'selectable',
     'djcelery',
+    'constance',
+    'constance.backends.database',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -184,6 +188,16 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
+# https://pypi.python.org/pypi/django-constance
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_CONFIG = {
+    'FACEBOOK_APP_ID': ('APP_SECRET', 'Facebook app id used to retrieve facebook graph data'),
+    'FACEBOOK_APP_SECRET_ID': ('APP_SECRET', 'Facebook app secret id used to retrireve facebook graph data'),
+    'FACEBOOK_USER_ACCESS_TOKEN': ('USER_ACCESS_TOKEN', 'Used to retrieve group events'),
+    'FACEBOOK_USER_ACCESS_TOKEN_EXPIRATION': (timezone.make_aware(datetime.now(), timezone.get_default_timezone()), 'Datetime that extended access token expire.'),
+    'FACEBOOK_USER_EMAIL': ('test@example.com', 'Dummy user email to login to m.facebook.com and parse DOM for group ids'),
+    'FACEBOOK_USER_PASSWORD': ('password', 'Dummy user password to login to m.facebook.com and parse DOM for group ids'),
+}
 if os.path.exists(os.path.normpath(os.path.join(os.path.dirname(__file__), 'local_settings.py'))):
   from local_settings import *
 
