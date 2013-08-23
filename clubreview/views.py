@@ -20,14 +20,18 @@ def landing(request, template_name = 'landing.html' ):
 def club_list_view(request, template_name='club_list.html'):
     order = request.GET.get('order', '')
     query = request.GET.get('q', '')
+    category = request.GET.get('cat', '')
 
     order_by = 'name' if order == 'name' else '-hit'
 
-    clubs = Club.objects.all().order_by(order_by)
+    clubs = Club.objects.filter(category__name=category) if category else Club.objects.all()
+    clubs = clubs.order_by(order_by)
     for word in query.split():
         clubs = clubs.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
 
     paginator = Paginator(clubs, 25) # Show 25 clubs per page
+
+    categories = Category.objects.all()
 
     page = request.GET.get('page')
     try:
@@ -39,7 +43,7 @@ def club_list_view(request, template_name='club_list.html'):
         # If page is out of range (e.g. 9999), deliver last page of results.
         clubs = paginator.page(paginator.num_pages)
     context = RequestContext(request)
-    return render_to_response(template_name, { 'clubs': clubs, 'order': order }, context_instance=context)
+    return render_to_response(template_name, { 'clubs': clubs, 'order': order , 'categories': categories }, context_instance=context)
 
 @login_required
 def club_info_view(request, club_id, template_name='club_info.html'):
