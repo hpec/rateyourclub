@@ -6,22 +6,24 @@ import operator
 import re
 import pdb
 
-CATEGORIES = ['Academic', 'Arts', 'Cultural', 'Polictical', 'Profession', 'Religious', 'Service', 'Sport']
+determinstic_words = {
+    'Academic':['academic',],
+    'Profession':['professional', 'professionals', 'financial', 'profession','entrepreneurship', 'entrepreneurs'],
+    'Service':['service', 'services', 'communities', 'community', 'welfare', 'volunteer', 'volunteers'],
+    'Cultural':['cultural', 'china', 'chinese', 'japan', 'japanese', 'african', 'afghan'],
+    'Religious':['jewish', 'christian', 'christ'],
+    'Arts':['art', 'performance', 'artistic'],
+    'Sport':['sport', 'athletics', 'athletic', 'tournament', 'basketball', 'football', 'soccer', 'badminton', 'archery', 'tennis', 'swim'],
+    'Political':['polictics', 'politic', 'Polictical'],
+}
 
+CATEGORIES = determinstic_words.keys()
 
 def find(word1, word2):
     return len(re.findall(r'\b' + word1 + r'\b', word2, re.IGNORECASE))
 
 def main():
-    determinstic_words = {
-        'Academic':['academic',],
-        'Profession':['professional', 'professionals', 'financial', 'profession','entrepreneurship', 'entrepreneurs'],
-        'Service':['service', 'services', 'communities', 'community', 'welfare', 'volunteer', 'volunteers'],
-        'Cultural':['cultural', 'china', 'chinese', 'japan', 'japanese', 'african', 'afghan'],
-        'Religious':['jewish', 'christian', 'christ'],
-        'Arts':['art', 'performance', 'artistic'],
-        'Sport':['sport', 'athletics', 'athletic', 'tournament', 'basketball', 'football', 'soccer', 'badminton', 'archery', 'tennis', 'swim'],
-    }
+
     # related_words = {
     #     'art':['art', 'arts', , 'op art', 'pop art', 'art deco', 'art form', 'art house', 'art-house', 'clip art', 'fine art', 'art gallery', 'art nouveau', 'art therapy',  'kinetic art', 'martial art', 'art director', 'conceptual art', "objet d'art", 'performance art', 'work of art', 'state-of-the-art', 'the black art', 'thou art', 'noble art', 'craft', 'craftsmanship', 'ingenuity', 'mastery', 'artistry', 'imagination', 'Biedermeier', 'Parian', 'Queen Anne', 'annulate', 'anomphalous', 'banded', 'chryselephantine', 'aperture', 'collared', 'artificial', 'condensed', 'camera', 'copied'],
 
@@ -44,14 +46,13 @@ def main():
         for category in CATEGORIES:
             all_words = wordpunct_tokenize(intro.lower())
             all_name_words = wordpunct_tokenize(name.lower())
-            if category in determinstic_words:
-                score = 0
-                for word in determinstic_words[category]:
-                    score += all_words.count(word) * 2
-                    score += all_name_words.count(word) * 10
-                if score > max_score:
-                    max_cat = category
-                    max_score = score
+            score = 0
+            for word in determinstic_words[category]:
+                score += all_words.count(word) * 2
+                score += all_name_words.count(word) * 10
+            if score > max_score:
+                max_cat = category
+                max_score = score
 
         if max_cat and max_score > 2:
             category = Category.objects.get(name=max_cat)
@@ -67,8 +68,7 @@ def main():
     for category in CATEGORIES:
         print category
         try:
-            for club in result[category]:
-                print club
+            for club in result[category]: print club
         except:
             pass
         print '\n'

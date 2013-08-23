@@ -13,9 +13,6 @@
                             <li><a href="?cat={{category.name}}">{{ category }}</a></li>
 
 
-
-
-
             - if user.is_authenticated
                 .span8.card
                     %h3
@@ -30,13 +27,13 @@
                 .pull-right
                     Sort by
                     - if order == 'name'
-                        %a{'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}'} Popularity
+                        %a{'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Popularity
                         %strong
-                            %a{'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}'} Name
+                            %a{'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Name
                     - else
                         %strong
-                            %a{'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}'} Popularity
-                        %a{'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}'} Name
+                            %a{'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Popularity
+                        %a{'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Name
 
             - for club in clubs
                 .span8.card
