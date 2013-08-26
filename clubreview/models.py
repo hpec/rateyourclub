@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.core.exceptions import (ObjectDoesNotExist,
                                         MultipleObjectsReturned, FieldError, ValidationError, NON_FIELD_ERRORS)
 import pdb
-import urlparse, fb_events
+import urlparse
 from copy import copy
 from datetime import timedelta
 from django.db.models.signals import post_init
