@@ -52,8 +52,8 @@ class UserManager(BaseUserManager):
             activation.delete()
         return user
 
-    def create_superuser(self, email, password):
-        u = self.create_user(email, password)
+    def create_superuser(self, email, screen_name, password):
+        u = self.create_user(email, screen_name, password)
         u.is_staff = True
         u.is_active = True
         u.is_superuser = True

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db import IntegrityError
+from django.db import transaction, IntegrityError
 from nltk.tokenize import word_tokenize, wordpunct_tokenize, sent_tokenize
 from clubreview.models import *
 import operator
@@ -93,18 +93,13 @@ def show_word_stats():
 
 
 def create_categories():
-    try:
-        default_cat = Category.objects.get(name='Default')
-        default_cat.delete()
-    except:
-        pass
     print "Creating Category ..."
     for category_name in CATEGORIES:
         try:
             category = Category.objects.create(name=category_name)
         except IntegrityError:
             print "Category Already Exists:", category_name
-            pass
+            transaction.rollback()
 
 
 class Command(BaseCommand):
