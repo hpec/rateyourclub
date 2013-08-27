@@ -6,9 +6,9 @@
     #landing_main_content.row-fluid.clearfix
       .span12
         #landing-hero.hero-unit
-            %h1.lead CalBeat
-            CalBeat is the easiest way to discover clubs at UC Berkeley
-            %blockquote
+            %h1.lead CalBeat <span style='font-size:20px'>- Discover and rate clubs at UC Berkeley</span>
+
+            %blockquote{'style': 'margin-top:15px'}
               %p  Being Berkeley means being involved and connected, on campus and in the community.
               %small
                 ="http://admissions.berkeley.edu/clubs"|urlize
@@ -16,7 +16,7 @@
               %li.span6
                 .thumbnails
                   .page-header
-                    %h3 
+                    %h3
                       %i.icon-search
                       Discover
                   %p
@@ -35,7 +35,7 @@
               %li.span6
                 .thumbnails
                   .page-header
-                    %h3 
+                    %h3
                         %i.icon-facebook-sign
                         Facebook Events
                   %p
@@ -45,7 +45,7 @@
               %li.span6
                 .thumbnails
                     .page-header
-                        %h3 
+                        %h3
                           %i.icon-star
                           Ratings
                     %p
@@ -55,13 +55,13 @@
               %li.span6
                 .thumbnails
                     .page-header
-                        %h3 
+                        %h3
                           %i.icon-mobile-phone
                           Mobile Friendly
                     %p
                       Use <em>CalBeat</em> on the go on any device.
 
-       
+
   %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/landing.css' %}" }
 
 

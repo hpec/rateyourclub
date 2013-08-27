@@ -1,9 +1,16 @@
+@font-face {
+    font-family: corp;
+    src: url('../font/corp.ttf');
+}
 body{
     padding-top : 40px;
     background-image : url(../img/patterns/pw_maze_white/pw_maze_white.png);
     background-position : initial initial;
     background-repeat : initial initial;
 }
+
+
+
 input[type="text"]{ height: inherit; }
 #main-wrapper { margin-top: 20px; }
 #club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 20px; background-color: white; }
@@ -51,4 +58,9 @@ a.star.selected,
 .rating-star-wrapper .bar-rating a.active,
 .rating-star-wrapper .bar-rating a.selected {
     background-position: 0 24px;
+}
+
+.title {
+    font-family: corp;
+    font-size: 30px;
 }
