@@ -93,8 +93,11 @@ def show_word_stats():
 
 
 def create_categories():
-    default_cat = Category.objects.find(name='Default')
-    default_cat.delete()
+    try:
+        default_cat = Category.objects.get(name='Default')
+        default_cat.delete()
+    except:
+        pass
     print "Creating Category ..."
     for category_name in CATEGORIES:
         try:
