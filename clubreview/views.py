@@ -17,6 +17,8 @@ from forms import *
 def landing(request, template_name = 'landing.html' ):
     context = RequestContext(request)
     return render_to_response(template_name, { }, context_instance=context)
+
+@login_required
 def club_list_view(request, template_name='club_list.html'):
     order = request.GET.get('order', '')
     query = request.GET.get('q', '')
