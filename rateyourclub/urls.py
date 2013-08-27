@@ -18,34 +18,18 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    url(r'^$',
-        club_list_view,
-        name='club_list_view'),
-
-    url(r'landing$',
-        landing,
-        name='landing'),
-
-    url(r'^admin/', include(admin.site.urls)),
-    #url(include('clubreview.urls'))
-    url(r'^clubs/$',
-        club_list_view,
-        name='club_list_view'),
-    url(r'^clubs/(\d+)/update', add_url_edit),
-    url(r'^reviews/create/$',
-        create_review,
-        name='create_review'),
+    url(r'^$', landing, name='home'),
+    url(r'^landing/$', landing, name='landing'),
+    url(r'^clubs/$', club_list_view, name='club_list_view'),
+    url(r'^clubs/([a-zA-Z0-9|-]+)/$', club_info_view, name='club_info_view'),
     url(r'^clubs/search/', club_lookup),
+    url(r'^clubs/(\d+)/update', add_url_edit),
+    url(r'^reviews/create/$', create_review, name='create_review'),
     url(r'^register/', register),
-    # url(r'^base$',
-    #     TemplateView.as_view(template_name='base.html')),
-    (r'^selectable/', include('selectable.urls')),
-
-    url(r'^clubs/([a-zA-Z0-9|-]+)/$',
-        club_info_view,
-        name='club_info_view'),
-
+    url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/', include('registration.urls')),
+    (r'^selectable/', include('selectable.urls')),
+    #url(include('clubreview.urls'))
 
 )
 urlpatterns += staticfiles_urlpatterns()
