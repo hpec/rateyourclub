@@ -7,6 +7,8 @@
       .span12
         #landing-hero.hero-unit
             %h1.lead CalBeat <span style='font-size:20px'>- Discover and rate clubs at UC Berkeley</span>
+              - if user.is_authenticated
+                %a.pull-right.btn.btn-info{'style':'font-family:Helvetica; font-size:17px', 'href':'/clubs/'} Get started
 
             %blockquote{'style': 'margin-top:15px'}
               %p  Being Berkeley means being involved and connected, on campus and in the community.
