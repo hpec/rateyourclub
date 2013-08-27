@@ -14,7 +14,7 @@
             .control-label
                 %label Email
             .controls
-                %input{'name':'email', 'maxlength':'40', 'type':'text'}
+                %input{'name':'email', 'id':'id-email', 'maxlength':'40', 'type':'text'}
         .control-group
             .control-label
                 %label Password
@@ -37,3 +37,9 @@
             please stay tunned or email
             %a{'href':"mailto: invite@CalBEAT.com"} invite@CalBEAT.com
             to request an invitation.
+
+        :javascript
+            $(function() {
+                $('#id-email').focus()
+
+                })
