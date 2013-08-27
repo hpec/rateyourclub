@@ -42,6 +42,11 @@ class Club(models.Model):
             self.permalink = re.sub('^[^a-zA-Z0-9]+','', self.permalink)
             self.permalink = re.sub('-+','-',self.permalink)[:50]
             if not self.permalink: self.permalink = re.sub('[^a-zA-Z0-9]+','', self.abbrev.lower())
+            temp = self.permalink
+            counter = 1
+            while Club.objects.filter(permalink__icontains=self.permalink).count() > 0:
+                self.permalink =  "%s-%s" % (temp[:50 - len(str(counter)) - 1], counter) # slug fields have length limit of 50
+                counter += 1
             self.save()
     school = models.ForeignKey(School)
     category = models.ForeignKey(Category, null=True)
