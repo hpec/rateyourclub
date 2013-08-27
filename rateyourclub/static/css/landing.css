@@ -17,3 +17,10 @@ body{
 #landing-hero  {
   background-color : inherit;
 }
+
+#footer {
+  color: #f8f8f8;
+  -webkit-text-shadow: 1px 1px 20px #111;
+  -moz-text-shadow: 1px 1px 20px #111;
+  text-shadow: 1px 1px 20px #111;
+}
