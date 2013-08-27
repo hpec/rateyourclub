@@ -32,7 +32,8 @@
         .navbar-inner
             .container
                 %a{'href':'/accounts/login'}
-                %a.brand.title{'href': "{% url 'home' %}"} CalBEAT
+
+                %a.brand.title{'href': "{% if user.is_authenticated %}{% url 'club_list_view' %}{% else %}{% url 'home' %}{% endif %}"} CalBEAT
                 %form{'class':'navbar-search pull-left', 'action':'/clubs/'}
                     %div{'class':'input-prepend input-append'}
                         %span{'class':'add-on'}

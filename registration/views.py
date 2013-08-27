@@ -22,7 +22,7 @@ def register(request, template_name='register.html'):
                 messages.success(request, "You have successfully created your account!")
             else:
                 messages.success(request, "You have successfully created your account! Please check your email and confirm your registration.")
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/clubs/')
         else:
             pass
             # for field, error in form.errors.items():
@@ -81,7 +81,7 @@ def login(request, template_name='login.html'):
                 auth_login(request, user)
                 messages.success(request, 'Logged in successfully.')
                 next_url = request.REQUEST.get('next', None)
-                return HttpResponseRedirect(next_url) if next_url else HttpResponseRedirect('/')
+                return HttpResponseRedirect(next_url) if next_url else HttpResponseRedirect('/clubs/')
             else:
                 messages.error(request, 'You have not activated your account yet. Please check your email and confirm your registration.')
         else:
