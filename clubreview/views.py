@@ -66,14 +66,34 @@ def club_info_view(request, club_id, template_name='club_info.html'):
 def create_review(request):
     response = {}
     if request.method == 'POST':
-        form = ReviewForm(data=request.POST)
+        form = ReviewForm(user=request.user, data=request.POST)
         if form.is_valid():
             review = form.save()
             response['status'] = 'success'
+            messages.success(request, 'Review submitted!')
         else:
             response['status'] = 'error'
             response['error'] = form.errors
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+@login_required
+def delete_review(request, id):
+    try:
+        review = Review.objects.get(id=id)
+    except Review.DoesNotExist:
+        messages.error(request, 'The review that you are trying to delete does not exist')
+    if review.user == request.user:
+        review.is_deleted = True
+        club = review.club
+        club.review_count -= 1
+        club.review_score -= review.ratings
+        review.save()
+        club.save()
+        messages.success(request, 'Successfully deleted your review')
+    else:
+        messages.error(request, "You could not delete others' review!")
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
 def add_url_edit(request, id):
     if request.method == 'POST':
         club = get_object_or_404(Club, pk=id)

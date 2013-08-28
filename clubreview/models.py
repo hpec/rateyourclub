@@ -10,8 +10,7 @@ from django.db.models.signals import post_init
 from django.dispatch import receiver
 import re
 from django.utils.timezone import is_aware
-
-# Create your models here.
+from registration.models import User
 
 NAME_LENGTH = 80
 
@@ -71,6 +70,7 @@ class Club(models.Model):
     address = models.TextField(blank=True,null=True)
     activity_summary = models.TextField(blank=True,null=True)
     permalink = models.SlugField(blank=True,null=True, unique=True)
+    is_deleted = models.BooleanField(default=0)
 
     objects = ClubManager()
     facebook_clubs = FacebookManager()
@@ -211,12 +211,14 @@ class Event(models.Model):
 
 class Review(models.Model):
     club = models.ForeignKey(Club)
+    user = models.ForeignKey(User)
     event = models.ForeignKey(Event, blank=True, null=True)
 
-    ratings = models.TextField(blank=False, null=True)
+    ratings = models.FloatField(blank=False, null=True)
     content = models.TextField(blank=True, null=True)
     anonymous = models.BooleanField(default=True)
     date_posted = models.DateTimeField(default=timezone.now)
+    is_deleted = models.BooleanField(default=0)
 
     def __unicode__(self):
         return "%s" % (self.content)

@@ -13,11 +13,12 @@ class ReviewForm(forms.Form):
     content = forms.CharField(required=True,
         widget=Textarea(attrs={'cols': 20, 'rows': 5}))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user=None, *args, **kwargs):
         super(ReviewForm, self).__init__(*args, **kwargs)
         try:
             self.ratings = kwargs['data']['rating-val']
             self.club_id = kwargs['data']['club_id']
+            self.user = user
         except KeyError:
             pass
 
@@ -42,7 +43,7 @@ class ReviewForm(forms.Form):
 
     def save(self):
         club = self.cleaned_data['club']
-        review = Review(club=club,
+        review = Review(club=club, user=self.user,
             content=self.cleaned_data['content'],
             ratings=self.cleaned_data['ratings'])
         club.review_count += 1

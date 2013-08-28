@@ -110,20 +110,25 @@
             .card
                 %h5 Reviews:
                 - for review in reviews
-                    .review
-                        .pull-right
-                            {{ review.date_posted }}
-                        .container
-                            - if review.anonymous
-                                %div.muted{'style':"float:left; margin-right: 10px"} Anonymous
+                    - if not review.is_deleted
+                        .review
+                            .pull-right
+                                {{ review.date_posted }}
+                                - if review.user == user
+                                        %a{'href':'/reviews/delete/{{ review.id }}'} delete?
 
-                            .rating
-                                %div{'data-rating': "{{ review.ratings }}"}
+                            .container
+                                - if review.anonymous
+                                    %div.muted{'style':"float:left; margin-right: 10px"} Anonymous
 
-                        .review-content
-                          %blockquote
-                            %p {{ review.content }}
-                        %hr
+                                .rating
+                                    %div{'data-rating': "{{ review.ratings }}"}
+
+                            .review-content
+                              %blockquote
+                                %p {{ review.content }}
+
+                            %hr
                 - empty
                     %p No reviews yet!
 
