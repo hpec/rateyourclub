@@ -40,5 +40,14 @@
 
         :javascript
             $(function() {
-                $('#id-email').focus()
+                $("#id-email").popover({'content':'Please use your @berkeley.edu email here','trigger':'manual'});
+                $('#id-email').focus();
+                $('#id-email').focusout(function(){
+                    console.log('triggered!');
+                    if (!(/@berkeley.edu\s*$/.test($('#id-email').val()))) {
+                        $('#id-email').popover('show')
+                    } else {
+                        $('#id-email').popover('hide')
+                    }
+                })
             })
