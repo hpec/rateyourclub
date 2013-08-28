@@ -33,7 +33,7 @@ def club_list_view(request, template_name='club_list.html'):
 
     paginator = Paginator(clubs, 25) # Show 25 clubs per page
 
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by(name)
 
     page = request.GET.get('page')
     try:

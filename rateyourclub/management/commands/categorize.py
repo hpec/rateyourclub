@@ -104,7 +104,7 @@ def create_categories():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        create_categories()
+        # create_categories()
         main()
         # show_word_stats()
 
