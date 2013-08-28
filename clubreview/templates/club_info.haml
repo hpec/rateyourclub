@@ -118,8 +118,11 @@
                                         %a{'href':'/reviews/delete/{{ review.id }}'} delete?
 
                             .container
-                                - if review.anonymous
-                                    %div.muted{'style':"float:left; margin-right: 10px"} Anonymous
+                                %div.muted{'style':"float:left; margin-right: 10px"}
+                                    - if review.anonymous
+                                        Anonymous
+                                    - else
+                                        =review.user.screen_name
 
                                 .rating
                                     %div{'data-rating': "{{ review.ratings }}"}
@@ -130,7 +133,7 @@
 
                             %hr
                 - empty
-                    %p No reviews yet!
+                    %p Be the first to review!
 
             %ul.pager
               %li.previous
@@ -158,6 +161,10 @@
                                     %option{'value':"3", 'selected':'true'} 3
                                     %option{'value':"4"} 4
                                     %option{'value':"5"} 5
+                    .control-group
+                        .control-label Anonymous?
+                        .controls
+                            %input{'type':'checkbox','checked':'true', 'name':'anonymous'}
 
                     %button#review_form_submit.btn-primary.btn{'type':'button'} Submit
 

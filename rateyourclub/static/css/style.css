@@ -40,7 +40,7 @@ input[type="text"]{ height: inherit; }
 #review_form  { text-align:left }
 #review_form .control-group { margin-bottom: 5px }
 #review_form .control-label { margin-left:0px; width:20px }
-#review_form .controls { margin-left:80px }
+#review_form .controls { margin-left:90px }
 #id_club_0 { width:400px }
 #id_ratings { width:400px }
 #id_content { width:400px }

@@ -19,6 +19,7 @@ class ReviewForm(forms.Form):
             self.ratings = kwargs['data']['rating-val']
             self.club_id = kwargs['data']['club_id']
             self.user = user
+            self.anonymous = kwargs['data']['anonymous'] if 'anonymous' in kwargs['data'] else 0
         except KeyError:
             pass
 
@@ -44,6 +45,7 @@ class ReviewForm(forms.Form):
     def save(self):
         club = self.cleaned_data['club']
         review = Review(club=club, user=self.user,
+            anonymous=self.anonymous,
             content=self.cleaned_data['content'],
             ratings=self.cleaned_data['ratings'])
         club.review_count += 1
