@@ -30,3 +30,4 @@ wsgiref==0.1.2
 django-constance==0.6
 nltk==2.0.4
 django-picklefield==0.3.0
+djrill==0.6.0

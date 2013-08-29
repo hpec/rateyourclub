@@ -138,9 +138,13 @@ INSTALLED_APPS = (
     'djcelery',
     'constance',
     'constance.backends.database',
+    'djrill'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+MANDRILL_API_KEY = "z0bPdSsfpIybi-H5HR1E1w"
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
