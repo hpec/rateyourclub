@@ -24,7 +24,7 @@
                 =review.date_posted
             %td
                 - if review.is_deleted
-                    %red x
+                    x
             %td
                 - if not review.is_deleted
                     %a.btn.btn-danger{'href':'/reviews/delete/{{ review.id }}'} Delete

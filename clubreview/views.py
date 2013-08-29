@@ -82,7 +82,7 @@ def delete_review(request, id):
         review = Review.objects.get(id=id)
     except Review.DoesNotExist:
         messages.error(request, 'The review that you are trying to delete does not exist')
-    if not review.is_deleted and (review.user == request.user or request.user.is_admin):
+    if not review.is_deleted and (review.user == request.user or request.user.is_staff):
         review.is_deleted = True
         club = review.club
         club.review_count -= 1
@@ -100,7 +100,7 @@ def undelete_review(request, id):
         review = Review.objects.get(id=id)
     except Review.DoesNotExist:
         messages.error(request, 'The review that you are trying to delete does not exist')
-    if review.is_deleted and (review.user == request.user or request.user.is_admin):
+    if review.is_deleted and (review.user == request.user or request.user.is_staff):
         review.is_deleted = False
         club = review.club
         club.review_count += 1
@@ -170,7 +170,7 @@ def add_url_edit(request, id):
 
 @login_required
 def review_list(request):
-    if request.user.is_admin:
+    if request.user.is_staff:
         return render_to_response('review_list.html', { 'reviews' : Review.objects.all() })
     else:
         messages.error(request, "You are not allowed to view this page")
