@@ -95,16 +95,15 @@ def show_word_stats():
 def create_categories():
     print "Creating Category ..."
     for category_name in CATEGORIES:
-        try:
+        if Category.objects.filter(name=category_name).count() == 0:
             category = Category.objects.create(name=category_name)
-        except IntegrityError:
+        else:
             print "Category Already Exists:", category_name
-            transaction.rollback()
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # create_categories()
+        create_categories()
         main()
         # show_word_stats()
 
