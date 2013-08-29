@@ -1,0 +1,32 @@
+- load static
+%link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "{% static 'css/bootstrap.min.css' %}" }
+%table.table.table-bordered
+    %tr
+        %td User
+        %td Club
+        %td Rating
+        %td Content
+        %td Date Posted
+        %td Deleted
+        %td Action
+
+    - for review in reviews
+        %tr
+            %td
+                =review.user
+            %td
+                =review.club
+            %td
+                =review.ratings
+            %td
+                =review.content
+            %td
+                =review.date_posted
+            %td
+                - if review.is_deleted
+                    %red x
+            %td
+                - if not review.is_deleted
+                    %a.btn.btn-danger{'href':'/reviews/delete/{{ review.id }}'} Delete
+                - else
+                    %a.btn.btn-success{'href':'/reviews/restore/{{ review.id }}'} Restore

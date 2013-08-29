@@ -82,7 +82,7 @@ def delete_review(request, id):
         review = Review.objects.get(id=id)
     except Review.DoesNotExist:
         messages.error(request, 'The review that you are trying to delete does not exist')
-    if review.user == request.user:
+    if not review.is_deleted and (review.user == request.user or request.user.is_admin):
         review.is_deleted = True
         club = review.club
         club.review_count -= 1
@@ -92,6 +92,24 @@ def delete_review(request, id):
         messages.success(request, 'Successfully deleted your review')
     else:
         messages.error(request, "You could not delete others' review!")
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+@login_required
+def undelete_review(request, id):
+    try:
+        review = Review.objects.get(id=id)
+    except Review.DoesNotExist:
+        messages.error(request, 'The review that you are trying to delete does not exist')
+    if review.is_deleted and (review.user == request.user or request.user.is_admin):
+        review.is_deleted = False
+        club = review.club
+        club.review_count += 1
+        club.review_score += review.ratings
+        review.save()
+        club.save()
+        messages.success(request, 'Successfully restored your review')
+    else:
+        messages.error(request, "You could not restore others' review!")
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 def add_url_edit(request, id):
@@ -148,3 +166,16 @@ def add_url_edit(request, id):
             return HttpResponse(content=simplejson.dumps(to_json), mimetype='application/json', status=422)
     else :
         raise Http404
+
+
+@login_required
+def review_list(request):
+    if request.user.is_admin:
+        return render_to_response('review_list.html', { 'reviews' : Review.objects.all() })
+    else:
+        messages.error(request, "You are not allowed to view this page")
+        try:
+            return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        except KeyError:
+            return HttpResponseRedirect('/')
+
