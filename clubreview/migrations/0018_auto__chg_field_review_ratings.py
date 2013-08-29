@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         # Changing field 'Review.ratings'
         # db.alter_column(u'clubreview_review', 'ratings', self.gf('django.db.models.fields.FloatField')(null=True))
         db.execute(
-            'ALTER TABLE "clubreview_review"',
+            'ALTER TABLE "clubreview_review"'
             'ALTER COLUMN "ratings" TYPE integer USING (trim("ratings")::integer)'
         )
 
