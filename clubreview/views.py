@@ -53,7 +53,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     club.hit += 1
     club.save()
     events = list(club.event_set.all()[:5])
-    reviews = Review.objects.filter(club=club)
+    reviews = Review.objects.filter(club=club, is_deleted=False)
     try:
         rating = int(club.review_score)*1.0 / int(club.review_count)
     except:

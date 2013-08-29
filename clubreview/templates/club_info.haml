@@ -3,27 +3,22 @@
 - load tz
 
 - block content
-    %script{'type':"text/javascript"}
+    :javascript
         $(function () {
             $('#form-errors').hide();
-
             $('.review .rating div').each(function() {
                 var rating = $(this).data("rating");
                 for (var i=0; i < rating; i++) {
                     $(this).append($("<a>").toggleClass("star selected"));
                 }
-
-            })
-
+            });
             avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
             for (var i=0; i < avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
             }
-
             for (var i=0; i < 5-avgRating; i++) {
                 $('.avg-rating-stars').append($("<a>").toggleClass("star"))
             }
-
             $('#review_form_submit').click(function(){
                 $.post('/reviews/create/', $('#review_form').serialize(), function(response){
                     if (response.status == 'success') {
@@ -34,10 +29,8 @@
                         });
                         $('#form-errors').show();
                     }
-
                 })
             })
-
         })
 
     #main-wrapper.row
@@ -110,28 +103,27 @@
             .card
                 %h5 Reviews:
                 - for review in reviews
-                    - if not review.is_deleted
-                        .review
-                            .pull-right
-                                {{ review.date_posted }}
-                                - if review.user == user
-                                        %a{'href':'/reviews/delete/{{ review.id }}'} delete?
+                    .review
+                        .pull-right
+                            {{ review.date_posted }}
+                            - if review.user == user
+                                    %a{'href':'/reviews/delete/{{ review.id }}'} delete?
 
-                            .container
-                                %div.muted{'style':"float:left; margin-right: 10px"}
-                                    - if review.anonymous
-                                        Anonymous
-                                    - else
-                                        =review.user.screen_name
+                        .container
+                            %div.muted{'style':"float:left; margin-right: 10px"}
+                                - if review.anonymous
+                                    Anonymous
+                                - else
+                                    =review.user.screen_name
 
-                                .rating
-                                    %div{'data-rating': "{{ review.ratings }}"}
+                            .rating
+                                %div{'data-rating': "{{ review.ratings }}"}
 
-                            .review-content
-                              %blockquote
-                                %p {{ review.content }}
+                        .review-content
+                          %blockquote
+                            %p {{ review.content }}
 
-                            %hr
+                        %hr
                 - empty
                     %p Be the first to review!
 
