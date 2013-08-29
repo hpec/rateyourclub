@@ -143,7 +143,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
-MANDRILL_API_KEY = "z0bPdSsfpIybi-H5HR1E1w"
+MANDRILL_API_KEY = "f3eZklctlBE786-dZQNKMQ"
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -206,8 +206,10 @@ if os.path.exists(os.path.normpath(os.path.join(os.path.dirname(__file__), 'loca
   from local_settings import *
 
 ACCOUNT_ACTIVATION_DAYS = 14
-EMAIL_PORT = 1025
-EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+# EMAIL_HOST = 'localhost'
 
 AUTH_USER_MODEL = 'registration.User'
 LOGIN_URL = '/accounts/login/'
+
+DEFAULT_FROM_EMAIL = 'norely@calbeat.com'

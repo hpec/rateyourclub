@@ -13,7 +13,7 @@
     {% endcompress %}
     - include_jquery_libs
     - include_ui_theme
-    %script{'tyoe':'text/javascript', 'src': '{% static "js/bootstrap.js" %}'}
+    %script{'type':'text/javascript', 'src': '{% static "js/bootstrap.js" %}'}
     %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
     %script{'type':"text/javascript"}
         $(function () {
@@ -55,6 +55,7 @@
                     <div class="alert alert-{{ message.tags }}" style="margin-bottom: 5px"> {{ message }} </div>
         - block content
         %p#footer
+
             &copy;
             - with year_tuple=2013|year_and_current_year
               {{year_tuple.0}}
@@ -62,4 +63,6 @@
                 \-
                 {{ year_tuple.1 }}
             Daniel Liu and David Su
+            %p{'style':'font-size:12px'} Any questions or suggestions? Email us: <a href='mailto:support@calbeat.com'>support@calbeat.com</a>
+
 
