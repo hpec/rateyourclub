@@ -45,9 +45,14 @@
                 .pull-right{'style':'margin-top:10px;'}
                     - if user.is_authenticated
                         Welcome, {{ user.screen_name }}
+                        &nbsp;
+                        %a{'href':'/accounts/invite'} Invite friends!
+                        |
                         %a{'href':'/accounts/logout'} Logout
                     - else
-                        %a{'href':'/accounts/login'} Sign in
+                        %a{'href':'/accounts/login'} Login
+                        Or
+                        %a{'href':'/accounts/register'} Sign up
     .container
         - if messages
             %div{'style':'margin-top:15px; margin-bottom:0;'}

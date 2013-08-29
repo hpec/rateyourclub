@@ -62,7 +62,7 @@ def invite(request, template_name='invite.html'):
         email = request.POST.get('email')
         if check_email_domain(email):
             invitation = User.objects.create_invitation(email)
-            User.objects.send_invitation_email(invitation)
+            User.objects.send_invitation_email(invitation, request.user)
             messages.success(request, 'Invitation sent successfully!')
         else:
             messages.error(request, 'You can only send invitation to @berkeley.edu')

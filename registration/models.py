@@ -64,7 +64,10 @@ class UserManager(BaseUserManager):
         return Activation.objects.create(user=user, activation_key=generate_random_key(user.email))
 
     def create_invitation(self, email):
-        return Invitation.objects.create(email=email, invitation_key=generate_random_key(email))
+        if Invitation.objects.filter(email=email).count() > 0:
+            return Invitation.objects.get(email=email)
+        else:
+            return Invitation.objects.create(email=email, invitation_key=generate_random_key(email))
 
     def send_activation_email(self, activation):
         current_site = "CalBEAT"
@@ -84,7 +87,7 @@ class UserManager(BaseUserManager):
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [activation.user.email])
 
-    def send_invitation_email(self, invitation):
+    def send_invitation_email(self, invitation, user):
         current_site = "CalBEAT"
 
         subject = render_to_string('invitation_email_subject.txt',
@@ -97,6 +100,7 @@ class UserManager(BaseUserManager):
         message = render_to_string('invitation_email.txt',
                                    { 'invitation_key': invitation.invitation_key,
                                      'site': current_site,
+                                     'who': user.email,
                                     })
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [invitation.email])

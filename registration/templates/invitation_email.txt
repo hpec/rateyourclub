@@ -1,7 +1,28 @@
 {% load humanize %}
 
-Hi Cal bears, you are invited to try our whole new website CalBEAT!
+Hi Cal bears, <{{ who }}> invites you to try our whole new website CalBEAT!
 
 Click the link below or copy and paste it into your web browser's address bar to get started!
 
 http://www.calbeat.com/accounts/register?invitation={{ invitation_key }}
+
+
+A little bit about what we do
+
+On Calbeat, you can:
+
+- Discover clubs/student organizations that match your interest
+- Find out club requirement, meeting time, etc
+- Write reviews to support clubs that you like
+- We sync all the events with clubs facebook page, stay updated with all of them
+
+
+For club leaders, you can:
+
+- Advertise your club to more students
+- Encourage your members to review your club for higher ranking
+- Connect to students who have good insight and advice
+- Receive event feedback by reading up reviews
+
+
+We do it for fun, and of course it's free.
