@@ -84,7 +84,7 @@
                         %ul{'class' : 'step-links'}
                             %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
                                 - if clubs.has_previous
-                                    %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}'} &larr;
+                                    %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}'} &larr;
                                 - else
                                     %a{'href' : '#'} &larr;
 
@@ -92,7 +92,7 @@
                                 - with offset_start=clubs.number|add:"-5"
                                     - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
                                         %li
-                                            %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
+                                            %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}'}
                                                 {{i}}
                             %li{'class':'current active'}
                                 %span
@@ -101,12 +101,12 @@
                                 - with offset_end=clubs.number|add:"5"
                                     - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
                                         %li
-                                            %a{'href':'?page={{i}}&q={{request.GET.dict.q}}'}
+                                            %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}'}
                                                 {{i}}
 
                             %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
                                 - if clubs.has_next
-                                    %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}'}
+                                    %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}'}
                                         &rarr;
                                 - else
                                     %a{'href': '#'}
