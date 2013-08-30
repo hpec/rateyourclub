@@ -60,7 +60,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
         rating = 0.0
     context = RequestContext(request)
     return render_to_response(template_name,
-        { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating }, context_instance=context)
+        { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating, 'related_clubs': Club.objects.get_related_clubs(club) }, context_instance=context)
 
 @login_required
 def create_review(request):

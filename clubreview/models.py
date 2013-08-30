@@ -4,15 +4,27 @@ from django.core.exceptions import (ObjectDoesNotExist,
                                         MultipleObjectsReturned, FieldError, ValidationError, NON_FIELD_ERRORS)
 import pdb
 import urlparse
+import random
+import re
+import nltk
+import operator
 from copy import copy
 from datetime import timedelta
 from django.db.models.signals import post_init
 from django.dispatch import receiver
-import re
 from django.utils.timezone import is_aware
 from registration.models import User
 
+common_words = ['berkeley', 'dwinelle', 'association', 'associations', 'club', 'clubs', 'students', 'student']
 NAME_LENGTH = 80
+
+def sim(a,b):
+    if not a or not b: return 0
+    intersect = set(a).intersection(set(b))
+    result = 0
+    for x in intersect:
+        result += min(a.count(x), b.count(x))
+    return result
 
 class School(models.Model):
     name = models.CharField(max_length=NAME_LENGTH)
@@ -32,6 +44,39 @@ class FacebookManager(models.Manager):
 class ClubManager(models.Manager):
     def find_by_permalink(self, permalink):
         return super(ClubManager, self).get_query_set().get(permalink=permalink)
+    # Note: this is too expensive
+    # def get_related_clubs(self, club):
+    #     clubs = list(super(ClubManager, self).get_query_set().all())
+    #     result = dict()
+    #     for c in clubs:
+    #         if c!=club:
+    #             score = sim(club.word_list, c.word_list)
+    #             if c.category and club.category == c.category: score += 5
+    #             result[c] = score
+    #     result = sorted(result.iteritems(), key=operator.itemgetter(1), reverse=True)
+    #     return [club for club, score in result][:5]
+    def get_related_clubs(self, club):
+        club_ids = club.related_clubs.split(',')
+        results = []
+        for club_id in club_ids:
+            results.append(super(ClubManager, self).get_query_set().get(id=int(club_id)))
+        if club.category:
+            clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(category=club.category))
+            n = 0
+            while n < 10000:
+                n += 1
+                random_club = random.choice(clubs_with_same_cat)
+                if random_club!=club and random_club not in results:
+                    results.append(random_club)
+                    break
+            while n < 10000:
+                n += 1
+                random_club = random.choice(clubs_with_same_cat)
+                if random_club!=club and random_club not in results:
+                    results.append(random_club)
+                    break
+        return results
+
 class Club(models.Model):
     def ensure_has_permalink(self):
         if not self.permalink:
@@ -71,6 +116,7 @@ class Club(models.Model):
     activity_summary = models.TextField(blank=True,null=True)
     permalink = models.SlugField(blank=True,null=True, unique=True)
     is_deleted = models.BooleanField(default=0)
+    related_clubs = models.TextField(blank=True,null=True)
 
     objects = ClubManager()
     facebook_clubs = FacebookManager()
@@ -98,8 +144,6 @@ class Club(models.Model):
         """
         return "http://web.archive.org/web/20130127122716/" + self.students_berkeley_edu_url
 
-
-
     @property
     def _EventManager(self):
         return Event.objects
@@ -122,6 +166,14 @@ class Club(models.Model):
     def avg_rating(self):
         return self.total_rating / self.num_ratings if self.num_ratings > 0 else 0
 
+    @property
+    def word_list(self):
+        if self.introduction:
+            intro = self.introduction.lower()
+            word_list = nltk.tokenize.wordpunct_tokenize(intro)
+            word_list = [w for w in word_list if not w in nltk.corpus.stopwords.words('english') and not w in common_words]
+            return word_list
+
     def relevance(self, query):
         from nltk.tokenize import wordpunct_tokenize
 
@@ -131,6 +183,9 @@ class Club(models.Model):
             if word in name_words: score += 20
 
         return score + self.hit * 0.1
+
+
+
 
     def facebook_event_update(self):
         import fb_events
@@ -267,3 +322,4 @@ class ClubURIEdit(models.Model):
         elif state == ClubURIEdit.DENIED_STATE:
             self.state = ClubURIEdit.DENIED_STATE
             self.save()
+
