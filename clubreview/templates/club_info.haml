@@ -182,4 +182,12 @@
                     %a{'href':'#'} View more
                 - else
                     No events listed!
+        .span4
+            #event-panel
+                %h4 You may also like
+                - for c in related_clubs
+                    %div{'style':'margin-top:10px'}
+                        %a{'href':'/clubs/{{ c.permalink }}', 'style':'font-size:12px'}
+                            =c.name
+
 

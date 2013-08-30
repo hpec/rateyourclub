@@ -26,7 +26,7 @@ def sim(a,b):
     return result
 
 def main():
-    common_words = ['berkeley', 'dwinelle', 'association', 'club', 'students', 'student']
+    common_words = ['berkeley', 'dwinelle', 'association', 'associations', 'club', 'clubs', 'students', 'student']
     # related_words = {
     #     'art':['art', 'arts', , 'op art', 'pop art', 'art deco', 'art form', 'art house', 'art-house', 'clip art', 'fine art', 'art gallery', 'art nouveau', 'art therapy',  'kinetic art', 'martial art', 'art director', 'conceptual art', "objet d'art", 'performance art', 'work of art', 'state-of-the-art', 'the black art', 'thou art', 'noble art', 'craft', 'craftsmanship', 'ingenuity', 'mastery', 'artistry', 'imagination', 'Biedermeier', 'Parian', 'Queen Anne', 'annulate', 'anomphalous', 'banded', 'chryselephantine', 'aperture', 'collared', 'artificial', 'condensed', 'camera', 'copied'],
 
@@ -40,21 +40,29 @@ def main():
         if intro:
             word_list = wordpunct_tokenize(intro.lower())
             word_list = [w for w in word_list if not w in nltk.corpus.stopwords.words('english') and not w in common_words]
+            word_list = nltk.pos_tag(word_list)
+            word_list = [word for word, x in word_list if x == 'NN']
             clubs_with_intro.append((club, word_list))
 
     for i in range(len(clubs_with_intro)):
         club_i, intro_i = clubs_with_intro[i]
         max_relation = 0
         max_club = None
+        result = dict()
         for j in range(len(clubs_with_intro)):
             if i!=j:
                 club_j, intro_j = clubs_with_intro[j]
-                tmp = sim(intro_i, intro_j) * 1.0 # / len(intro_j)
-                if club_i.category and club_i.category == club_j.category: tmp += 5
-                if tmp > max_relation:
-                    max_relation = tmp
-                    max_club = club_j
-        print club_i, ",", max_club
+                score = sim(intro_i, intro_j) * 1.0 # / len(intro_j)
+                if club_i.category and club_i.category == club_j.category: score += 5
+                result[club_j] = score
+                # if tmp > max_relation:
+                #     max_relation = tmp
+                #     max_club = club_j
+        result = sorted(result.iteritems(), key=operator.itemgetter(1), reverse=True)[:4]
+        print club_i, result, '\n'
+        club_i.related_clubs = ','.join([str(club.id) for club, score in result])
+        club_i.save()
+        # print club_i, ",", max_club
             # correlation = Correlation.get_or_create(club_a=clubs[i], club_b=clubs[j])
             # correlation.value = sim(clubs[i], clubs[j])
             # correlation.save()
