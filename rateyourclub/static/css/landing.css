@@ -24,3 +24,13 @@ body{
   -moz-text-shadow: 1px 1px 20px #111;
   text-shadow: 1px 1px 20px #111;
 }
+#support-message {
+  font-size: 12px;
+  color: white;
+  text-shadow: 1px 1px 20px #111;
+  background: rgba(0,0,0,0.1);
+  display: inline-block;
+}
+#support-message a, #support-message a:hover {
+  color: #0cf;
+}
