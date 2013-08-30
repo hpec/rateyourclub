@@ -41,7 +41,6 @@
                             %i{'class':'icon-search'}
                         %input{'id':'search-box','type':'text','class':'','placeholder':'Search', 'name':'q'}
                         %button{'class':'btn', 'type':'submit'} Search
-                        %button{'class':'btn', 'type':'button'} Categories
                 .pull-right{'style':'margin-top:10px;'}
                     - if user.is_authenticated
                         Welcome, {{ user.screen_name }}
@@ -68,6 +67,6 @@
                 \-
                 {{ year_tuple.1 }}
             Daniel Liu and David Su
-            %p{'style':'font-size:12px'} Any questions or suggestions? Email us: <a href='mailto:support@calbeat.com'>support@calbeat.com</a>
+            %p#support-message{'style':'font-size:12px'} Any questions or suggestions? Email us: <a href='mailto:support@calbeat.com'>support@calbeat.com</a>
 
 
