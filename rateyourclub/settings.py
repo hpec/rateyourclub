@@ -212,4 +212,4 @@ ACCOUNT_ACTIVATION_DAYS = 14
 AUTH_USER_MODEL = 'registration.User'
 LOGIN_URL = '/accounts/login/'
 
-DEFAULT_FROM_EMAIL = 'norely@calbeat.com'
+DEFAULT_FROM_EMAIL = 'noreply@calbeat.com'
