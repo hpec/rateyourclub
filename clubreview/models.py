@@ -56,25 +56,26 @@ class ClubManager(models.Manager):
     #     result = sorted(result.iteritems(), key=operator.itemgetter(1), reverse=True)
     #     return [club for club, score in result][:5]
     def get_related_clubs(self, club):
-        club_ids = club.related_clubs.split(',')
         results = []
-        for club_id in club_ids:
-            results.append(super(ClubManager, self).get_query_set().get(id=int(club_id)))
-        if club.category:
-            clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(category=club.category))
-            n = 0
-            while n < 10000:
-                n += 1
-                random_club = random.choice(clubs_with_same_cat)
-                if random_club!=club and random_club not in results:
-                    results.append(random_club)
-                    break
-            while n < 10000:
-                n += 1
-                random_club = random.choice(clubs_with_same_cat)
-                if random_club!=club and random_club not in results:
-                    results.append(random_club)
-                    break
+        if club.related_clubs:
+            club_ids = club.related_clubs.split(',')
+            for club_id in club_ids:
+                results.append(super(ClubManager, self).get_query_set().get(id=int(club_id)))
+            if club.category:
+                clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(category=club.category))
+                n = 0
+                while n < 10000:
+                    n += 1
+                    random_club = random.choice(clubs_with_same_cat)
+                    if random_club!=club and random_club not in results:
+                        results.append(random_club)
+                        break
+                while n < 10000:
+                    n += 1
+                    random_club = random.choice(clubs_with_same_cat)
+                    if random_club!=club and random_club not in results:
+                        results.append(random_club)
+                        break
         return results
 
 class Club(models.Model):
