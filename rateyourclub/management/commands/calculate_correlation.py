@@ -6,6 +6,8 @@ import re
 import pdb
 import nltk
 
+nltk.data.path.append('./nltk_data/')
+
 def sim(a,b):
     # intro_a = a.introduction
     # intro_b = b.introduction
