@@ -63,19 +63,8 @@ class ClubManager(models.Manager):
                 results.append(super(ClubManager, self).get_query_set().get(id=int(club_id)))
             if club.category:
                 clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(category=club.category))
-                n = 0
-                while n < 10000:
-                    n += 1
-                    random_club = random.choice(clubs_with_same_cat)
-                    if random_club!=club and random_club not in results:
-                        results.append(random_club)
-                        break
-                while n < 10000:
-                    n += 1
-                    random_club = random.choice(clubs_with_same_cat)
-                    if random_club!=club and random_club not in results:
-                        results.append(random_club)
-                        break
+                clubs_with_same_cat = [club for club in clubs_with_same_cat if club not in results]
+                results.extend(random.sample(clubs_with_same_cat, 2))
         return results
 
 class Club(models.Model):
