@@ -267,3 +267,8 @@ class ClubURIEdit(models.Model):
         elif state == ClubURIEdit.DENIED_STATE:
             self.state = ClubURIEdit.DENIED_STATE
             self.save()
+
+class Correlation(models.Model):
+    club_a = models.ForeignKey(Club, related_name='club_a')
+    club_b = models.ForeignKey(Club, related_name='club_b')
+    value = models.FloatField(default=0)
