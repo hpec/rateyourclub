@@ -9,8 +9,10 @@ import re
 import nltk
 import operator
 from copy import copy
-from datetime import timedelta
+from datetime import timedelta, date
 from django.db.models.signals import post_init
+from django.utils.timezone import now
+from django.db.models import Q
 from django.dispatch import receiver
 from django.utils.timezone import is_aware
 from registration.models import User
@@ -211,6 +213,38 @@ class Club(models.Model):
 def post_init_callbacks(sender, instance, **kwargs):
     instance.ensure_has_permalink()
 
+class EventQuerySet(models.query.QuerySet):
+        def future(self):
+            """
+            Return ongoing or events in the future
+            """
+            return self.filter( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+
+
+        def past(self):
+            return self.exclude( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+        def now(self):
+            """
+            Return ongoing events:
+                1) Events that started and will be ending later.
+                2) Full day events. Events without an end date.
+            """
+            return self.filter( ( Q(start_time__lte=now()) & Q(end_time__gte=now())) |
+                                ( Q( start_time__month=now().month) & Q( start_time__day=now().day) & Q( start_time__year=now().year) & Q(end_time__isnull=True))  )
+
+
+class EventsManager(models.Manager):
+    use_for_related_fields = True
+    def get_query_set(self):
+        return EventQuerySet(model=self.model)
+
+    def future(self):
+        return self.get_query_set().future()
+    def past(self):
+        return self.get_query_set().past()
+    def now(self):
+        return self.get_query_set().now()
+
 class Event(models.Model):
     """
     Model fields are modeled very closely after facebook event api attributes
@@ -225,6 +259,7 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
+    objects = EventsManager()
     @property
     def display_start_time(self):
         return self.convert_to_local_time(self.start_time)
