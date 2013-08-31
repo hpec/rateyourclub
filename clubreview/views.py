@@ -24,9 +24,16 @@ def club_list_view(request, template_name='club_list.html'):
     query = request.GET.get('q', '')
     category = request.GET.get('cat', '')
 
-    order_by = 'name' if order == 'name' else '-hit'
+    order_by = '-hit'
+    if order == 'name':
+        order_by = 'name'
+    elif order == 'ratings':
+        order_by = '-average_rating'
+    else:
+        order_by = '-hit'
 
     clubs = Club.objects.filter(category__name=category) if category else Club.objects.all()
+    clubs = clubs.rated() if order == 'ratings' else clubs
     clubs = clubs.order_by(order_by)
     for word in query.split():
         clubs = clubs.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
