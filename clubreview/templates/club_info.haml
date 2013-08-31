@@ -71,28 +71,28 @@
                           {{club.meeting|urlize}}
                     - if club.students_berkeley_edu_url
                         %p
-                          %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}" }
+                          %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}", 'target' : '_blank'}
                             %small Legacy Source
 
 
                 %ul.unstyled
                   - if club.contact_email
                     %li
-                      %a{ 'href' : "mailto:{{club.contact_email}}"}
+                      %a{ 'href' : "mailto:{{club.contact_email}}", 'target' : '_blank'}
                         %i.icon-envelope-alt
                         %small
                             = club.contact_email
 
                   - if club.website and club.website != club.facebook_url
                       %li
-                        %a{ 'href' : "{{club.website}}" }
+                        %a{ 'href' : "{{club.website}}", 'target' : '_blank' }
                             %i.icon-external-link
                             %small
                                 = club.website
 
                   - if club.facebook_url
                     %li
-                        %a{ 'href' : "{{club.facebook_url}}" }
+                        %a{ 'href' : "{{club.facebook_url}}", 'target' : '_blank' }
                             %i.icon-facebook-sign
                             %small
                                   = club.facebook_url

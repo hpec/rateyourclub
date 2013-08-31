@@ -45,12 +45,12 @@
                           %i.icon-star
                       - if club.website
                               %li
-                                  %a.pull-right{ 'href' : "{{club.website}}" }
+                                  %a.pull-right{ 'href' : "{{club.website}}", 'target' : '_blank' }
                                       %i.icon-external-link
                                   .clearfix
                       - if club.facebook_url
                           %li
-                              %a.pull-right{ 'href' : "{{club.facebook_url}}" }
+                              %a.pull-right{ 'href' : "{{club.facebook_url}}", 'target' : '_blank' }
                                   %i.icon-facebook-sign
                                   .hide-text
                                     {{ club.facebook_url}}
