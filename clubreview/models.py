@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.dispatch import receiver
 from django.utils.timezone import is_aware
 from registration.models import User
+from bs4 import BeautifulSoup
 
 common_words = ['berkeley', 'dwinelle', 'association', 'associations', 'club', 'clubs', 'students', 'student']
 NAME_LENGTH = 80
@@ -122,6 +123,29 @@ class Club(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
+
+    @property
+    def display_requirements(self):
+        #http://stackoverflow.com/questions/2087370/decode-html-entities-in-python-string
+        #http://www.crummy.com/software/BeautifulSoup/bs4/doc/#get-text
+        return BeautifulSoup(self.requirements).get_text()
+    @property
+    def display_activity_summary(self):
+        return BeautifulSoup(self.activity_summary).get_text()
+    @property
+    def display_introduction(self):
+        """
+        Introduction without html entities. By default, django converts text to entities in templates
+        """
+        return BeautifulSoup(self.introduction).get_text()
+    @property
+    def display_meeting(self):
+        return BeautifulSoup(self.meeting).get_text()
+    @property
+    def display_address(self):
+        return BeautifulSoup(self.address).get_text()
+
+
     @property
     def callink_url(self):
         return urlparse.urljoin("https://callink.berkeley.edu/organization", self.permalink) if self.permalink else None

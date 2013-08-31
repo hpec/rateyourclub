@@ -39,7 +39,7 @@
                 %h3 {{ club }}
                 %blockquote
                     %p
-                        {{ club.introduction|urlize }}
+                        {{ club.display_introduction|urlize }}
 
                 .avg-rating-stars.pull-left
                 %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
@@ -51,24 +51,24 @@
                         %dt.muted
                           Requirements
                         %dd
-                          {{club.requirements|urlize}}
+                          {{club.display_requirements|urlize}}
 
                     - if club.address
                         %dt.muted
                           Address
                         %dd
-                          {{club.address}}
+                          {{club.display_address}}
                     - if club.activity_summary
                         %dt.muted
                           Activities
                         %dd
-                          {{club.activity_summary|urlize}}
+                          {{club.display_activity_summary|urlize}}
 
                     - if club.meeting
                         %dt.muted
                             Meetings
                         %dd
-                          {{club.meeting|urlize}}
+                          {{club.display_meeting|urlize}}
                     - if club.students_berkeley_edu_url
                         %p
                           %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}", 'target' : '_blank'}

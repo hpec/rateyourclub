@@ -64,7 +64,7 @@
                     %p
                         %span.intro-text
                             {{club.introduction|slice:":200"|urlize}}
-                        - if club.introduction and club.introduction|length  > 200
+                        - if club.introduction and club.display_introduction|length  > 200
                             %span.ellipsis
                                 \...
 
@@ -72,7 +72,7 @@
                             %a.show-more{ 'href' : "#" }
                               Read more
                             %span.hide-text
-                              {{club.introduction|urlize}}
+                              {{club.display_introduction|urlize}}
 
 
 
