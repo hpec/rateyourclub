@@ -41,12 +41,29 @@ class Category(models.Model):
     def __unicode__(self):
         return "%s" % (self.name)
 
-class FacebookManager(models.Manager):
-    def get_query_set(self):
-        return super(FacebookManager, self).get_query_set().filter(facebook_id__isnull=False)
+class ClubQuerySet(models.query.QuerySet):
+    def facebook(self):
+        return self.filter(facebook_id__isnull=False)
+    def rated(self):
+        return self.extra(select={'average_rating':'CASE WHEN review_count > 0 THEN review_score/review_count ELSE 0 END'})
+    def top_rated(self):
+        return self.rated().order_by('-average_rating')
+
 class ClubManager(models.Manager):
+
+    use_for_related_fields = True
+
     def find_by_permalink(self, permalink):
-        return super(ClubManager, self).get_query_set().get(permalink=permalink)
+        return self.get_query_set().get(permalink=permalink)
+    def get_query_set(self):
+        return ClubQuerySet(model=self.model)
+    def facebook(self):
+        return self.get_query_set().facebook()
+    def rated(self):
+        return self.get_query_set().rated()
+    def top_rated(self):
+        return self.get_query_set().top_rated()
+
     # Note: this is too expensive
     # def get_related_clubs(self, club):
     #     clubs = list(super(ClubManager, self).get_query_set().all())
@@ -112,7 +129,7 @@ class Club(models.Model):
     related_clubs = models.TextField(blank=True,null=True)
 
     objects = ClubManager()
-    facebook_clubs = FacebookManager()
+
     def is_float(self, val):
         try:
             float(val)
