@@ -164,25 +164,24 @@
         .span4
             #event-panel
                 %h4 Events
-                - for event in events
-                    %div
-                      %a{ 'href' : "{{ event.facebook_url }}" }
-                            {{ event.name }}
-                    %div{'style':'font-size:12px; color:#aaa;'}
-                        {{ event.location }}
-                    %div{'style':'font-size:12px; color:#aaa;'}
-                        {% localtime off %}
-                            {{ event.display_start_time }}
-                            to
-                            {{ event.display_end_time }}
-                        {% endlocaltime %}
-                    %hr
-
-                - if events
-                    %a{'href':'#'} View more
+                -with events=events.future|slice:":5"
+                  - include "includes/club_event_info.html"
+                - if events.future.count > 5
+                  %a#btn-more-events{'href':'#'} View more
+                    #more-events{ 'style': 'display:none;'}
+                      -with events=events.future|slice:"5:"
+                        - include "includes/club_event_info.html"
+                    <script>
+                      $("#btn-more-events").click(function(e){
+                        e.preventDefault();
+                        $(this).remove();
+                        $("#more-events").toggle();
+                      })
+                    </script>
                 - else
+                  - if events.future.count == 0
                     No events listed!
-        .span4
+        .span4.pull-right
             #event-panel
                 %h4 You may also like
                 - for c in related_clubs

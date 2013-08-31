@@ -52,7 +52,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
     club.save()
-    events = list(club.event_set.order_by("-start_time").all()[:5])
+    events = club.event_set.order_by("-start_time").all()
     reviews = Review.objects.filter(club=club, is_deleted=False)
     try:
         rating = int(club.review_score)*1.0 / int(club.review_count)
