@@ -12,7 +12,7 @@ ROOTDIR = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 CONFIGURATION_YAML = os.path.join(ROOTDIR, 'config.yaml')
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    'hpec.liu@gmail.com',
 )
 
 MANAGERS = ADMINS
