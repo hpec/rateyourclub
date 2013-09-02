@@ -5,14 +5,14 @@ import djcelery
 from django.utils import timezone
 djcelery.setup_loader()
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ROOTDIR = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 CONFIGURATION_YAML = os.path.join(ROOTDIR, 'config.yaml')
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Daniel Liu', 'hpec.liu@gmail.com'),
 )
 
 MANAGERS = ADMINS
