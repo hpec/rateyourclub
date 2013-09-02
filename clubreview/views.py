@@ -18,7 +18,6 @@ def landing(request, template_name = 'landing.html' ):
     context = RequestContext(request)
     return render_to_response(template_name, { }, context_instance=context)
 
-@login_required
 def club_list_view(request, template_name='club_list.html'):
     order = request.GET.get('order', '')
     query = request.GET.get('q', '')
@@ -47,7 +46,6 @@ def club_list_view(request, template_name='club_list.html'):
     context = RequestContext(request)
     return render_to_response(template_name, { 'clubs': clubs, 'order': order , 'categories': categories }, context_instance=context)
 
-@login_required
 def club_info_view(request, club_id, template_name='club_info.html'):
     club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
