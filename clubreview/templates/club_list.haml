@@ -11,7 +11,13 @@
                     -# Placeholder for actiual comments
                     %ul{'class':'pull-left'}
                         - for category in categories
-                            <li><a href="?cat={{category.name}}">{{ category }}</a></li>
+                            %li
+                              <a href="?cat={{category.name}}">
+                                - if category.name == request.GET.dict.cat
+                                  %strong {{ category }}
+                                - else
+                                  {{ category }}
+                              </a>
 
 
             - if user.is_authenticated

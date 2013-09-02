@@ -255,23 +255,23 @@ def post_init_callbacks(sender, instance, **kwargs):
     instance.ensure_has_permalink()
 
 class EventQuerySet(models.query.QuerySet):
-        def future(self):
-            """
-            Return ongoing or events in the future
-            """
-            return self.filter( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+    def future(self):
+        """
+        Return ongoing or events in the future
+        """
+        return self.filter( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
 
 
-        def past(self):
-            return self.exclude( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
-        def now(self):
-            """
-            Return ongoing events:
-                1) Events that started and will be ending later.
-                2) Full day events. Events without an end date.
-            """
-            return self.filter( ( Q(start_time__lte=now()) & Q(end_time__gte=now())) |
-                                ( Q( start_time__month=now().month) & Q( start_time__day=now().day) & Q( start_time__year=now().year) & Q(end_time__isnull=True))  )
+    def past(self):
+        return self.exclude( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+    def now(self):
+        """
+        Return ongoing events:
+            1) Events that started and will be ending later.
+            2) Full day events. Events without an end date.
+        """
+        return self.filter( ( Q(start_time__lte=now()) & Q(end_time__gte=now())) |
+                            ( Q( start_time__month=now().month) & Q( start_time__day=now().day) & Q( start_time__year=now().year) & Q(end_time__isnull=True))  )
 
 
 class EventsManager(models.Manager):

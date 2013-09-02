@@ -19,27 +19,22 @@ def landing(request, template_name = 'landing.html' ):
     return render_to_response(template_name, { }, context_instance=context)
 
 def club_list_view(request, template_name='club_list.html'):
-    order = request.GET.get('order', '')
+    order_mapping = {'name':'name', 'ratings':'-average_rating', 'pop':'-hit'}
+
+    order = request.GET.get('order', 'pop')
     query = request.GET.get('q', '')
     category = request.GET.get('cat', '')
 
-    order_by = '-hit'
-    if order == 'name':
-        order_by = 'name'
-    elif order == 'ratings':
-        order_by = '-average_rating'
-    else:
-        order_by = '-hit'
+    categories = Category.objects.all().order_by('name')
 
-    clubs = Club.objects.filter(category__name=category) if category else Club.objects.all()
-    clubs = clubs.rated() if order == 'ratings' else clubs
-    clubs = clubs.order_by(order_by)
+    clubs = Club.objects.all()
+    if category: clubs = Club.objects.filter(category__name=category)
+    if order == 'ratings': clubs = clubs.rated()
+    clubs = clubs.order_by(order_mapping[order], '-hit', 'name') # break tie by hit then name
     for word in query.split():
         clubs = clubs.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
 
     paginator = Paginator(clubs, 25) # Show 25 clubs per page
-
-    categories = Category.objects.all().order_by('name')
 
     page = request.GET.get('page')
     try:
