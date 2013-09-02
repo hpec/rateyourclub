@@ -39,7 +39,7 @@
                 %h3 {{ club }}
                 %blockquote
                     %p
-                        {{ club.introduction|urlize }}
+                        {{ club.display_introduction|urlize }}
 
                 .avg-rating-stars.pull-left
                 %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
@@ -51,48 +51,48 @@
                         %dt.muted
                           Requirements
                         %dd
-                          {{club.requirements|urlize}}
+                          {{club.display_requirements|urlize}}
 
                     - if club.address
                         %dt.muted
                           Address
                         %dd
-                          {{club.address}}
+                          {{club.display_address}}
                     - if club.activity_summary
                         %dt.muted
                           Activities
                         %dd
-                          {{club.activity_summary|urlize}}
+                          {{club.display_activity_summary|urlize}}
 
                     - if club.meeting
                         %dt.muted
                             Meetings
                         %dd
-                          {{club.meeting|urlize}}
+                          {{club.display_meeting|urlize}}
                     - if club.students_berkeley_edu_url
                         %p
-                          %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}" }
+                          %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}", 'target' : '_blank'}
                             %small Legacy Source
 
 
                 %ul.unstyled
                   - if club.contact_email
                     %li
-                      %a{ 'href' : "mailto:{{club.contact_email}}"}
+                      %a{ 'href' : "mailto:{{club.contact_email}}", 'target' : '_blank'}
                         %i.icon-envelope-alt
                         %small
                             = club.contact_email
 
                   - if club.website and club.website != club.facebook_url
                       %li
-                        %a{ 'href' : "{{club.website}}" }
+                        %a{ 'href' : "{{club.website}}", 'target' : '_blank' }
                             %i.icon-external-link
                             %small
                                 = club.website
 
                   - if club.facebook_url
                     %li
-                        %a{ 'href' : "{{club.facebook_url}}" }
+                        %a{ 'href' : "{{club.facebook_url}}", 'target' : '_blank' }
                             %i.icon-facebook-sign
                             %small
                                   = club.facebook_url
@@ -172,25 +172,24 @@
         .span4
             #event-panel
                 %h4 Events
-                - for event in events
-                    %div
-                      %a{ 'href' : "{{ event.facebook_url }}" }
-                            {{ event.name }}
-                    %div{'style':'font-size:12px; color:#aaa;'}
-                        {{ event.location }}
-                    %div{'style':'font-size:12px; color:#aaa;'}
-                        {% localtime off %}
-                            {{ event.display_start_time }}
-                            to
-                            {{ event.display_end_time }}
-                        {% endlocaltime %}
-                    %hr
-
-                - if events
-                    %a{'href':'#'} View more
+                -with events=events.future|slice:":5"
+                  - include "includes/club_event_info.html"
+                - if events.future.count > 5
+                  %a#btn-more-events{'href':'#'} View more
+                    #more-events{ 'style': 'display:none;'}
+                      -with events=events.future|slice:"5:"
+                        - include "includes/club_event_info.html"
+                    <script>
+                      $("#btn-more-events").click(function(e){
+                        e.preventDefault();
+                        $(this).remove();
+                        $("#more-events").toggle();
+                      })
+                    </script>
                 - else
+                  - if events.future.count == 0
                     No events listed!
-        .span4
+        .span4.pull-right
             #event-panel
                 %h4 You may also like
                 - for c in related_clubs

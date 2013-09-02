@@ -7,7 +7,7 @@ def import_clubs():
     crawler.main()
 @task
 def add_club_events(name="add_club_events"):
-    for club in Club.facebook_clubs.all():
+    for club in Club.objects.facebook():
         club.facebook_event_update()
 @task
 def import_callink_crawler_data():

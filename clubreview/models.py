@@ -9,11 +9,14 @@ import re
 import nltk
 import operator
 from copy import copy
-from datetime import timedelta
+from datetime import timedelta, date
 from django.db.models.signals import post_init
+from django.utils.timezone import now
+from django.db.models import Q
 from django.dispatch import receiver
 from django.utils.timezone import is_aware
 from registration.models import User
+from bs4 import BeautifulSoup
 
 common_words = ['berkeley', 'dwinelle', 'association', 'associations', 'club', 'clubs', 'students', 'student']
 NAME_LENGTH = 80
@@ -38,12 +41,29 @@ class Category(models.Model):
     def __unicode__(self):
         return "%s" % (self.name)
 
-class FacebookManager(models.Manager):
-    def get_query_set(self):
-        return super(FacebookManager, self).get_query_set().filter(facebook_id__isnull=False)
+class ClubQuerySet(models.query.QuerySet):
+    def facebook(self):
+        return self.filter(facebook_id__isnull=False)
+    def rated(self):
+        return self.extra(select={'average_rating':'CASE WHEN review_count > 0 THEN review_score/review_count ELSE 0 END'})
+    def top_rated(self):
+        return self.rated().order_by('-average_rating')
+
 class ClubManager(models.Manager):
+
+    use_for_related_fields = True
+
     def find_by_permalink(self, permalink):
-        return super(ClubManager, self).get_query_set().get(permalink=permalink)
+        return self.get_query_set().get(permalink=permalink)
+    def get_query_set(self):
+        return ClubQuerySet(model=self.model)
+    def facebook(self):
+        return self.get_query_set().facebook()
+    def rated(self):
+        return self.get_query_set().rated()
+    def top_rated(self):
+        return self.get_query_set().top_rated()
+
     # Note: this is too expensive
     # def get_related_clubs(self, club):
     #     clubs = list(super(ClubManager, self).get_query_set().all())
@@ -109,7 +129,7 @@ class Club(models.Model):
     related_clubs = models.TextField(blank=True,null=True)
 
     objects = ClubManager()
-    facebook_clubs = FacebookManager()
+
     def is_float(self, val):
         try:
             float(val)
@@ -120,6 +140,29 @@ class Club(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
+
+    @property
+    def display_requirements(self):
+        #http://stackoverflow.com/questions/2087370/decode-html-entities-in-python-string
+        #http://www.crummy.com/software/BeautifulSoup/bs4/doc/#get-text
+        return BeautifulSoup(self.requirements).get_text()
+    @property
+    def display_activity_summary(self):
+        return BeautifulSoup(self.activity_summary).get_text()
+    @property
+    def display_introduction(self):
+        """
+        Introduction without html entities. By default, django converts text to entities in templates
+        """
+        return BeautifulSoup(self.introduction).get_text()
+    @property
+    def display_meeting(self):
+        return BeautifulSoup(self.meeting).get_text()
+    @property
+    def display_address(self):
+        return BeautifulSoup(self.address).get_text()
+
+
     @property
     def callink_url(self):
         return urlparse.urljoin("https://callink.berkeley.edu/organization", self.permalink) if self.permalink else None
@@ -211,6 +254,38 @@ class Club(models.Model):
 def post_init_callbacks(sender, instance, **kwargs):
     instance.ensure_has_permalink()
 
+class EventQuerySet(models.query.QuerySet):
+        def future(self):
+            """
+            Return ongoing or events in the future
+            """
+            return self.filter( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+
+
+        def past(self):
+            return self.exclude( Q(start_time__gte=now()) | Q(end_time__gte=now()) )
+        def now(self):
+            """
+            Return ongoing events:
+                1) Events that started and will be ending later.
+                2) Full day events. Events without an end date.
+            """
+            return self.filter( ( Q(start_time__lte=now()) & Q(end_time__gte=now())) |
+                                ( Q( start_time__month=now().month) & Q( start_time__day=now().day) & Q( start_time__year=now().year) & Q(end_time__isnull=True))  )
+
+
+class EventsManager(models.Manager):
+    use_for_related_fields = True
+    def get_query_set(self):
+        return EventQuerySet(model=self.model)
+
+    def future(self):
+        return self.get_query_set().future()
+    def past(self):
+        return self.get_query_set().past()
+    def now(self):
+        return self.get_query_set().now()
+
 class Event(models.Model):
     """
     Model fields are modeled very closely after facebook event api attributes
@@ -225,6 +300,7 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
+    objects = EventsManager()
     @property
     def display_start_time(self):
         return self.convert_to_local_time(self.start_time)
