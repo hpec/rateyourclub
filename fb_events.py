@@ -208,6 +208,13 @@ class FacebookGroup(object):
                 return self.id
             else: #when the id returned is just a url
                 return self.get_gid_by_login()
+        elif response and  len(response.keys()) > 0 and not 'first_name' in response[response.keys()[0]] and 'id' in response[response.keys()[0]]:  #filter out profiles
+            if re.match('\d+$', str(response[response.keys()[0]]['id']) ):
+                self.id = int(response[response.keys()[0]]['id'])
+                return self.id
+            else: #when the id returned is just a url
+                return self.get_gid_by_login()
+
         else:
             return False
     def get_events_by_fql(self):
