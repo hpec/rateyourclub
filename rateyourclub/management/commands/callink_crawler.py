@@ -85,8 +85,11 @@ def updateExistingClubs(meta_dict):
             if not club.facebook_url and 'facebook' in meta_dict:
                 club.facebook_url = meta_dict['facebook']
                 changed = True
-            if changed and club.full_clean():
-                print "saving!!! " + club, meta_dict
+            if not club.callink_permalink and 'permalink' in meta_dict:
+                club.callink_permalink = meta_dict['permalink']
+                changed = True
+            if changed and type(club.full_clean()) == type(None):
+                print "saving!!! %s, %s " % (club, meta_dict)
                 club.save()
         except (ValidationError, DatabaseError) as e:
             if isinstance(e, DatabaseError):
@@ -131,6 +134,7 @@ def updateExistingClubs(meta_dict):
                     club = Club.objects.filter(name__contains = just_name)[0]
                     save_club_links(club, meta_dict)
             else:
+                print "%s not found" % meta_dict['name']
                 clubs_not_found.append(meta_dict['name'])
         except DatabaseError as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
