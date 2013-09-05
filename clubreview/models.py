@@ -44,6 +44,10 @@ class Category(models.Model):
 class ClubQuerySet(models.query.QuerySet):
     def facebook(self):
         return self.filter(facebook_id__isnull=False)
+    def facebook_including_null_id(self):
+        return self.exclude(facebook_url='')
+    def facebook_null_id(self):
+        return self.exclude(Q(facebook_url='')).filter(facebook_id__isnull=True)
     def rated(self):
         return self.extra(select={'average_rating':'CASE WHEN review_count > 0 THEN review_score/review_count ELSE 0 END'})
     def top_rated(self):
@@ -63,6 +67,10 @@ class ClubManager(models.Manager):
         return self.get_query_set().rated()
     def top_rated(self):
         return self.get_query_set().top_rated()
+    def facebook_null_id(self):
+        return self.get_query_set().facebook_null_id()
+    def facebook_including_null_id(self):
+        return self.get_query_set().facebook_including_null_id()
 
     # Note: this is too expensive
     # def get_related_clubs(self, club):
