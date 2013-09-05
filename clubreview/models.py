@@ -228,6 +228,13 @@ class Club(models.Model):
 
 
 
+    def set_facebook_id(self):
+        import fb_events
+        if self.facebook_url:
+            fb = fb_events.FacebookGroup(self.facebook_url)
+            if fb.get_id() : self.facebook_id = fb.get_id()
+            if self.facebook_id: self.save()
+
     def facebook_event_update(self):
         import fb_events
         if self.facebook_id == None:
