@@ -46,7 +46,7 @@ def club_list_view(request, template_name='club_list.html'):
         clubs = paginator.page(paginator.num_pages)
 
     categories = Category.objects.order_by('name')
-    events = Event.objects.filter(start_time__gt=datetime.datetime.now()).order_by('-start_time')
+    events = Event.objects.filter(start_time__gt=datetime.datetime.now()).order_by('start_time')[:5]
     return render_to_response(
         template_name,
         { 'clubs': clubs, 'order': order , 'categories': categories, 'events': events },
