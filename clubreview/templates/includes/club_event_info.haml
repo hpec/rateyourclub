@@ -3,13 +3,10 @@
   %div
       %a{ 'href' : "{{ event.facebook_url }}",  'target' : '_blank'}
             {{ event.name }}
+    %div.lead{'style':'font-size:12px; margin-bottom:0'}
+        {{ event.display_time }}
     %div{'style':'font-size:12px; color:#aaa;'}
         {{ event.location }}
-    %div{'style':'font-size:12px; color:#aaa;'}
-        {% localtime off %}
-            {{ event.display_start_time }}
-            to
-            {{ event.display_end_time }}
-        {% endlocaltime %}
+
     %hr
 
