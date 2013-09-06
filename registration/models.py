@@ -100,7 +100,7 @@ class UserManager(BaseUserManager):
         message = render_to_string('invitation_email.txt',
                                    { 'invitation_key': invitation.invitation_key,
                                      'site': current_site,
-                                     'who': user.email,
+                                     'who': user,
                                     })
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [invitation.email])
