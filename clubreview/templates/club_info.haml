@@ -172,12 +172,12 @@
         .span4
             #event-panel
                 %h4 Events
-                -with events=events.future|slice:":5"
+                -with events=events|slice:":4"
                   - include "includes/club_event_info.html"
-                - if events.future.count > 5
+                - if events.count > 4
                   %a#btn-more-events{'href':'#'} View more
                     #more-events{ 'style': 'display:none;'}
-                      -with events=events.future|slice:"5:"
+                      -with events=events|slice:"4:"
                         - include "includes/club_event_info.html"
                     <script>
                       $("#btn-more-events").click(function(e){
@@ -187,7 +187,7 @@
                       })
                     </script>
                 - else
-                  - if events.future.count == 0
+                  - if events.count == 0
                     No events listed!
         .span4.pull-right
             #event-panel

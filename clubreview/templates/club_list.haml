@@ -3,135 +3,132 @@
 - load humanize
 
 - block content
+    .row
+      .span3.pull-right{'style':'width:265px'}
+        .card
+          %h4 Categories
+          %ul
+            - for category in categories
+                %li
+                  <a href="?cat={{category.name}}">
+                    - if category.name == request.GET.dict.cat
+                      %strong {{ category }}
+                    - else
+                      {{ category }}
+                  </a>
 
-        .row
-            .pull-right.span3.card
-                %div{'class':'span3'}
-                    %h4 Categories
-                    -# Placeholder for actiual comments
-                    %ul{'class':'pull-left'}
-                        - for category in categories
-                            %li
-                              <a href="?cat={{category.name}}">
-                                - if category.name == request.GET.dict.cat
-                                  %strong {{ category }}
-                                - else
-                                  {{ category }}
-                              </a>
+        .card
+          %h4 Upcoming events
+          - with events=events
+            - include "includes/club_event_info.html"
 
+      .span8
+        - if user.is_authenticated
+          .card
+            %h3
+              %a{'href': "#"} Write Review
+            - review_form_handler
 
-            - if user.is_authenticated
-                .span8.card
-                    %h3
-                        %a{'href': "#"} Write Review
-                    - review_form_handler
+        .card
+          .pull-left
+            Displaying
+            ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
+          .pull-right
+              Sort by
+                %a{'class':"{% if order == 'pop' or not order or not order in 'ratings name'%}sort-active{% endif %}",'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Views
+                %a{'class':"{% if order == 'name'%}sort-active{% endif %}",'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Name
+                %a{'class':"{% if order == 'ratings'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Rating
 
-            .span8.card{'style':'padding-bottom:10px; padding-top:10px'}
-                .pull-left
-
-                        Displaying
-                        ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
-                .pull-right
-                    Sort by
-                      %a{'class':"{% if order == 'pop' or not order or not order in 'ratings name'%}sort-active{% endif %}",'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Views
-                      %a{'class':"{% if order == 'name'%}sort-active{% endif %}",'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Name
-                      %a{'class':"{% if order == 'ratings'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Rating
-
-            - for club in clubs
-                .span8.card
-                    %ul.unstyled.pull-right
-                      %li
-                        %span.text-info
-                          {% widthratio club.avg_rating 5 5 %}
-                          &times;
-                          %i.icon-star
-                      - if club.website
-                              %li
-                                  %a.pull-right{ 'href' : "{{club.website}}", 'target' : '_blank' }
-                                      %i.icon-external-link
-                                  .clearfix
-                      - if club.facebook_url
+        - for club in clubs
+            .card
+                %ul.unstyled.pull-right
+                  %li
+                    %span.text-info
+                      {% widthratio club.avg_rating 5 5 %}
+                      &times;
+                      %i.icon-star
+                  - if club.website
                           %li
-                              %a.pull-right{ 'href' : "{{club.facebook_url}}", 'target' : '_blank' }
-                                  %i.icon-facebook-sign
-                                  .hide-text
-                                    {{ club.facebook_url}}
+                              %a.pull-right{ 'href' : "{{club.website}}", 'target' : '_blank' }
+                                  %i.icon-external-link
                               .clearfix
+                  - if club.facebook_url
+                      %li
+                          %a.pull-right{ 'href' : "{{club.facebook_url}}", 'target' : '_blank' }
+                              %i.icon-facebook-sign
+                              .hide-text
+                                {{ club.facebook_url}}
+                          .clearfix
 
 
 
-                    %h4
-                        %a{'href' : "{% url 'club_info_view' club.permalink %}"}
-                            {{club}}
-                    %p
-                        %span.intro-text
-                            {{club.display_introduction|slice:":200"|urlize}}
-                        - if club.introduction and club.display_introduction|length  > 200
-                            %span.ellipsis
-                                \...
+                %h4
+                    %a{'href' : "{% url 'club_info_view' club.permalink %}"}
+                        {{club}}
+                %p
+                    %span.intro-text
+                        {{club.display_introduction|slice:":200"|urlize}}
+                    - if club.introduction and club.display_introduction|length  > 200
+                        %span.ellipsis
+                            \...
 
-                            %br
-                            %a.show-more{ 'href' : "#" }
-                              Read more
-                            %span.hide-text
-                              {{club.display_introduction|urlize}}
-                    %small.muted.pull-right
-                      = club.hit|intcomma
-                      view{{club.hit|pluralize}}
-
-
+                        %br
+                        %a.show-more{ 'href' : "#" }
+                          Read more
+                        %span.hide-text
+                          {{club.display_introduction|urlize}}
+                %small.muted.pull-right
+                  = club.hit|intcomma
+                  view{{club.hit|pluralize}}
 
 
+        - if clubs.paginator.count > 0
+            %div{'class':'pagination pagination-centered'}
+                %ul{'class' : 'step-links'}
+                    %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
+                        - if clubs.has_previous
+                            %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'} &larr;
+                        - else
+                            %a{'href' : '#'} &larr;
 
-        .row
-            .span7
-                - if clubs.paginator.count > 0
-                    %div{'class':'pagination pagination-centered'}
-                        %ul{'class' : 'step-links'}
-                            %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
-                                - if clubs.has_previous
-                                    %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'} &larr;
-                                - else
-                                    %a{'href' : '#'} &larr;
+                    - for i in clubs.paginator.page_range
+                        - with offset_start=clubs.number|add:"-5"
+                            - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
+                                %li
+                                  %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                                        {{i}}
+                    %li{'class':'current active'}
+                        %span
+                            {{clubs.number}}
+                    - for i in clubs.paginator.page_range
+                        - with offset_end=clubs.number|add:"5"
+                            - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
+                                %li
+                                    %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                                        {{i}}
 
-                            - for i in clubs.paginator.page_range
-                                - with offset_start=clubs.number|add:"-5"
-                                    - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
-                                        %li
-                                          %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
-                                                {{i}}
-                            %li{'class':'current active'}
-                                %span
-                                    {{clubs.number}}
-                            - for i in clubs.paginator.page_range
-                                - with offset_end=clubs.number|add:"5"
-                                    - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
-                                        %li
-                                            %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
-                                                {{i}}
+                    %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
+                        - if clubs.has_next
+                            %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                                &rarr;
+                        - else
+                            %a{'href': '#'}
+                                &rarr;
+                %p
+                    page ={clubs.number} of ={clubs.paginator.num_pages}
 
-                            %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
-                                - if clubs.has_next
-                                    %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
-                                        &rarr;
-                                - else
-                                    %a{'href': '#'}
-                                        &rarr;
-                        %p
-                            page ={clubs.number} of ={clubs.paginator.num_pages}
+
     :javascript
-        (function($){
-            $(document).ready(function(){
-              $(".show-more").click(function(e){
-                $this = $(e.target);
-                e.preventDefault();
-                var toInsert = $this.siblings('.hide-text').text().trim();
-                $this.siblings('.ellipsis').remove();
-                var $target = $this.siblings('.intro-text');
-                $target.text( toInsert);
-                $this.remove();
-              })
-              });
-          })(jQuery)
-
-
+      (function($){
+        $(document).ready(function(){
+          $(".show-more").click(function(e){
+            $this = $(e.target);
+            e.preventDefault();
+            var toInsert = $this.siblings('.hide-text').text().trim();
+            $this.siblings('.ellipsis').remove();
+            var $target = $this.siblings('.intro-text');
+            $target.text( toInsert);
+            $this.remove();
+          })
+        });
+        })(jQuery)

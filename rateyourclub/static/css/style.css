@@ -14,7 +14,13 @@ body{
 input[type="text"]{ height: inherit; }
 #main-wrapper { margin-top: 20px; }
 #club-name { padding-left: 15px; padding-right: 15px; padding-top: 5px; padding-bottom: 20px; background-color: white; }
-.card { padding: 15px; padding-top: 5px; margin-top: 15px; background-color: white; }
+.card {
+    padding: 15px;
+    padding-top: 10px;
+    padding-bottom: 29px;
+    margin-top: 15px;
+    background-color: white;
+}
 #event-panel {
     padding: 15px;
     padding-top: 5px;

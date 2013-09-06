@@ -1,3 +1,4 @@
+import datetime
 import itertools
 
 from django.contrib import messages
@@ -25,8 +26,6 @@ def club_list_view(request, template_name='club_list.html'):
     query = request.GET.get('q', '')
     category = request.GET.get('cat', '')
 
-    categories = Category.objects.all().order_by('name')
-
     clubs = Club.objects.all()
     if category: clubs = Club.objects.filter(category__name=category)
     if order == 'ratings': clubs = clubs.rated()
@@ -45,14 +44,24 @@ def club_list_view(request, template_name='club_list.html'):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         clubs = paginator.page(paginator.num_pages)
-    context = RequestContext(request)
-    return render_to_response(template_name, { 'clubs': clubs, 'order': order , 'categories': categories }, context_instance=context)
+
+    categories = Category.objects.order_by('name')
+    events = Event.objects.filter(start_time__gt=datetime.datetime.now()).order_by('-start_time')
+    return render_to_response(
+        template_name,
+        { 'clubs': clubs, 'order': order , 'categories': categories, 'events': events },
+        context_instance=RequestContext(request)
+    )
 
 def club_info_view(request, club_id, template_name='club_info.html'):
     club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
     club.save()
-    events = club.event_set.order_by("-start_time").all()
+    if club.event_set.future().count() > 0:
+        events = club.event_set.future().order_by('start_time')
+    else:
+        events = club.event_set.order_by("-start_time")
+    events = events[:6]
     reviews = Review.objects.filter(club=club, is_deleted=False)
     try:
         rating = int(club.review_score)*1.0 / int(club.review_count)
