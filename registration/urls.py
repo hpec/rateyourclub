@@ -24,8 +24,7 @@ from django.conf.urls.defaults import *
 # from django.views.generic.simple import direct_to_template
 from django.contrib.auth import views as auth_views
 
-from registration.views import activate, login, invite, logout
-from registration.views import register
+from registration.views import activate, login, invite, logout, register, user_list
 
 
 urlpatterns = patterns('',
@@ -69,6 +68,8 @@ urlpatterns = patterns('',
                        url(r'^invite/$',
                            invite,
                            name='registration_invite'),
+                       url(r'^users/$',
+                           user_list),
                        # url(r'^register/complete/$',
                        #     direct_to_template,
                        #     {'template': 'registration/registration_complete.html'},

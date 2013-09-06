@@ -96,3 +96,10 @@ def logout(request):
     messages.info(request, 'You have successfully logged out.')
     return HttpResponseRedirect('/')
 
+@login_required
+def user_list(request, template_name='users.html'):
+    if request.user.is_staff:
+        return render_to_response(template_name, {'users':User.objects.all()}, context_instance=RequestContext(request))
+    else:
+        messages.error(request, 'You are not allowed to view this page')
+        return HttpResponseRedirect('/clubs/')
