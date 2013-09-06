@@ -320,7 +320,7 @@ class Event(models.Model):
     @property
     def display_time(self):
         start_time = self.convert_to_local_time(self.start_time)
-        return start_time.strftime("%m/%d %I:%M %p")
+        return start_time.strftime("%A %m/%d, %I:%M %p")
     @property
     def display_start_time(self):
         return self.convert_to_local_time(self.start_time)

@@ -18,8 +18,24 @@
 
         %button.btn{'type':'submit'} Invite
 
+    %div
+        %a{'id':'share-on-facebook','target':'__blank', 'href':'http://www.facebook.com/sharer.php?s=100&p[url]=http://calbeat.com&p[title]=CalBEAT&p[summary]=Discover Cal student clubs, stay updated with club events, and write reviews to support your club!'}
+            <img style="width:24px;height:24px;" src="/static/img/facebook.png">
+            Share on facebook
+    / %div
+    /     %a{'href':"https://twitter.com/intent/tweet?text=Hi I am using Calbeat.com", 'class':"twitter-share-button", 'data-url':"http://calbeat.com", 'data-text':"Hi I am using Calbeat.com", 'date-count':"None"}
+    /         <img style="width:24px;height:24px;" src="/static/img/twitter.png">
+    /         Share on Twitter
+
+
+
     :javascript
         $(function() {
             $("#id-email").popover({'content':'You can only invite @berkeley.edu email here','trigger':'focus'});
             $('#id-email').focus();
+            $('#share-on-facebook').click(function(event) {
+                var fb = window.open('http://www.facebook.com/sharer.php?s=100&p[url]=http://calbeat.com&p[title]=CalBEAT&p[summary]=Discover Cal student clubs, stay updated with club events, and write reviews to support your club!','sharer', 'width=626, height=436');
+                fb.focus();
+                /* Act on the event */
+            });
         })
