@@ -80,6 +80,13 @@
                 %small.muted.pull-right
                   = club.hit|intcomma
                   view{{club.hit|pluralize}}
+          - empty
+            .card{'style':'text-align: center; padding-bottom:10px'}
+              %p{'style':'padding-top:10px;'}
+                Sorry we cannot find any club matching your search.
+              %p{'style':'font-size:12px'}
+                Try searching with less words, and see if auto-completion works for you.
+
 
 
         - if clubs.paginator.count > 0
