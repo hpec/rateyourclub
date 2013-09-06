@@ -316,12 +316,11 @@ class Event(models.Model):
     end_time = models.DateTimeField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
     objects = EventsManager()
+
     @property
     def display_time(self):
         start_time = self.convert_to_local_time(self.start_time)
-        end_time = self.convert_to_local_time(self.end_time)
         return start_time.strftime("%m/%d %I:%M %p")
-
     @property
     def display_start_time(self):
         return self.convert_to_local_time(self.start_time)
