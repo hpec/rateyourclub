@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'constance',
     'constance.backends.database',
     'djrill'
+
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -213,3 +214,8 @@ AUTH_USER_MODEL = 'registration.User'
 LOGIN_URL = '/accounts/login/'
 
 DEFAULT_FROM_EMAIL = 'noreply@calbeat.com'
+
+# django celery
+# http://docs.celeryproject.org/en/latest/getting-started/brokers/django.html#broker-django
+BROKER_URL = 'django://'
+INSTALLED_APPS += ('kombu.transport.django',)
