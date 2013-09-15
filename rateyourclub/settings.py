@@ -219,3 +219,4 @@ DEFAULT_FROM_EMAIL = 'noreply@calbeat.com'
 # http://docs.celeryproject.org/en/latest/getting-started/brokers/django.html#broker-django
 BROKER_URL = 'django://'
 INSTALLED_APPS += ('kombu.transport.django',)
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
