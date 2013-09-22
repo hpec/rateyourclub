@@ -35,6 +35,40 @@ class CallinkEvent(object):
         if self.facebook_event_id: return "https://facebook.com/events/%s" % self.facebook_event_id
 
     @property
+    def categories(self):
+        """
+        If event does not have a category it will be in the 'No Specific Category' category
+        """
+        return map(lambda category : category.text, self.soup.select('category'))
+
+    @property
+    def author(self):
+        return self.soup.find('author').text
+
+    @property
+    def email(self):
+        if self.author:
+            match = re.match('.*@.+?\.[a-z]+', self.author)
+            if match:
+                email = match.group(0)
+                if not re.match('no-reply', email): return email
+
+    @property
+    def image_url(self):
+        """
+        https://callink.berkeley.edu/images/W460xL600/0/noshadow/Event/2e98c6d8565f4549976cc6a18320ab89.jpg
+        """
+        enclosure = self.soup.find('enclosure')
+        if enclosure and  enclosure.get('url') : return unicode(enclosure.get('url'))
+    @property
+    def image_thumb_url(self):
+        """
+        https://callink.berkeley.edu/images/W180xL240/0/noshadow/Event/2e98c6d8565f4549976cc6a18320ab89.jpg
+        """
+        if self.image_url:
+            match = re.match('https://callink.berkeley.edu/images/.*/0/noshadow/Event/(.*).jpg', self.image_url)
+            if match : return "https://callink.berkeley.edu/images/W180xL240/0/noshadow/Event/%s.jpg" % match.group(1)
+    @property
     def text(self):
         return self.soup.text
 
@@ -162,7 +196,11 @@ class CallinkEvent(object):
             'event_id' : self.callink_event_id,
             'redirect_permalink' : self.redirect_permalink,
             'facebook_event_id' : self.facebook_event_id,
-            'facebook_event_url' : self.facebook_event_url
+            'facebook_event_url' : self.facebook_event_url,
+            'image_url' : self.image_url,
+            'image_thumb_url' : self.image_thumb_url,
+            'email' : self.email,
+            'categories' : self.categories
             }
     CALLINK_EVENTS_RSS_URL = 'https://callink.berkeley.edu/EventRss/EventsRss'
     @classmethod
