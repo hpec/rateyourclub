@@ -162,7 +162,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_all_permissions(self, obj=None):
         return None
     def has_perm(self, perm, obj=None):
-        return ob.is_staff if obj else self.is_staff
+        return obj.is_staff if obj else self.is_staff
     def has_perms(self, perm, obj=None):
         return obj.is_staff if obj else self.is_staff
     def has_module_perms(self, package_name):
