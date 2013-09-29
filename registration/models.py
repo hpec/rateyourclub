@@ -4,7 +4,7 @@ import random
 import re
 
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
@@ -56,7 +56,7 @@ class UserManager(BaseUserManager):
         u = self.create_user(email, screen_name, password)
         u.is_staff = True
         u.is_active = True
-        u.is_superuser = True
+        u.is_admin = True
         u.save(using=self._db)
         return u
 
@@ -126,7 +126,7 @@ class UserManager(BaseUserManager):
         return False
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
@@ -156,6 +156,18 @@ class User(AbstractBaseUser):
 
     def email_user(self, subject, message, from_email=None):
         send_mail(subject, message, from_email, [self.email])
+
+    def get_group_permissions(self, obj=None):
+        return None
+    def get_all_permissions(self, obj=None):
+        return None
+    def has_perm(self, perm, obj=None):
+        return obj.is_staff if obj else self.is_staff
+    def has_perms(self, perm, obj=None):
+        return obj.is_staff if obj else self.is_staff
+    def has_module_perms(self, package_name):
+        return self.is_staff
+
 
 
 class Activation(models.Model):
