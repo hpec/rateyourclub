@@ -1,6 +1,15 @@
 from django.core.management.base import BaseCommand, CommandError
 from bs4 import BeautifulSoup
-import urllib, requests
+import urllib, requests, re
+
+class CallinkClub(object):
+    def __init__(self, name, permalink, abbrev = None):
+        self.name = name
+        self.permalink = permalink
+        self.abbrev = abbrev
+    def __repr__(self):
+        return "<%s:%s>" % (self.__class__.__name__, unicode(self.name.encode('utf8'), errors='ignore'))
+
 
 class CallinkCategory(object):
     categories = [(5098,"Academic Student Organizations"),
@@ -46,43 +55,76 @@ class CallinkCategory(object):
         self._page = kwargs['page']
         self._last_result = []
         self._done = False
-        self.results = []
-    @property
-    def qs(self):
-        return urllib.urlencode({'SearchValue': self.name,
-         'SearchType' : 'Category',
-         'CurrentPage' : self._page,
-         'SelectedCategoryId' : self.id
-         })
+        self._results = []
 
     @property
+    def qs(self):
+        return qs_at_page()
+
+    def qs_at_page(self, page = None):
+        return urllib.urlencode(self.params(page = page or self._page))
+
+    def params(self, page = None):
+        return {'SearchValue': self.name,
+         'SearchType' : 'Category',
+         'CurrentPage' : page or self._page,
+         'SelectedCategoryId' : self.id }
+
+    def url_at_page(self, page = None):
+        return "https://callink.berkeley.edu/organizations?" + self.qs_at_page(page or self._page)
+    
+    @property
     def url(self):
-        return "https://callink.berkeley.edu/organizations?" + self.qs
-    def next(self):
-        if not self._done:
-            response  = requests.get(self.url)
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.text)
-                result_soup = soup.select(".result h5")
-                results = map(lambda r: (r.a.text, r.a.get("href")), result_soup)
-                if results and results[0] in self.results:
-                    self._done = True
-                    return
-                else:
-                    self.results += results
-                    self._page += 1
-                    return results
+        return self.url_at_page()
+
+    def get_abbrev(self, name):
+        res  = re.findall(r'\(([^\(^\)]*)\)', name)
+        if len(res) > 0:  return res[-1]
+
+    def get(self, page = None):
+        response  = requests.get(self.url_at_page(page or self._page))
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text)
+            result_soup = soup.select(".result h5")
+            return  map(lambda r: CallinkClub(r.a.text, r.a.get("href").replace('/organization/',''), self.get_abbrev(r.a.text)), result_soup)
+
     @property
     def clubs(self):
-        import pprint
-        next_result = self.next()
-        while(next_result):
-            pprint.pprint(next_result)
-            next_result = self.next()
-        return self.results
+        if len(self._results) == 0:
+            for club in self.club_iterator:
+                self._results.append(club)
+        return self._results
+
+    @property
+    def club_iterator(self):
+        page = 1
+        results = []
+        last_result = []
+        club = None
+        just_parsed = False
+
+        while(not club in results) :
+            if club : results.append(club)
+
+            if len(last_result) == 0:
+                last_result  = self.get( page = page )
+                page += 1
+
+            club = last_result.pop(0)
+
+            yield club
 
 
 
     def __repr__(self):
-        return "<%s> %s #%s" %(self.__class__.__name__, self.name, self.id)
+        return "<%s> %s #%s" % (self.__class__.__name__, unicode(self.name.encode('utf-8'), errors='ignore'), self.id)
 
+def main():
+    for category in CallinkCategory.all():
+        for i, club in enumerate(category.club_iterator):
+            #TODO store into database
+            print club
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        main()
