@@ -14,6 +14,10 @@ class CallinkEvent(object):
     def __init__(self, soup):
         self.soup = soup
 
+    def __unicode__(self):
+        return "%s:%s,%s-%s" % (self.__class__.__name__, self.title, self.start_time.isoformat(), self.end_time.isoformat())
+    def __repr__(self):
+        return self.__unicode__()
     def pprint(self):
         import pprint
         pprint.pprint(event.as_dict)
