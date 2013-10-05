@@ -1,2 +1,2 @@
-web: gunicorn rateyourclub.wsgi
+web: gunicorn -b 0.0.0.0:$PORT -w 4 rateyourclub.wsgi:application
 celery: python manage.py celeryd -c 3 --beat
