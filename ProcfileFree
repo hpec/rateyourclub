@@ -1,0 +1,2 @@
+web: gunicorn rateyourclub.wsgi
+celery: python manage.py celeryd -c 3 --beat
