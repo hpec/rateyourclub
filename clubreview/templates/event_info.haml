@@ -1,0 +1,47 @@
+- extends "base.html"
+- load static
+- load tz
+
+- block content
+
+    #main-wrapper.row
+        #main-content.span8
+            #club-name.hero-unit.no-border-radius
+                %h3 {{ event.name }}
+                %div{'style':"font-size:.8em; margin-top:-14px; margin-bottom:10px"}
+                    Hosted by
+                    - for club in event.club.all
+                        %a{'href':'{% url "club_info_view" club.permalink %}'}
+                            {{ club }}
+                        %span
+
+                - if event.description
+                    %blockquote
+                        %p
+                            {{ event.description|urlize }}
+
+                %dl.dl
+
+                    %dt.muted
+                      Time
+                    %dd
+                      {{ event.display_start_time }}
+                      - if event.display_end_time
+                        to {{ event.display_end_time }}
+
+                    %dt.muted
+                      Location
+                    %dd
+                      {{ event.location }}
+
+                    %dt.muted
+                      Facebook page
+                    %dd
+                      %a{ 'href' : "{{ event.facebook_url }}",  'target' : '_blank'}
+                        {{ event.facebook_url }}
+        .span4
+            #event-panel
+                - with event.club.all|first as club
+                    %h4 Other Events
+                    - with events=club.display_events
+                        - include "includes/club_event_info.html"
