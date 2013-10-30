@@ -1,7 +1,7 @@
 - load tz
 - for event in events
   %div
-      %a{ 'href' : "{{ event.facebook_url }}",  'target' : '_blank'}
+      %a{ 'href' : "{% url 'event_info_view' event.id %}",  'target' : '_blank'}
             {{ event.name }}
     %div.lead{'style':'font-size:12px; margin-bottom:0'}
         {{ event.display_time }}

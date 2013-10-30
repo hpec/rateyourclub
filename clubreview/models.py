@@ -170,6 +170,11 @@ class Club(models.Model):
     def display_address(self):
         return BeautifulSoup(self.address).get_text()
 
+    def display_events(self, num=4):
+        if self.event_set.future().count() > 0:
+            return self.event_set.future().order_by('start_time')[:num]
+        else:
+            return self.event_set.order_by("-start_time")[:num]
 
     @property
     def callink_url(self):

@@ -33,7 +33,7 @@ def club_list_view(request, template_name='club_list.html'):
     for word in query.split():
         clubs = clubs.filter(Q(name__icontains=word)|Q(introduction__icontains=word))
 
-    paginator = Paginator(clubs, 25) # Show 25 clubs per page
+    paginator = Paginator(clubs, 10) # Show 10 clubs per page
 
     page = request.GET.get('page')
     try:
@@ -57,11 +57,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     club = get_object_or_404(Club, permalink=club_id)
     club.hit += 1
     club.save()
-    if club.event_set.future().count() > 0:
-        events = club.event_set.future().order_by('start_time')
-    else:
-        events = club.event_set.order_by("-start_time")
-    events = events[:6]
+    events = club.display_events(6)
     reviews = Review.objects.filter(club=club, is_deleted=False)
     try:
         rating = int(club.review_score)*1.0 / int(club.review_count)
@@ -70,6 +66,12 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     context = RequestContext(request)
     return render_to_response(template_name,
         { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating, 'related_clubs': Club.objects.get_related_clubs(club) }, context_instance=context)
+
+
+def event_info_view(request, event_id, template_name='event_info.html'):
+    event = get_object_or_404(Event, id=event_id)
+    return render_to_response(template_name, {'event':event})
+
 
 @login_required
 def create_review(request):
