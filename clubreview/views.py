@@ -70,7 +70,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
 
 def event_info_view(request, event_id, template_name='event_info.html'):
     event = get_object_or_404(Event, id=event_id)
-    return render_to_response(template_name, {'event':event})
+    return render_to_response(template_name, {'event':event}, context_instance=RequestContext(request))
 
 
 @login_required

@@ -39,6 +39,12 @@
                     %dd
                       %a{ 'href' : "{{ event.facebook_url }}",  'target' : '_blank'}
                         {{ event.facebook_url }}
+
+            %ul.pager
+              %li.previous
+                %a{'href': "{{request.META.HTTP_REFERER}}"}
+                    &larr;  Previous
+
         .span4
             #event-panel
                 - with event.club.all|first as club
