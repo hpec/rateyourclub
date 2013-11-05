@@ -5,31 +5,14 @@
 - block content
     :javascript
         $(function () {
+            generate_avg_rating_stars();
+            generate_review_stars();
             $('#form-errors').hide();
-            $('.review .rating div').each(function() {
-                var rating = $(this).data("rating");
-                for (var i=0; i < rating; i++) {
-                    $(this).append($("<a>").toggleClass("star selected"));
-                }
-            });
-            avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
-            for (var i=0; i < avgRating; i++) {
-                $('.avg-rating-stars').append($("<a>").toggleClass("star selected"))
-            }
-            for (var i=0; i < 5-avgRating; i++) {
-                $('.avg-rating-stars').append($("<a>").toggleClass("star"))
-            }
-            $('#review_form_submit').click(function(){
-                $.post('/reviews/create/', $('#review_form').serialize(), function(response){
-                    if (response.status == 'success') {
-                        location.reload();
-                    } else {
-                        $.each(response.error, function(key, val) {
-                            $('#form-errors').append($('<div>').text(val[0]));
-                        });
-                        $('#form-errors').show();
-                    }
-                })
+            $('#review_form_submit').bind('click', create_review);
+            $("#btn-more-events").click(function(e) {
+                e.preventDefault();
+                $(this).remove();
+                $("#more-events").toggle();
             })
         })
 
@@ -101,73 +84,14 @@
 
 
             .card
-                %h5 Reviews:
-                - for review in reviews
-                    .review
-                        .pull-right
-                            {{ review.date_posted }}
-                            - if review.user == user
-                                    %a{'href':'/reviews/delete/{{ review.id }}'} delete?
-
-                        .container
-                            %div.muted{'style':"float:left; margin-right: 10px"}
-                                - if review.anonymous
-                                    Anonymous
-                                - else
-                                    =review.user.screen_name
-
-                            .rating
-                                %div{'data-rating': "{{ review.ratings }}"}
-
-                        .review-content
-                          %blockquote
-                            %p {{ review.content }}
-
-                        %hr
-                - empty
-                    %p Be the first to review!
+                - include "includes/reviews_snippet.html"
 
             %ul.pager
               %li.previous
                 %a{'href': "{{request.META.HTTP_REFERER}}"}
                     &larr;  Previous
-            - if user.is_authenticated
-                .review-form-wrapper
-                    %form#review_form.form-horizontal
-                        - csrf_token
-                        .form-fieldset
-                            #form-errors.alert.alert-error
-                        %input{'type':"hidden", 'id':"club_id", 'name':"club_id", 'value':"{{ club.id }}"}
-                        .control-group
-                            .control-label Content
-                            .controls
-                                %textarea{'cols':"20", 'id':"id_content", 'name':"content", 'rows':"5"}
-                        %input{'type':"hidden", 'id':"rating-val", 'name':"rating-val", 'value':"3"}
-                        .control-group
-                            .control-label Ratings
-                            .controls
-                                .input.select.rating-star-wrapper
-                                    %select#rating
-                                        %option{'value':"1"} 1
-                                        %option{'value':"2"} 2
-                                        %option{'value':"3", 'selected':'true'} 3
-                                        %option{'value':"4"} 4
-                                        %option{'value':"5"} 5
-                        .control-group
-                            .control-label Anonymous?
-                            .controls
-                                %input{'type':'checkbox','checked':'true', 'name':'anonymous'}
 
-                        %button#review_form_submit.btn-primary.btn{'type':'button'} Submit
-            - else
-                .card{'style':'text-align: center'}
-                    %p{'style':'padding-top:20px'}
-                        %a{'href':'/accounts/register/'} Sign up
-                        to rate & review!
-                    %p
-                        Already have an account?
-                        %a{'href':'/accounts/login/?next={{request.path}}'} Log in
-                        here
+            - include "includes/review_form.html"
 
         .span4
             #event-panel
@@ -179,13 +103,6 @@
                     #more-events{ 'style': 'display:none;'}
                       -with events=events|slice:"4:"
                         - include "includes/club_event_info.html"
-                    <script>
-                      $("#btn-more-events").click(function(e){
-                        e.preventDefault();
-                        $(this).remove();
-                        $("#more-events").toggle();
-                      })
-                    </script>
                 - else
                   - if events.count == 0
                     No events listed!

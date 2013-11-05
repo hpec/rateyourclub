@@ -1,0 +1,25 @@
+%h5 Reviews:
+- for review in reviews
+    .review
+        .pull-right
+            {{ review.date_posted }}
+            - if review.user == user
+                    %a{'href':'/reviews/delete/{{ review.id }}'} delete?
+
+        .container
+            %div.muted{'style':"float:left; margin-right: 10px"}
+                - if review.anonymous
+                    Anonymous
+                - else
+                    =review.user.screen_name
+
+            .rating
+                %div{'data-rating': "{{ review.ratings }}"}
+
+        .review-content
+          %blockquote
+            %p {{ review.content }}
+
+        %hr
+- empty
+    %p Be the first to review!

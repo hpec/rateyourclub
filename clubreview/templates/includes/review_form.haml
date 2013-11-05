@@ -1,0 +1,38 @@
+- if user.is_authenticated
+    .review-form-wrapper
+        %form#review_form.form-horizontal
+            - csrf_token
+            .form-fieldset
+                #form-errors.alert.alert-error
+            %input{'type':"hidden", 'id':"club_id", 'name':"club_id", 'value':"{{ club.id }}"}
+            %input{'type':"hidden", 'id':"event_id", 'name':"event_id", 'value':"{{ event.id }}"}
+            .control-group
+                .control-label Content
+                .controls
+                    %textarea{'cols':"20", 'id':"id_content", 'name':"content", 'rows':"5"}
+            %input{'type':"hidden", 'id':"rating-val", 'name':"rating-val", 'value':"3"}
+            .control-group
+                .control-label Ratings
+                .controls
+                    .input.select.rating-star-wrapper
+                        %select#rating
+                            %option{'value':"1"} 1
+                            %option{'value':"2"} 2
+                            %option{'value':"3", 'selected':'true'} 3
+                            %option{'value':"4"} 4
+                            %option{'value':"5"} 5
+            .control-group
+                .control-label Anonymous?
+                .controls
+                    %input{'type':'checkbox','checked':'true', 'name':'anonymous'}
+
+            %button#review_form_submit.btn-primary.btn{'type':'button'} Submit
+- else
+    .card{'style':'text-align: center'}
+        %p{'style':'padding-top:20px'}
+            %a{'href':'/accounts/register/'} Sign up
+            to rate & review!
+        %p
+            Already have an account?
+            %a{'href':'/accounts/login/?next={{request.path}}'} Log in
+            here

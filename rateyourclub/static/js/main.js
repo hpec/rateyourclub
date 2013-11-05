@@ -5,3 +5,32 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 
 ga('create', 'UA-44445341-1', 'calbeat.com');
 ga('send', 'pageview');
+
+var generate_avg_rating_stars = function() {
+    avgRating = Math.round(parseFloat($('.avg-rating-val').text()))
+    for (var i=0; i < avgRating; i++) {
+        $('.avg-rating-stars').append($("<a>").toggleClass("star selected"));
+    }
+    for (var i=0; i < 5-avgRating; i++) {
+        $('.avg-rating-stars').append($("<a>").toggleClass("star"));
+    }
+}
+
+var generate_review_stars = function() {
+    $('.review .rating div').each(function() {
+        var rating = $(this).data("rating");
+        for (var i=0; i < rating; i++) {
+            $(this).append($("<a>").toggleClass("star selected"));
+        }
+    });
+}
+
+var create_review = function() {
+    $.post('/reviews/create/', $('#review_form').serialize(), function(response) {
+        location.reload();
+    }).fail(function(response) {
+        msg = JSON.parse(response.responseText)['error'];
+        $('#form-errors').text(msg)
+        $('#form-errors').show();
+    });
+}

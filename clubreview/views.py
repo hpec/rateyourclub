@@ -80,12 +80,12 @@ def create_review(request):
         form = ReviewForm(user=request.user, data=request.POST)
         if form.is_valid():
             review = form.save()
-            response['status'] = 'success'
+            status = 201
             messages.success(request, 'Review submitted!')
         else:
-            response['status'] = 'error'
-            response['error'] = form.errors
-    return HttpResponse(json.dumps(response), content_type="application/json")
+            status = 406
+            response['error'] = 'Content cannot be blank'
+    return HttpResponse(json.dumps(response), content_type="application/json", status=status)
 
 @login_required
 def delete_review(request, id):
