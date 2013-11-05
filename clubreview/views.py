@@ -91,36 +91,38 @@ def create_review(request):
 def delete_review(request, id):
     try:
         review = Review.objects.get(id=id)
+        if not review.is_deleted and (review.user == request.user or request.user.is_staff):
+            review.is_deleted = True
+            club = review.club
+            club.review_count -= 1
+            club.review_score -= review.ratings
+            review.save()
+            club.save()
+            messages.success(request, 'Successfully deleted your review')
+        else:
+            messages.error(request, "You can only delete your own review!")
     except Review.DoesNotExist:
         messages.error(request, 'The review that you are trying to delete does not exist')
-    if not review.is_deleted and (review.user == request.user or request.user.is_staff):
-        review.is_deleted = True
-        club = review.club
-        club.review_count -= 1
-        club.review_score -= review.ratings
-        review.save()
-        club.save()
-        messages.success(request, 'Successfully deleted your review')
-    else:
-        messages.error(request, "You could not delete others' review!")
+
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 @login_required
 def undelete_review(request, id):
     try:
         review = Review.objects.get(id=id)
+        if review.is_deleted and (review.user == request.user or request.user.is_staff):
+            review.is_deleted = False
+            club = review.club
+            club.review_count += 1
+            club.review_score += review.ratings
+            review.save()
+            club.save()
+            messages.success(request, 'Successfully restored your review')
+        else:
+            messages.error(request, "You can only restore your own review!")
     except Review.DoesNotExist:
         messages.error(request, 'The review that you are trying to delete does not exist')
-    if review.is_deleted and (review.user == request.user or request.user.is_staff):
-        review.is_deleted = False
-        club = review.club
-        club.review_count += 1
-        club.review_score += review.ratings
-        review.save()
-        club.save()
-        messages.success(request, 'Successfully restored your review')
-    else:
-        messages.error(request, "You could not restore others' review!")
+
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 def add_url_edit(request, id):

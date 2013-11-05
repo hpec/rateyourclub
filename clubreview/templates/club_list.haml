@@ -23,12 +23,6 @@
             - include "includes/club_event_info.html"
 
       .span8
-        - if user.is_authenticated
-          .card
-            %h3
-              %a{'href': "#"} Write Review
-            - review_form_handler
-
         .card
           .pull-left
             Displaying
