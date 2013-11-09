@@ -4,7 +4,19 @@
 
 - block content
     :javascript
+        var subscribed = "{{ subscribed }}" == "True";
+        var $subscribeBtn;
+        var toggleSubscribe = function($btn) {
+            $btn.toggleClass('subscribed');
+            if ($btn.text() == 'Subscribe') {
+                $btn.text('Unsubscribe');
+            } else {
+                $btn.text('Subscribe');
+            }
+            subscribed = !subscribed;
+        }
         $(function () {
+            $subscribeBtn = $("#subscribe-btn");
             generate_avg_rating_stars();
             generate_review_stars();
             $('#form-errors').hide();
@@ -13,13 +25,29 @@
                 e.preventDefault();
                 $(this).remove();
                 $("#more-events").toggle();
-            })
+            });
+            $subscribeBtn.click(function() {
+                params = {};
+                params['csrfmiddlewaretoken'] = getCookie('csrftoken');
+                if (!subscribed) {
+                    $.post('/clubs/{{ club.id }}/subscribe/', params);
+                } else {
+                    $.post('/clubs/{{ club.id }}/unsubscribe/', params);
+                }
+                toggleSubscribe($subscribeBtn);
+            });
+            if (subscribed) {
+                toggleSubscribe($subscribeBtn);
+            }
         })
 
     #main-wrapper.row
         #main-content.span8
             #club-name.hero-unit.no-border-radius
-                %h3 {{ club }}
+                %h3
+                    .pull-right
+                        %button#subscribe-btn.btn.btn-info Subscribe
+                    {{ club }}
                 %blockquote
                     %p
                         {{ club.display_introduction|urlize }}

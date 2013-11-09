@@ -80,3 +80,11 @@ a.star.selected,
     font-size: 30px;
 }
 .sort-active{ font-weight: bold; }
+
+.subscribed {
+    opacity: 0.65;
+}
+
+#subscribe-btn {
+    font-size: .5em;
+}

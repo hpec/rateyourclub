@@ -6,12 +6,14 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core import serializers
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils import simplejson
 
+from registration.models import Subscription
 from models import *
 from forms import *
 
@@ -64,6 +66,7 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     except:
         rating = 0.0
     context = RequestContext(request)
+    context['subscribed'] = Subscription.objects.filter(club=club, user=request.user).count() > 0
     return render_to_response(template_name,
         { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating, 'related_clubs': Club.objects.get_related_clubs(club) }, context_instance=context)
 
@@ -191,4 +194,25 @@ def review_list(request):
             return HttpResponseRedirect(request.META['HTTP_REFERER'])
         except KeyError:
             return HttpResponseRedirect('/')
+
+
+@login_required
+def subscribe_club(request, club_id):
+    if request.is_ajax():
+        user = request.user
+        club = get_object_or_404(Club, id=club_id)
+        try:
+            subscription = Subscription.objects.create(user=user, club=club)
+        except IntegrityError:
+            pass
+        return HttpResponse()
+
+@login_required
+def unsubscribe_club(request, club_id):
+    if request.is_ajax():
+        user = request.user
+        club = get_object_or_404(Club, id=club_id)
+        subscription = Subscription.objects.get(user_id=user.id, club=club)
+        subscription.delete()
+        return HttpResponse()
 

@@ -142,6 +142,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Designates whether the user can log into this admin '
                     'site.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    subscribed_clubs = models.ManyToManyField('clubreview.Club', through='Subscription')
 
     objects = UserManager()
 
@@ -190,4 +191,13 @@ class Invitation(models.Model):
     invitation_key = models.CharField(_('invitation key'), max_length=40)
     created_at = models.DateTimeField(_('created_at'), default=timezone.now)
 
+class Subscription(models.Model):
+    club = models.ForeignKey('clubreview.Club')
+    user = models.ForeignKey(User)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('club', 'user')
+
+    def __unicode__(self):
+        return "%s - %s" % (self.user, self.club)
