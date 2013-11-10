@@ -43,6 +43,7 @@
                     toggleSubscribe($subscribeBtn);
                 }
             });
+            $subscribeBtn.tooltipster();
         })
 
     #main-wrapper.row
@@ -50,7 +51,7 @@
             #club-name.bordered.hero-unit.no-border-radius
                 %h3
                     .pull-right
-                        %a#subscribe-btn.btn.btn-info Subscribe
+                        %a#subscribe-btn.btn.btn-info{'title':"Subscribe to receive events update by email!"} Subscribe
                     {{ club }}
                 %blockquote
                     %p

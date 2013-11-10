@@ -192,7 +192,7 @@ class Invitation(models.Model):
     created_at = models.DateTimeField(_('created_at'), default=timezone.now)
 
 class SubscriptionManager(models.Manager):
-    def send_events_update(self):
+    def send_events_update(self, email=None):
         def send_update_email(user, events):
             subject = render_to_string('events_update_email_subject.txt')
             # Email subject *must not* contain newlines
@@ -201,7 +201,7 @@ class SubscriptionManager(models.Manager):
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
 
         subscriptions = self.get_query_set().all()
-        users = User.objects.all()
+        users = User.objects.filter(email=email) if email else User.objects.all()
         for user in users:
             events = []
             clubs = user.subscribed_clubs.all()
