@@ -14,6 +14,7 @@ from django.template import RequestContext
 from django.utils import simplejson
 
 from registration.models import Subscription
+from decorators import *
 from models import *
 from forms import *
 
@@ -66,7 +67,8 @@ def club_info_view(request, club_id, template_name='club_info.html'):
     except:
         rating = 0.0
     context = RequestContext(request)
-    context['subscribed'] = Subscription.objects.filter(club=club, user=request.user).count() > 0
+    if request.user.is_authenticated():
+        context['subscribed'] = Subscription.objects.filter(club=club, user=request.user).count() > 0
     return render_to_response(template_name,
         { 'club': club, 'reviews': reviews, 'events': events, 'rating': rating, 'related_clubs': Club.objects.get_related_clubs(club) }, context_instance=context)
 
@@ -195,24 +197,27 @@ def review_list(request):
         except KeyError:
             return HttpResponseRedirect('/')
 
-
-@login_required
+@ajax_login_required
 def subscribe_club(request, club_id):
+    user = request.user
+    club = get_object_or_404(Club, id=club_id)
+    try:
+        subscription = Subscription.objects.create(user=user, club=club)
+    except IntegrityError, e:
+        print e
     if request.is_ajax():
-        user = request.user
-        club = get_object_or_404(Club, id=club_id)
-        try:
-            subscription = Subscription.objects.create(user=user, club=club)
-        except IntegrityError:
-            pass
         return HttpResponse()
+    else:
+        return HttpResponseRedirect(reverse('club_info_view', args=[club.permalink]))
 
-@login_required
+@ajax_login_required
 def unsubscribe_club(request, club_id):
+    user = request.user
+    club = get_object_or_404(Club, id=club_id)
+    subscription = Subscription.objects.get(user_id=user.id, club=club)
+    subscription.delete()
     if request.is_ajax():
-        user = request.user
-        club = get_object_or_404(Club, id=club_id)
-        subscription = Subscription.objects.get(user_id=user.id, club=club)
-        subscription.delete()
         return HttpResponse()
+    else:
+        return HttpResponseRedirect(reverse('club_info_view', args=[club.permalink]))
 

@@ -5,6 +5,7 @@
 - block content
     :javascript
         var subscribed = "{{ subscribed }}" == "True";
+        var is_authenticated = "{{ user.is_authenticated }}" == "True";
         var $subscribeBtn;
         var toggleSubscribe = function($btn) {
             $btn.toggleClass('subscribed');
@@ -13,10 +14,12 @@
             } else {
                 $btn.text('Subscribe');
             }
-            subscribed = !subscribed;
         }
         $(function () {
             $subscribeBtn = $("#subscribe-btn");
+            if (subscribed) {
+                toggleSubscribe($subscribeBtn);
+            }
             generate_avg_rating_stars();
             generate_review_stars();
             $('#form-errors').hide();
@@ -30,15 +33,16 @@
                 params = {};
                 params['csrfmiddlewaretoken'] = getCookie('csrftoken');
                 if (!subscribed) {
-                    $.post('/clubs/{{ club.id }}/subscribe/', params);
+                    $.post('/clubs/{{ club.id }}/subscribe/', params, handleRedirect);
+                    subscribed = true;
                 } else {
-                    $.post('/clubs/{{ club.id }}/unsubscribe/', params);
+                    $.post('/clubs/{{ club.id }}/unsubscribe/', params, handleRedirect);
+                    subscribed = false;
                 }
-                toggleSubscribe($subscribeBtn);
+                if (is_authenticated) { // Change subscription status only if user is logined
+                    toggleSubscribe($subscribeBtn);
+                }
             });
-            if (subscribed) {
-                toggleSubscribe($subscribeBtn);
-            }
         })
 
     #main-wrapper.row
@@ -46,7 +50,7 @@
             #club-name.bordered.hero-unit.no-border-radius
                 %h3
                     .pull-right
-                        %button#subscribe-btn.btn.btn-info Subscribe
+                        %a#subscribe-btn.btn.btn-info Subscribe
                     {{ club }}
                 %blockquote
                     %p

@@ -50,3 +50,9 @@ var getCookie = function(name) {
   }
   return cookieValue;
 }
+
+var handleRedirect = function(json) {
+  if (json.not_authenticated) {
+    window.location.href = json.redirect;
+  }
+}
