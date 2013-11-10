@@ -20,16 +20,20 @@ input[type="text"]{ height: inherit; }
     padding-bottom: 29px;
     margin-top: 15px;
     background-color: white;
+    border: 1px solid rgba(125,125,125,0.3);
 }
 #event-panel {
     padding: 15px;
     padding-top: 5px;
-    background-color:
-    white;
+    background-color: white;
     width: 235px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 15px;
+    border: 1px solid rgba(125,125,125,0.3);
+}
+.bordered {
+    border: 1px solid rgba(125,125,125,0.3);
 }
 #footer {
     margin-top: 80px;
@@ -44,7 +48,6 @@ input[type="text"]{ height: inherit; }
     -moz-border-radius: 0px;
     -o-border-radius: 0px;
     border-radius: 0px;
-    border: 0px;
 }
 
 .review-content {
