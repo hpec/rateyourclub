@@ -3,7 +3,6 @@ Hi {{ user.screen_name }},
 Here's what we've got for you next week:
 
 {% autoescape off %}
-
 {% for event in events %}
 {{ forloop.counter }} {{ event.name }}
 {% if event.description %}
@@ -12,8 +11,13 @@ Here's what we've got for you next week:
 {{ event.display_time }}
 {{ event.location }}
 
---
-
+{% if not forloop.last %}
+------------------------
+{% endif %}
 
 {% endfor %}
 {% endautoescape %}
+
+
+Sincerely,
+CalBEAT
