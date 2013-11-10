@@ -1,0 +1,15 @@
+Hi {{ user.screen_name }},
+
+Here's what we've got for you next week:
+
+{% autoescape off %}
+{% for event in events %}
+    {{ event.name }}
+    {% if event.description %}
+        {{ event.description}}
+    {% endif %}
+    {{ event.display_time }}
+    {{ event.location }}
+
+{% endfor %}
+{% endautoescape %}

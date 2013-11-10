@@ -191,10 +191,34 @@ class Invitation(models.Model):
     invitation_key = models.CharField(_('invitation key'), max_length=40)
     created_at = models.DateTimeField(_('created_at'), default=timezone.now)
 
+class SubscriptionManager(models.Manager):
+    def send_events_update(self):
+        def send_update_email(user, events):
+            subject = render_to_string('events_update_email_subject.txt')
+            # Email subject *must not* contain newlines
+            subject = ''.join(subject.splitlines())
+            message = render_to_string('events_update_email.txt', { 'user':user, 'events':events })
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+
+        subscriptions = self.get_query_set().all()
+        users = User.objects.all()
+        for user in users:
+            events = []
+            clubs = user.subscribed_clubs.all()
+            for club in clubs:
+                events.extend(list(club.event_set.future()
+                    .filter(start_time__lte=timezone.now() + datetime.timedelta(days=7))
+                    .order_by('start_time')))
+            events = list(set(events)) # Eliminate duplicate events
+            if events:
+                send_update_email(user, events[:6])
+
 class Subscription(models.Model):
     club = models.ForeignKey('clubreview.Club')
     user = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    objects = SubscriptionManager()
 
     class Meta:
         unique_together = ('club', 'user')
