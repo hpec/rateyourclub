@@ -10,6 +10,7 @@ import nltk
 import operator
 from copy import copy
 from datetime import timedelta, date
+from django.core.urlresolvers import reverse
 from django.db.models.signals import post_init
 from django.utils.timezone import now
 from django.db.models import Q
@@ -230,8 +231,8 @@ class Club(models.Model):
 
         return score + self.hit * 0.1
 
-
-
+    def get_absolute_url(self):
+        return reverse('club_info_view', args=[self.permalink])
 
     def set_facebook_id(self):
         import fb_events
@@ -354,6 +355,9 @@ class Event(models.Model):
     @property
     def facebook_url(self):
         return "https://www.facebook.com/events/%s" % self.facebook_id
+
+    def get_absolute_url(self):
+        return reverse('event_info_view', args=[self.id])
 
 class Review(models.Model):
     club = models.ForeignKey(Club)

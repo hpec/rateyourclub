@@ -2,13 +2,20 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 from clubreview.views import *
+from clubreview.models import *
 from clubreview.lookups import club_lookup
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib.sitemaps import GenericSitemap
 from registration.views import register
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
+sitemaps = {
+    'club': GenericSitemap({'queryset': Club.objects.all()}, priority=0.8),
+    'events': GenericSitemap({'queryset': Event.objects.all()}, priority=0.4),
+}
+
 admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
@@ -36,6 +43,7 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.urls')),
     (r'^selectable/', include('selectable.urls')),
     #url(include('clubreview.urls'))
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
 
 )
 urlpatterns += staticfiles_urlpatterns()

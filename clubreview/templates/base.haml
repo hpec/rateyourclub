@@ -7,7 +7,7 @@
 %head
     %title {% block title %}{% endblock %} CalBEAT
     %meta{ 'name': 'description',  'content' : 'Discover and rate sudent clubs at UC Berkeley' }
-    %meta{ 'name': 'keywords', 'content': 'CalBeat,UC Berkeley,California,Clubs,Cal,College,Callink,Student Organizations' }
+    %meta{ 'name': 'keywords', 'content': 'CalBeat,UC Berkeley,California,Clubs,Cal,College,Callink,Student,Organizations,Review,Rating,Events' }
     %meta{ 'charset' : 'UTF-8' }
     // CSS
     %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" }
@@ -38,7 +38,6 @@
             $('#rating').barrating({ showSelectedRating:false, onSelect:function(value, text) {
                 $("#rating-val").val(value);
             }})
-            $('.tooltip').tooltipster();
         });
 
 %body
