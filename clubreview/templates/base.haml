@@ -5,9 +5,9 @@
 
 !!! 5
 %head
-    %title CalBeat
-    %meta{ 'name': 'description',  'content' : 'Discover and rate clubs at UC Berkeley' }
-    %meta{ 'name': 'keywords', 'content': 'CalBeat,UC Berkeley,California,Clubs,Cal,College,Callink' }
+    %title {% block title %}{% endblock %} CalBEAT
+    %meta{ 'name': 'description',  'content' : 'Discover and rate sudent clubs at UC Berkeley' }
+    %meta{ 'name': 'keywords', 'content': 'CalBeat,UC Berkeley,California,Clubs,Cal,College,Callink,Student Organizations' }
     %meta{ 'charset' : 'UTF-8' }
     // CSS
     %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" }
@@ -19,13 +19,13 @@
     {% endcompress %}
     %link{ 'rel' : 'stylesheet', 'type' : 'text/css', 'href' : "//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" }
     // JS
-    %script{'type':'text/javascript', 'src': '//code.jquery.com/jquery-1.9.1.js'}
-    %script{'type':'text/javascript', 'src': '//code.jquery.com/ui/1.10.3/jquery-ui.js'}
+    %script{'type': 'text/javascript', 'src': '//code.jquery.com/jquery-1.9.1.js'}
+    %script{'type': 'text/javascript', 'src': '//code.jquery.com/ui/1.10.3/jquery-ui.js'}
     {% compress js %}
-        %script{'type':"text/javascript", 'src': '{% static "js/jquery.tooltipster.min.js" %}'}
-        %script{'type':'text/javascript', 'src': '{% static "js/bootstrap.js" %}'}
-        %script{'type':"text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
-        %script{'type':"text/javascript", 'src': '{% static "js/main.js" %}'}
+        %script{'type': "text/javascript", 'src': '{% static "js/jquery.tooltipster.min.js" %}'}
+        %script{'type': 'text/javascript', 'src': '{% static "js/bootstrap.js" %}'}
+        %script{'type': "text/javascript", 'src': '{% static "js/jquery.barrating.js" %}'}
+        %script{'type': "text/javascript", 'src': '{% static "js/main.js" %}'}
     {% endcompress %}
     :javascript
         $(function () {
