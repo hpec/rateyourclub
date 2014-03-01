@@ -1,3 +1,4 @@
+- load static
 - load tz
 - for event in events
   %div
@@ -5,6 +6,8 @@
             {{ event.name }}
     %div.lead{'style':'font-size:12px; margin-bottom:0'}
         {{ event.display_time }}
+        %a.pull-right{'href': "{% url 'event_ical_view' event.id %}"}
+            %img.ical{'src':'{% static "img/ical.jpeg"%}'}
     %div{'style':'font-size:12px; color:#aaa;'}
         {{ event.location }}
 

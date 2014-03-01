@@ -80,6 +80,15 @@ input[type="text"]{ height: inherit; }
     margin-bottom: 15px;
     border: 1px solid rgba(125,125,125,0.3);
 }
+
+.ical {
+    height: 18px;
+}
+
+.add-to-ical:hover {
+    text-decoration:none; !important
+}
+
 .bordered {
     border: 1px solid rgba(125,125,125,0.3);
 }

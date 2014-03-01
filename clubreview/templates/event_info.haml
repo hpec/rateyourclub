@@ -18,6 +18,9 @@
                         %a{'href':'{% url "club_info_view" club.permalink %}'}
                             {{ club }}
                         %span
+                    %a.pull-right.add-to-ical{'href': "{% url 'event_ical_view' event.id %}"}
+                        %img.ical{'src':'{% static "img/ical.jpeg" %}'}
+                        Add to iCal
 
                 - if event.description
                     %blockquote

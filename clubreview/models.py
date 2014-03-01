@@ -7,6 +7,7 @@ import urlparse
 import random
 import re
 import nltk
+import icalendar
 import operator
 from copy import copy
 from datetime import timedelta, date
@@ -342,10 +343,27 @@ class Event(models.Model):
         localtimezone = pytz.timezone(settings.TIME_ZONE)
         is_dst = time.localtime( time.mktime(dt.timetuple()) ).tm_isdst == 1
         if is_aware(dt):
-             time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
+            time_without_zone = (dt - timedelta(hours=1) if is_dst else dt).astimezone(localtimezone).replace(tzinfo=None)
         else:
             time_without_zone = localtimezone.localize((dt - timedelta(hours=1) if is_dst else dt)).astimezone(localtimezone).replace(tzinfo=None)
         return localtimezone.localize(time_without_zone, is_dst=is_dst )
+
+    def ical(self):
+        site_name = 'CalBEAT'
+        site_domain = 'calbeat.com'
+        ical = icalendar.Calendar()
+        ical.add('prodid', '-//%s Events Calendar//%s//' % (site_name, site_domain))
+        ical_event = icalendar.Event()
+        ical_event.add('summary', self.name)
+        ical_event.add('location', self.location)
+        ical_event.add('dtstart', self.start_time)
+        if self.end_time:
+            ical_event.add('dtend', self.end_time)
+        else:
+            ical_event.add('dtend', self.start_time + timedelta(hours=1))
+        ical_event['uid'] = 'event-%d@%s' % (self.facebook_id, site_domain)
+        ical.add_component(ical_event)
+        return ical.to_ical()
 
     def __unicode__(self):
         return "%s" % (self.name)

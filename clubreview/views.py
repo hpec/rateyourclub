@@ -77,6 +77,11 @@ def event_info_view(request, event_id, template_name='event_info.html'):
     event = get_object_or_404(Event, id=event_id)
     return render_to_response(template_name, {'event':event}, context_instance=RequestContext(request))
 
+def event_ical_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    response = HttpResponse(event.ical(), mimetype="text/calendar")
+    response['Content-Disposition'] = 'attachment; filename=%s.ics' % event.name
+    return response
 
 @login_required
 def create_review(request):
