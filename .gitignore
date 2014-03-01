@@ -24,3 +24,4 @@ media
 post-merge
 #soft links
 static/admin
+*.dump

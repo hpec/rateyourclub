@@ -50,8 +50,8 @@
             $subscribeBtn.tooltipster();
         })
 
-    #main-wrapper.row
-        #main-content.span8
+    #main-wrapper
+        #main-content
             #club-name.bordered.hero-unit.no-border-radius
                 %h3
                     .pull-right
@@ -130,7 +130,7 @@
 
             - include "includes/review_form.html"
 
-        .span4
+        .right-side-panel
             #event-panel
                 %h4 Events
                 -with events=events|slice:":4"
@@ -143,7 +143,7 @@
                 - else
                   - if events.count == 0
                     No events listed!
-        .span4.pull-right
+        .right-side-panel
             #event-panel
                 %h4 You may also like
                 - for c in related_clubs

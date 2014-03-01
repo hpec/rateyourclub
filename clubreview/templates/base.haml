@@ -41,34 +41,33 @@
         });
 
 %body
-    .navbar.navbar-fixed-top
-        .navbar-inner
-            .container
-                %a.brand.title{'href': "{% url 'club_list_view' %}"} CalBEAT
-                %form{'class':'navbar-search pull-left', 'action':'/clubs/'}
-                    %div{'class':'input-prepend input-append'}
-                        %span{'class':'add-on'}
-                            %i{'class':'icon-search'}
-                        %input{'id':'search-box','type':'text','class':'','placeholder':'Search', 'name':'q'}
-                        %button{'class':'btn', 'type':'submit'} Search
-                .pull-right{'style':'margin-top:10px;'}
-                    - if user.is_authenticated
-                        Welcome, {{ user.screen_name }}
-                        &nbsp;
-                        %a{'href':'/accounts/invite'} Invite friends!
-                        |
-                        %a{'href':'/accounts/logout'} Logout
-                    - else
-                        %a{'href':'/accounts/login/?next={{request.path}}'} Login
-                        Or
-                        %a{'href':'/accounts/register'} Sign up
-    .container
+    .navbar
+        .cb-container
+            %a.title{'href': "{% url 'club_list_view' %}"} CalBEAT
+            %form{'class':'navbar-search pull-left', 'action':'/clubs/'}
+                %div{'class':'input-prepend input-append'}
+                    %span{'class':'add-on'}
+                        %i{'class':'icon-search'}
+                    %input{'id':'search-box','type':'text','class':'','placeholder':'Search', 'name':'q'}
+                    %button{'class':'btn', 'type':'submit'} Search
+            .pull-right{'style':'margin-top:10px;'}
+                - if user.is_authenticated
+                    Welcome, {{ user.screen_name }}
+                    &nbsp;
+                    %a{'href':'/accounts/invite'} Invite friends!
+                    |
+                    %a{'href':'/accounts/logout'} Logout
+                - else
+                    %a{'href':'/accounts/login/?next={{request.path}}'} Login
+                    or
+                    %a{'href':'/accounts/register'} Sign up
+    .cb-container
         - if messages
             %div{'style':'margin-top:15px; margin-bottom:0;'}
                 - for message in messages
                     <div class="alert alert-{{ message.tags }}" style="margin-bottom: 5px"> {{ message }} </div>
         - block content
-        %p#footer
+        #footer
             &copy;
             - with year_tuple=2013|year_and_current_year
               {{year_tuple.0}}

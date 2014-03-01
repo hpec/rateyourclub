@@ -3,8 +3,7 @@
 - load humanize
 
 - block content
-    .row
-      .span3.pull-right{'style':'width:265px'}
+      .right-side-panel
         .card
           %h4 Categories
           %ul
@@ -22,7 +21,7 @@
           - with events=events
             - include "includes/club_event_info.html"
 
-      .span8
+      #main-content
         .card
           .pull-left
             Displaying
