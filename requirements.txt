@@ -32,3 +32,4 @@ nltk==2.0.4
 django-picklefield==0.3.0
 djrill==0.6.0
 numpy==1.7.0
+icalendar
