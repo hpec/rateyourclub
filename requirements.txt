@@ -1,6 +1,6 @@
 Django==1.5.1
 Markdown==2.3.1
-MySQL-python==1.2.4
+MySQL-python==1.2.5
 PyYAML==3.10
 Pygments==1.6
 South==0.7.6
@@ -32,3 +32,4 @@ nltk==2.0.4
 django-picklefield==0.3.0
 djrill==0.6.0
 numpy==1.7.0
+icalendar==3.6.1
