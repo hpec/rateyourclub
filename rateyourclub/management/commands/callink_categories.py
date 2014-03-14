@@ -7,6 +7,11 @@ class CallinkClub(object):
         self.name = name
         self.permalink = permalink
         self.abbrev = abbrev
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__) and
+               self.name == other.name and
+               self.abbrev == other.abbrev and
+               self.permalink == other.permalink)
     def __repr__(self):
         return "<%s:%s>" % (self.__class__.__name__, unicode(self.name.encode('utf8'), errors='ignore'))
 
@@ -56,6 +61,8 @@ class CallinkCategory(object):
         self._last_result = []
         self._done = False
         self._results = []
+    def __eq__(self, other):
+        return  isinstance(other, self.__class__) and self.id == other.id
 
     @property
     def qs(self):
