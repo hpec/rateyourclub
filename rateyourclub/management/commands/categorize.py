@@ -56,7 +56,7 @@ def main():
 
         if max_cat and max_score > 2:
             category = Category.objects.get(name=max_cat)
-            club.category = category
+            club.categories.add(category)
             club.save()
 
             try:
