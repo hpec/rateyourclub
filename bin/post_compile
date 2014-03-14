@@ -10,3 +10,4 @@ export PATH=$PATH:$PWD/.ruby-gems/bin
 
 # install foreman
 gem install --no-ri --no-rdoc foreman
+python manage.py migrate
