@@ -1,6 +1,7 @@
 from celery import task
 from rateyourclub.management.commands import crawler, callink_crawler
 from clubreview.models import *
+from registration.models import SubscriptionManager, Subscription
 
 @task
 def import_clubs():
@@ -15,3 +16,7 @@ def add_club_events(name="add_club_events"):
 @task
 def import_callink_crawler_data():
     callink_crawler.main(callink_crawler.updateExistingClubs)
+
+@task
+def send_events_update():
+    Subscription.objects.send_events_update()
