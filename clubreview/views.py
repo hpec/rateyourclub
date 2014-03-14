@@ -27,7 +27,7 @@ def club_list_view(request, template_name='club_list.html'):
     category = request.GET.get('cat', '')
 
     clubs = Club.objects.all()
-    if category: clubs = Club.objects.filter(category__name=category)
+    if category: clubs = Club.objects.filter(categories__name=category)
     if order == 'ratings': clubs = clubs.rated()
     clubs = clubs.order_by(order_mapping[order], '-hit', 'name') # break tie by hit then name
     for word in query.split():
