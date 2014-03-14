@@ -111,6 +111,7 @@ class Club(models.Model):
                 counter += 1
             self.save()
     school = models.ForeignKey(School)
+    categories = models.ManyToManyField(Category, related_name='clubs')
     category = models.ForeignKey(Category, null=True)
 
     name = models.TextField()

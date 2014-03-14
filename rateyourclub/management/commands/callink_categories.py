@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from bs4 import BeautifulSoup
+from clubreview.models import Club, Category
 import urllib, requests, re
 
 class CallinkClub(object):
@@ -127,10 +128,20 @@ class CallinkCategory(object):
         return "<%s> %s #%s" % (self.__class__.__name__, unicode(self.name.encode('utf-8'), errors='ignore'), self.id)
 
 def main():
-    for category in CallinkCategory.all():
-        for i, club in enumerate(category.club_iterator):
-            #TODO store into database
-            print club
+    category = None
+    club = None
+    for callink_category in CallinkCategory.all():
+        try:
+            category = Category.objects.get(name=callink_category.name)
+        except Category.DoesNotExist:
+            category = Category(name = callink_category.name)
+            category.save()
+        for i, callink_club in enumerate(callink_category.club_iterator):
+            try:
+                 club = Club.objects.get(callink_permalink=callink_club.permalink)
+                 if club.categories.filter(pk=category.id).count() == 0: club.categories.add(category)
+            except Club.DoesNotExist:
+                pass
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
