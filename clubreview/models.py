@@ -92,8 +92,8 @@ class ClubManager(models.Manager):
             club_ids = club.related_clubs.split(',')
             for club_id in club_ids:
                 results.append(super(ClubManager, self).get_query_set().get(id=int(club_id)))
-            if club.category:
-                clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(category=club.category))
+            if club.categories.count() > 0:
+                clubs_with_same_cat = list(super(ClubManager, self).get_query_set().filter(categories__in=club.categories.all()))
                 clubs_with_same_cat = [club for club in clubs_with_same_cat if club not in results]
                 results.extend(random.sample(clubs_with_same_cat, 2))
         return results
@@ -114,7 +114,7 @@ class Club(models.Model):
                 counter += 1
             self.save()
     school = models.ForeignKey(School)
-    category = models.ForeignKey(Category, null=True)
+    categories = models.ManyToManyField(Category, related_name='clubs')
 
     name = models.TextField()
     abbrev = models.CharField(max_length=NAME_LENGTH, blank=True, null=True)

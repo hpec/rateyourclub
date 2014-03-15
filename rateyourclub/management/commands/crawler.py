@@ -286,8 +286,8 @@ def main():
             if club.address != metadata[ADDRESS] and metadata[ADDRESS]:
                 club.address = metadata[ADDRESS]
 
-            if not club.category:
-                club.category = default_category
+            if club.categories.count() == 0:
+                club.categories.add(default_category)
 
             if type(club.full_clean()) == type(None): #no errors
                 club.save()
