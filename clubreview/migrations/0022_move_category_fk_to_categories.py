@@ -3,18 +3,12 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
-from clubreview.models import Club, Category
-
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for club in Club.objects.all():
-            categories = Category.objects.filter(clubs__id=club.id)
-            for category in categories:
-                if category and club.categories.filter(pk=category.id).count() == 0 :
-                    club.categories.add(category)
-            club.save()
+        for club in orm.Club.objects.all():
+            if club.category: club.categories.add(club.category)
 
     def backwards(self, orm):
         pass
