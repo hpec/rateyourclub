@@ -7,6 +7,7 @@ djcelery.setup_loader()
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+DEV_MODE = False
 
 ROOTDIR = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 CONFIGURATION_YAML = os.path.join(ROOTDIR, 'config.yaml')
@@ -208,8 +209,6 @@ if os.path.exists(os.path.normpath(os.path.join(os.path.dirname(__file__), 'loca
   from local_settings import *
 
 ACCOUNT_ACTIVATION_DAYS = 14
-# EMAIL_PORT = 1025
-# EMAIL_HOST = 'localhost'
 
 AUTH_USER_MODEL = 'registration.User'
 LOGIN_URL = '/accounts/login/'

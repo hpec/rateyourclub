@@ -1,0 +1,56 @@
+<table width="620" border="0" align="center" cellpadding="0" cellspacing="0">
+<tr>
+    <td height="82" width="11" valign="middle"></td>
+    <td height="82" bgcolor="#FFFFFF" valign="middle">
+        <table width="594" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="background-image: url(images/bar-end.png); background-repeat: no-repeat; background-position: right;" valign="middle" height="37" bgcolor="#cc0000">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="background-color:#cc0000;" bgcolor="#cc0000" width="25" height="37"></td>
+                            <td height="37">
+                                <h2 style="color: #fff; font-size: 21px; font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; text-shadow: 1px 1px 1px #000;">
+                                    {{ event.name }}
+                                </h2>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign="top"></td>
+    <td bgcolor="#FFFFFF" valign="top">
+        <table width="560" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td valign="top" width="150" style="font-size:12px">
+                                <p>{{ event.display_time }}</p>
+                                <p>{{ event.location }}</p>
+                            </td>
+                            <td valign="top">
+                                <p style="font-size: 14px; color: #333333; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;">
+                                    {% if event.description %}
+                                        {{ event.description|truncatechars:200 }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--break-->
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td height="25"></td>
+                        </tr>
+                    </table>
+                    <!--/break-->
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>

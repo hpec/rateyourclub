@@ -11,6 +11,7 @@ import icalendar
 import operator
 from copy import copy
 from datetime import timedelta, date
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_init
 from django.utils.timezone import now
@@ -302,6 +303,8 @@ class EventsManager(models.Manager):
         return EventQuerySet(model=self.model)
 
     def future(self):
+        if settings.DEV_MODE:
+            return self.get_query_set()
         return self.get_query_set().future()
     def past(self):
         return self.get_query_set().past()

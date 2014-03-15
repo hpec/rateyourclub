@@ -5,10 +5,11 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -194,11 +195,13 @@ class Invitation(models.Model):
 class SubscriptionManager(models.Manager):
     def send_events_update(self, email=None):
         def send_update_email(user, events):
-            subject = render_to_string('events_update_email_subject.txt')
-            # Email subject *must not* contain newlines
-            subject = ''.join(subject.splitlines())
-            message = render_to_string('events_update_email.txt', { 'user':user, 'events':events })
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+            subject = render_to_string('emails/events_update_email_subject.txt')
+            subject = ''.join(subject.splitlines()) # Email subject *must not* contain newlines
+            html_content = render_to_string('emails/events_update_email.txt', { 'user':user, 'events':events })
+            text_content = strip_tags(html_content) # this strips the html, so people will have the text as well.
+            msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [user.email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
 
         subscriptions = self.get_query_set().all()
         users = User.objects.filter(email=email) if email else User.objects.all()
