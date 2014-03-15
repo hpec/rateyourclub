@@ -10,7 +10,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         for club in Club.objects.all():
-            if club.category and club.categories.filter(pk=club.category.id).count() == 0 : club.categories.add(club.category)
+            categories = Category.objects.filter(clubs__id=club.id)
+            for category in categories:
+                if category and club.categories.filter(pk=category.id).count() == 0 :
+                    club.categories.add(category)
             club.save()
 
     def backwards(self, orm):
