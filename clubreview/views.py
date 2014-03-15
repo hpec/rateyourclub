@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import urllib
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -27,7 +28,7 @@ def club_list_view(request, template_name='club_list.html'):
 
     order = request.GET.get('order', 'pop')
     query = request.GET.get('q', '')
-    category = request.GET.get('cat', '')
+    category = urllib.unquote(request.GET.get('cat', '')).decode('utf-8')
 
     clubs = Club.objects.all()
     if category: clubs = Club.objects.filter(categories__name=category)

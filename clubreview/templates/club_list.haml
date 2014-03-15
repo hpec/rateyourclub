@@ -9,8 +9,8 @@
           %ul
             - for category in categories
                 %li
-                  <a href="?cat={{category.name}}">
-                    - if category.name == request.GET.dict.cat
+                  <a href="?cat={{category.name|urlencode}}">
+                    - if category.name|urlencode == request.GET.dict.cat|urlencode
                       %strong {{ category }}
                     - else
                       {{ category }}
@@ -28,9 +28,9 @@
             ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
           .pull-right
               Sort by
-                %a{'class':"{% if order == 'pop' or not order or not order in 'ratings name'%}sort-active{% endif %}",'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Views
-                %a{'class':"{% if order == 'name'%}sort-active{% endif %}",'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Name
-                %a{'class':"{% if order == 'ratings'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat }}{% endif %}'} Rating
+                %a{'class':"{% if order == 'pop' or not order or not order in 'ratings name'%}sort-active{% endif %}",'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Views
+                %a{'class':"{% if order == 'name'%}sort-active{% endif %}",'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Name
+                %a{'class':"{% if order == 'ratings'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Rating
 
         - for club in clubs
             .card
@@ -87,7 +87,7 @@
                 %ul{'class' : 'step-links'}
                     %li{'class' : "{{ clubs.has_previous|yesno:',disabled' }}"}
                         - if clubs.has_previous
-                            %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'} &larr;
+                            %a{'href' : '?page={{clubs.previous_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat|urlencode}}&order={{order}}'} &larr;
                         - else
                             %a{'href' : '#'} &larr;
 
@@ -95,7 +95,7 @@
                         - with offset_start=clubs.number|add:"-5"
                             - if i < clubs.number and i > offset_start or i == 1 and i != clubs.number
                                 %li
-                                  %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                                  %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat|urlencode}}&order={{order}}'}
                                         {{i}}
                     %li{'class':'current active'}
                         %span
@@ -104,12 +104,12 @@
                         - with offset_end=clubs.number|add:"5"
                             - if i > clubs.number and i < offset_end or i == clubs.paginator.num_pages and i != clubs.number
                                 %li
-                                    %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                                    %a{'href':'?page={{i}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat|urlencode}}&order={{order}}'}
                                         {{i}}
 
                     %li{'class' : "{{ clubs.has_next|yesno:',disabled' }}"}
                         - if clubs.has_next
-                            %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat}}&order={{order}}'}
+                            %a{'href': '?page={{clubs.next_page_number}}&q={{request.GET.dict.q}}&cat={{request.GET.dict.cat|urlencode}}&order={{order}}'}
                                 &rarr;
                         - else
                             %a{'href': '#'}
