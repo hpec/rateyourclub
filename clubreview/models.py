@@ -275,7 +275,7 @@ class Club(models.Model):
         return "%s" % (self.name)
 @receiver(post_init, sender=Club)
 def post_init_callbacks(sender, instance, **kwargs):
-    instance.ensure_has_permalink()
+    if instance.id: instance.ensure_has_permalink()
 
 class EventQuerySet(models.query.QuerySet):
     def future(self):
