@@ -59,7 +59,8 @@
                     {{ club }}
                 %blockquote
                     %p
-                        {{ club.display_introduction|urlize }}
+                        - autoescape off
+                            {{club.introduction}}
 
                 .avg-rating-stars.pull-left
                 %p.avg-rating-val.pull-left.muted{ 'style' : "padding-left: 10px; "}
@@ -89,6 +90,10 @@
                             Meetings
                         %dd
                           {{club.display_meeting|urlize}}
+                    - if club.callink_permalink
+                        %p
+                          %a.muted{ 'href' : "{{club.callink_url}}", 'target' : '_blank'}
+                            %small Callink
                     - if club.students_berkeley_edu_url
                         %p
                           %a.muted{ 'href' : "{{club.legacy_students_berkeley_edu_url}}", 'target' : '_blank'}

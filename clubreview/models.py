@@ -181,7 +181,7 @@ class Club(models.Model):
 
     @property
     def callink_url(self):
-        return urlparse.urljoin("https://callink.berkeley.edu/organization", self.permalink) if self.permalink else None
+        return "https://callink.berkeley.edu/organization/%s" % self.callink_permalink if self.callink_permalink else None
 
     @property
     def students_berkeley_edu_url(self):
