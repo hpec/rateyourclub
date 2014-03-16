@@ -15,8 +15,9 @@ class ClubURIEditAdmin(admin.ModelAdmin):
   ordering = ( 'club', 'value')
   actions = [approve, deny]
 class ClubAdmin(admin.ModelAdmin):
-  list_display = ['name', 'facebook_url', 'website', 'SGID']
-  list_editable = ['facebook_url', 'website', 'SGID']
+  search_fields = ['callink_permalink', 'name', 'permalink']
+  list_display = ['id','name', 'facebook_url', 'website', 'SGID', 'permalink', 'callink_permalink']
+  list_editable = ['facebook_url', 'website', 'SGID', 'callink_permalink']
   ordering = ( 'name', )
 
 admin.site.register(Event)
