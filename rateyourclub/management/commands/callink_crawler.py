@@ -15,6 +15,7 @@ clubs_found = []
 def is_valid_url(url):
     try:
         URLValidator()(url)
+        return True
     except ValidationError:
         return False
 def main(callback = None):
