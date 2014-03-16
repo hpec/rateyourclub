@@ -8,11 +8,15 @@ from django.db import DatabaseError
 import pdb
 import traceback
 import sys
+from django.core.validators import URLValidator
 
 
 clubs_found = []
-clubs_partially_found = []
-clubs_not_found = []
+def is_valid_url(url):
+    try:
+        URLValidator()(url)
+    except ValidationError:
+        return False
 def main(callback = None):
     """
     Parser to harvest social media links from callink.berkeley.edu
@@ -44,7 +48,14 @@ def main(callback = None):
             for class_name in link_types:
                 if class_name in link['class']:
                     link_dict[class_name] = link['href']
+                    if 'http' not in link_dict[class_name] and '::' not in link_dict[class_name]:
+                        link_dict[class_name] = 'http://'+link_dict[class_name]
         return link_dict
+    def parse_description(url):
+        r = requests.get(url)
+        soup = BeautifulSoup(r.text)
+        description =  ' '.join(list((map(lambda p: str(p), soup.select('#largeColumn .section p')))))
+        return description
 
     r = requests.get(ORGANIZATION_URL, params = DEFAULT_PARAMS)
     last_links = None
@@ -61,13 +72,15 @@ def main(callback = None):
         for link in links:
             link = str(link)
             relative_link = re.findall(r'href="(.*?)"', link)[0]
-            name =  re.findall(r'<a.*>(.*?)</a>', link)[0]
+            name =  ("" + re.findall(r'<a.*>(.*?)</a>', link)[0] + "").decode('utf-8')
             full_url = urlparse.urljoin( BASE_URL, relative_link )
             link_dict = parse( full_url )
             link_dict['name'] = name
             link_dict['permalink'] = relative_link.split('/')[2]
+            about_url = full_url + '/about'
+            description = parse_description(about_url)
             if callable(callback):
-                callback(link_dict)
+               callback(link_dict, name, description)
 
         last_links = links
 
@@ -75,32 +88,31 @@ def main(callback = None):
         r = requests.get(ORGANIZATION_URL, params = params)
 
 
-def updateExistingClubs(meta_dict):
+def updateExistingClubs(meta_dict, name, description):
     def save_club_links(club, meta_dict):
         try:
             changed = False
             if not club.website and 'earth' in meta_dict:
-                club.website = meta_dict['earth']
-                changed = True
+                if is_valid_url(meta_dict['earth']):
+                    club.website = meta_dict['earth']
+                    changed = True
             if not club.facebook_url and 'facebook' in meta_dict:
-                club.facebook_url = meta_dict['facebook']
-                changed = True
+                if is_valid_url(meta_dict['facebook']):
+                    club.facebook_url = meta_dict['facebook']
+                    changed = True
             if not club.callink_permalink and 'permalink' in meta_dict:
                 club.callink_permalink = meta_dict['permalink']
                 changed = True
             if changed and type(club.full_clean()) == type(None):
-                print "saving!!! %s, %s " % (club, meta_dict)
                 club.save()
         except (ValidationError, DatabaseError) as e:
-            if isinstance(e, DatabaseError):
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                                                        limit=10, file=sys.stdout)
-                #don't require category
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_traceback,
+                                                                    limit=10, file=sys.stdout)
 
     try:
-        print meta_dict['permalink']
-        club = Club.objects.get(name = meta_dict['name'])
+        club = Club.objects.get(callink_permalink= meta_dict['permalink'])
+        save_club_links(club, meta_dict)
         clubs_found.append(club.name)
     except (Club.DoesNotExist,  DatabaseError) as e:
         try:
@@ -113,29 +125,9 @@ def updateExistingClubs(meta_dict):
             abbreviation = re.findall(r'\([^\(^\)]*\)',meta_dict['name']) #find first set of parenthesis-wrapped words
             abbreviation = abbreviation[0].strip() if len(abbreviation) > 0 else None
 
-            if abbreviation :
-                just_name = meta_dict['name'].replace(abbreviation, '')
-            else:
-                just_name = ''
-
-            if len(Club.objects.filter(name__icontains = meta_dict['name'])) > 0:
-                club = Club.objects.filter(name__icontains = meta_dict['name'])[0]
-                clubs_partially_found.append(meta_dict['name'])
-                save_club_links(club, meta_dict)
-            elif abbreviation and len( Club.objects.filter(name__contains = abbreviation) ) > 0:
-
-                if len( Club.objects.filter(name__contains = abbreviation) ) > 0:
-                    clubs_partially_found.append(meta_dict['name'])
-                    club = Club.objects.filter(name__contains = abbreviation)[0]
-                    save_club_links(club, meta_dict)
-            elif just_name.strip() and just_name != meta_dict['name'] and len( Club.objects.filter(name__contains = just_name.strip()) ) > 0:
-                just_name = just_name.strip()
-                if len( Club.objects.filter(name__contains = just_name) ) > 0:
-                    club = Club.objects.filter(name__contains = just_name)[0]
-                    save_club_links(club, meta_dict)
-            else:
-                print "%s not found" % meta_dict['name']
-                clubs_not_found.append(meta_dict['name'])
+            print "creating club %s" % name
+            club = Club(name=name, introduction=description, abbrev=abbreviation, school=School.objects.get(name="UC Berkeley"))
+            save_club_links(club, meta_dict)
         except DatabaseError as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, exc_traceback,
@@ -146,5 +138,3 @@ class Command(BaseCommand):
         main(updateExistingClubs)
 
         print "Clubs found %s \n" % len(clubs_found)
-        print "Clubs partially found %s \n" % len(clubs_partially_found)
-        print "Clubs not found %s \n" % len(clubs_not_found)
