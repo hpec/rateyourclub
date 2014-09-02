@@ -3,7 +3,7 @@
     %small
         %i.icon-edit
         %span.text
-            Contribute
+            Suggest edit
 
 
 %form#add-url-form.form-horizontal{ 'style': 'display:none', 'method' : 'post', 'action' : "{% url 'clubreview.views.add_url_edit' club.id %}"}
@@ -17,16 +17,16 @@
     .control-label
       %label{ 'for' : 'facebook_url'}
         Facebook
-    .controls 
+    .controls
       %input.input-xlarge{ 'type':'text', 'name':'facebook_url', 'placeholder' : "{% firstof club.facebook_url 'https://www.facebook.com/UCBerkeley' %}" }
   .control-group
-    .control-label 
+    .control-label
       %label{ 'for': 'website_url'}
         Website
-    .controls 
+    .controls
       %input.input-xlarge{ 'type':'text', 'name':'website_url', 'placeholder' : "{% firstof club.website 'http://www.example.com'%}"}
   .control-group
-    .controls 
+    .controls
       %button.btn.btn-primary{' type':"submit" }
         Submit
   %script{ 'type':'text/javascript' }
