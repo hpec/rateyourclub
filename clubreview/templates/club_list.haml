@@ -5,6 +5,11 @@
 - block content
       .right-side-panel
         .card
+          %h4 Upcoming events
+          - with events=events
+            - include "includes/club_event_info.html"
+
+        .card
           %h4 Categories
           %ul
             - for category in categories
@@ -15,11 +20,6 @@
                     - else
                       {{ category }}
                   </a>
-
-        .card
-          %h4 Upcoming events
-          - with events=events
-            - include "includes/club_event_info.html"
 
       #main-content
         .card
