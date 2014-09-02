@@ -26,7 +26,7 @@ def landing(request, template_name = 'landing.html' ):
 def club_list_view(request, template_name='club_list.html'):
     order_mapping = {'name':'name', 'ratings':'-average_rating', 'pop':'-hit'}
 
-    order = request.GET.get('order', 'pop')
+    order = request.GET.get('order', 'ratings')
     query = request.GET.get('q', '')
     category = urllib.unquote(request.GET.get('cat', '')).decode('utf-8')
 
