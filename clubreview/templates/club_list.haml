@@ -28,7 +28,7 @@
             ={clubs.start_index} - ={clubs.end_index} of ={clubs.paginator.count} result{{clubs.paginator.count|pluralize}}
           .pull-right
               Sort by
-                %a{'class':"{% if order == 'ratings' or not order or not order in 'ratings name'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Rating
+                %a{'class':"{% if order == 'ratings' or not order or not order in 'pop name'%}sort-active{% endif %}",'href':'?order=ratings{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Rating
                 %a{'class':"{% if order == 'pop'%}sort-active{% endif %}",'href':'?order=pop{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Views
                 %a{'class':"{% if order == 'name'%}sort-active{% endif %}",'href':'?order=name{% if request.GET.dict.q %}&q={{request.GET.dict.q}}{% endif %}{% if request.GET.dict.cat %}&cat={{ request.GET.dict.cat|urlencode }}{% endif %}'} Name
 
