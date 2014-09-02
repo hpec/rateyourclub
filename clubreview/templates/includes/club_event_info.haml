@@ -5,10 +5,12 @@
       %a{ 'href' : "{% url 'event_info_view' event.id %}",  'target' : '_blank'}
             {{ event.name }}
     %div.lead{'style':'font-size:12px; margin-bottom:0'}
+        %i.fa.fa-clock-o
         {{ event.display_time }}
         %a.pull-right{'href': "{% url 'event_ical_view' event.id %}"}
             %img.ical{'src':'{% static "img/ical.jpeg"%}'}
     %div{'style':'font-size:12px; color:#aaa;'}
+        %i.fa.fa-map-marker
         {{ event.location }}
 
     %hr
