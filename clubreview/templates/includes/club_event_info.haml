@@ -10,7 +10,7 @@
         %a.pull-right{'href': "{% url 'event_ical_view' event.id %}"}
             %img.ical{'src':'{% static "img/ical.jpeg"%}'}
     %div{'style':'font-size:12px; color:#aaa;'}
-        %i.icon-map-marker
+        %i.icon-location-arrow
         {{ event.location }}
 
     %hr
